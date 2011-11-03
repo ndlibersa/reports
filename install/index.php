@@ -152,7 +152,7 @@ if ($step == "3"){
 			if (!$dbcheck) {
 				$errorMessage[] = "Unable to access the database '" . $database_name . "'.  Please verify it has been created.<br />MySQL Error: " . mysql_error();
 			}else{
-				//passed db host, name check, test that user can select from License database
+				//passed db host, name check, test that user can select from Reports database
 				$result = mysql_query("SELECT reportID FROM " . $database_name . ".Report WHERE reportName like '%Usage%';");
 				if (!$result){
 					$errorMessage[] = "Unable to select from the Report table in database '" . $database_name . "' with user '" . $database_username . "'.  Error: " . mysql_error();
@@ -242,7 +242,7 @@ if ($step == "3"){
 	</ul>
 
 
-	<form action="<?=$_SERVER['PHP_SELF']?>" method="post">
+	<form action="<?php echo $_SERVER['PHP_SELF']; ?>" method="post">
 	<input type='hidden' name='step' value='1'>
 	<input type="submit" value="Continue" name="submit">
 	</form>
@@ -271,9 +271,9 @@ if ($step == "3"){
 
 	<h3>Getting system info and verifying php version</h3>
 	<ul>
-	<li>System: <?=$phpinfo['phpinfo']['System'];?></li>
-    <li>PHP version: <?=phpversion();?></li>
-    <li>Server API: <?=$phpinfo['phpinfo']['Server API'];?></li>
+	<li>System: <?php echo $phpinfo['phpinfo']['System']; ?></li>
+    <li>PHP version: <?php echo phpversion(); ?></li>
+    <li>Server API: <?php echo $phpinfo['phpinfo']['Server API'];?></li>
 	</ul>
 
 	<br />
@@ -283,7 +283,7 @@ if ($step == "3"){
 
 	if (phpversion() >= 5){
 	?>
-		<form action="<?=$_SERVER['PHP_SELF']?>" method="post">
+		<form action="<?php echo $_SERVER['PHP_SELF']; ?>" method="post">
 		<input type='hidden' name='step' value='2'>
 		<input type="submit" value="Continue" name="submit">
 		</form>
@@ -299,7 +299,7 @@ if ($step == "3"){
 	if (!$database_name) $database_name='coral_reporting_prod';
 	if (!$usage_database_name) $usage_database_name='coral_usage_prod';
 	?>
-		<form method="post" action="<?=$_SERVER['PHP_SELF']?>">
+		<form method="post" action="<?php echo $_SERVER['PHP_SELF']; ?>">
 		<h3>MySQL info with permissions to create tables and Link Resolver info</h3>
 		<?php
 			if (count($errorMessage) > 0){
@@ -314,39 +314,39 @@ if ($step == "3"){
 			<tr>
 				<td>&nbsp;Database Host</td>
 				<td>
-					<input type="text" name="database_host" value='<?=$database_host?>' style="width:250px;">
+					<input type="text" name="database_host" value='<?php echo $database_host; ?>' style="width:250px;">
 				</td>
 			</tr>
 			<tr>
 				<td>&nbsp;Database Schema Name</td>
 				<td>
-					<input type="text" name="database_name" style="width:250px;" value="<?=$database_name?>">
+					<input type="text" name="database_name" style="width:250px;" value="<?php echo $database_name; ?>">
 				</td>
 			</tr>
 			<tr>
 				<td>&nbsp;Database Username</td>
 				<td>
-					<input type="text" name="database_username" style="width:250px;" value="<?=$database_username?>">
+					<input type="text" name="database_username" style="width:250px;" value="<?php echo $database_username; ?>">
 				</td>
 			</tr>
 			<tr>
 				<td>&nbsp;Database Password</td>
 				<td>
-					<input type="text" name="database_password" style="width:250px;" value="<?=$database_password?>">
+					<input type="text" name="database_password" style="width:250px;" value="<?php echo $database_password; ?>">
 				</td>
 			</tr>
 
 			<tr>
 				<td>&nbsp;Usage Module Schema Name</td>
 				<td>
-					<input type="text" name="usage_database_name" style="width:250px;" value="<?=$usage_database_name?>">
+					<input type="text" name="usage_database_name" style="width:250px;" value="<?php echo $usage_database_name; ?>">
 				</td>
 			</tr>
 
 			<tr>
 				<td>&nbsp;Link Resolver Base URL (optional)</td>
 				<td>
-					<textarea id="base_url" name="base_url" style="width:250px;" rows="3"><?=$base_url?></textarea>
+					<textarea id="base_url" name="base_url" style="width:250px;" rows="3"><?php echo $base_url; ?></textarea>
 				</td>
 			</tr>
 
@@ -369,7 +369,7 @@ if ($step == "3"){
 //third step - ask for DB info to log in from CORAL
 } else if ($step == '3') {
 	?>
-		<form method="post" action="<?=$_SERVER['PHP_SELF']?>">
+		<form method="post" action="<?php echo $_SERVER['PHP_SELF']; ?>">
 		<h3>MySQL user for CORAL web application - with select, insert, update, delete privileges to CORAL schemas</h3>
 		*It's recommended but not required that this user is different than the one used on the prior step
 		<?php
@@ -380,26 +380,26 @@ if ($step == "3"){
 				echo "</ul></span>";
 			}
 		?>
-		<input type="hidden" name="database_host" value='<?=$database_host?>'>
-		<input type="hidden" name="database_name" value="<?=$database_name?>">
-		<input type="hidden" name="usage_database_name" value="<?=$usage_database_name?>">
-		<input type="hidden" name="resolver" value="<?=$resolver?>">
-		<input type="hidden" name="base_url" value="<?=$base_url?>">
-		<input type="hidden" name="sid" value="<?=$sid?>">
-		<input type="hidden" name="client_identifier" value="<?=$client_identifier?>">
+		<input type="hidden" name="database_host" value='<?php echo $database_host; ?>'>
+		<input type="hidden" name="database_name" value="<?php echo $database_name; ?>">
+		<input type="hidden" name="usage_database_name" value="<?php echo $usage_database_name; ?>">
+		<input type="hidden" name="resolver" value="<?php echo $resolver; ?>">
+		<input type="hidden" name="base_url" value="<?php echo $base_url; ?>">
+		<input type="hidden" name="sid" value="<?php echo $sid?>">
+		<input type="hidden" name="client_identifier" value="<?php echo $client_identifier; ?>">
 
 		<table width="100%" border="0" cellspacing="0" cellpadding="2">
 		<tr>
 			<tr>
 				<td>&nbsp;Database Username</td>
 				<td>
-					<input type="text" name="database_username" size="30" value="<?=$database_username?>">
+					<input type="text" name="database_username" size="30" value="<?php echo $database_username; ?>">
 				</td>
 			</tr>
 			<tr>
 				<td>&nbsp;Database Password</td>
 				<td>
-					<input type="text" name="database_password" size="30" value="<?=$database_password?>">
+					<input type="text" name="database_password" size="30" value="<?php echo $database_password; ?>">
 				</td>
 			</tr>
 

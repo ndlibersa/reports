@@ -534,10 +534,10 @@ for($a = 1; $a <= $numberLoops; $a++){
 
 			}
 
-
 			//Display adjusted numbers
-			if (($showUnadjusted == 'N') && (($overrides[$field]) || ($outliers[$field]))){
-				if ($overrides[$field] != ''){
+			if (($showUnadjusted == 'N') && (isset($overrides[$field]) || isset($outliers[$field]))){
+
+				if (isset($overrides[$field])){
 					$rowoutput[$rowcount] .= "<td bgcolor='$usageOverridenColor' class='usageOverriden' border=1>" . $overrides[$field] . '</td>';
 				}else if ($outliers[$field] > 0){
 					$rowoutput[$rowcount] .= "<td bgcolor='$usageFlaggedColor' class='usageFlagged' border=1>" . $print_data . '</td>';
@@ -1090,6 +1090,7 @@ if ($pubIDs){
 </tr>
 </center>
 </table>
+
 
 <script type="text/javascript" src="js/header.js"></script>
 <script type="text/javascript" src="js/report.js"></script>

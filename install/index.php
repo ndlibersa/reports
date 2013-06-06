@@ -49,7 +49,7 @@ if ($step == "3"){
 			    	$errorMessage[] = "Could not open sql file: " . $test_sql_file . ".  If this file does not exist you must download new install files.";
 			    }else{
 					//run the file - checking for errors at each SQL execution
-					$f = fopen($test_sql_file,"r+");
+					$f = fopen($test_sql_file,"r");
 					$sqlFile = fread($f,filesize($test_sql_file));
 					$sqlArray = explode(";",$sqlFile);
 
@@ -91,7 +91,7 @@ if ($step == "3"){
 						$errorMessage[] = "Could not open sql file: " . $sql_file . ".  If this file does not exist you must download new install files.";
 					}else{
 						//run the file - checking for errors at each SQL execution
-						$f = fopen($sql_file,"r+");
+						$f = fopen($sql_file,"r");
 						$sqlFile = fread($f,filesize($sql_file));
 						$sqlArray = explode(';',$sqlFile);
 

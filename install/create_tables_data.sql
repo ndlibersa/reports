@@ -53,8 +53,8 @@ CREATE TABLE IF NOT EXISTS `_DATABASE_NAME_`.`ReportSum` (
 
 DELETE FROM `_DATABASE_NAME_`.Report;
 INSERT INTO `_DATABASE_NAME_`.Report (reportID, reportName, reportSQL, reportGroupingColumnName, defaultRecPageNumber, groupTotalInd, specialPageURL, orderBySQL, infoDisplayText, excelOnlyInd, reportDatabaseName)  VALUES ('1','Usage Statistics by Titles','SELECT t.Title TITLE, pp.reportDisplayName PUBLISHER, Platform.reportDisplayName PLATFORM, mus.year YEAR,
-MAX(IF(ti.issnType=\'print\', concat(substr(ti.issn,1,4), \'-\', substr(ti.issn,5,4)),null)) PRINT_ISSN,
-MAX(IF(ti.issnType=\'online\', concat(substr(ti.issn,1,4), \'-\', substr(ti.issn,5,4)),null)) ONLINE_ISSN,
+MAX(IF(ti.identifierType=\'print\', concat(substr(ti.identifier,1,4), \'-\', substr(ti.identifier,5,4)),null)) PRINT_ISSN,
+MAX(IF(ti.identifierType=\'online\', concat(substr(ti.identifier,1,4), \'-\', substr(ti.identifier,5,4)),null)) ONLINE_ISSN,
 MAX(IF(month=1,usageCount,null)) JAN,
 MAX(IF(month=2,usageCount,null)) FEB,
 MAX(IF(month=3,usageCount,null)) MAR,
@@ -103,9 +103,9 @@ yus.mergeInd mergeInd, pp.publisherPlatformID, pp.platformID,
 replace(replace(replace(t.Title,"A ",""),"An ",""),"The ","") TITLE_SORT
 FROM Platform, PublisherPlatform pp,
 MonthlyUsageSummary mus LEFT JOIN YearlyUsageSummary yus ON yus.publisherPlatformID = mus.publisherPlatformID AND yus.year = mus.year AND yus.titleID = mus.titleID AND yus.archiveInd = mus.archiveInd, 
-Title t LEFT JOIN TitleISSN ti ON t.titleID = ti.titleID
+Title t LEFT JOIN TitleIdentifier ti ON t.titleID = ti.titleID
 WHERE Platform.platformID = pp.platformID
-AND t.titleID in (SELECT t2.titleID FROM Title t2 LEFT JOIN TitleISSN ti2 ON ti2.titleID = t2.titleID WHERE t2.titleID != \'\' ADD_WHERE2) 
+AND t.titleID in (SELECT t2.titleID FROM Title t2 LEFT JOIN TitleIdentifier ti2 ON ti2.titleID = t2.titleID WHERE t2.titleID != \'\' ADD_WHERE2) 
 ADD_WHERE
 AND mus.publisherPlatformID = pp.publisherPlatformID
 AND mus.titleID = t.titleID
@@ -114,8 +114,8 @@ GROUP BY t.titleID, t.Title, pp.reportDisplayName, Platform.reportDisplayName, m
 
 
 INSERT INTO `_DATABASE_NAME_`.Report (reportID, reportName, reportSQL, reportGroupingColumnName, defaultRecPageNumber, groupTotalInd, specialPageURL, orderBySQL, infoDisplayText, excelOnlyInd, reportDatabaseName)  VALUES ('2','Usage Statistics by Provider / Publisher','SELECT t.Title TITLE, pp.reportDisplayName PUBLISHER, Platform.reportDisplayName PLATFORM, mus.year YEAR,
-MAX(IF(ti.issnType=\'print\', concat(substr(ti.issn,1,4), \'-\', substr(ti.issn,5,4)),null)) PRINT_ISSN,
-MAX(IF(ti.issnType=\'online\', concat(substr(ti.issn,1,4), \'-\', substr(ti.issn,5,4)),null)) ONLINE_ISSN,
+MAX(IF(ti.identifierType=\'print\', concat(substr(ti.identifier,1,4), \'-\', substr(ti.identifier,5,4)),null)) PRINT_ISSN,
+MAX(IF(ti.identifierType=\'online\', concat(substr(ti.identifier,1,4), \'-\', substr(ti.identifier,5,4)),null)) ONLINE_ISSN,
 MAX(IF(month=1,usageCount,null)) JAN,
 MAX(IF(month=2,usageCount,null)) FEB,
 MAX(IF(month=3,usageCount,null)) MAR,
@@ -164,7 +164,7 @@ yus.mergeInd mergeInd, pp.publisherPlatformID, pp.platformID,
 replace(replace(replace(t.Title,"A ",""),"An ",""),"The ","") TITLE_SORT
 FROM Platform, PublisherPlatform pp,
 MonthlyUsageSummary mus LEFT JOIN YearlyUsageSummary yus ON yus.publisherPlatformID = mus.publisherPlatformID AND yus.year = mus.year AND yus.titleID = mus.titleID AND yus.archiveInd = mus.archiveInd, 
-Title t LEFT JOIN TitleISSN ti ON t.titleID = ti.titleID
+Title t LEFT JOIN TitleIdentifier ti ON t.titleID = ti.titleID
 WHERE Platform.platformID = pp.platformID
 ADD_WHERE
 AND mus.publisherPlatformID = pp.publisherPlatformID
@@ -248,8 +248,8 @@ INSERT INTO `_DATABASE_NAME_`.Report (reportID, reportName, reportSQL, reportGro
 max(pp.reportDisplayName) PUBLISHER,
 GROUP_CONCAT(distinct Platform.reportDisplayName ORDER BY Platform.reportDisplayName DESC SEPARATOR \', \') PLATFORM,
 yus.year YEAR,
-MAX(IF(ti.issnType=\'print\', concat(substr(ti.issn,1,4), \'-\', substr(ti.issn,5,4)),null)) PRINT_ISSN,
-MAX(IF(ti.issnType=\'online\', concat(substr(ti.issn,1,4), \'-\', substr(ti.issn,5,4)),null)) ONLINE_ISSN,
+MAX(IF(ti.identifierType=\'print\', concat(substr(ti.identifier,1,4), \'-\', substr(ti.identifier,5,4)),null)) PRINT_ISSN,
+MAX(IF(ti.identifierType=\'online\', concat(substr(ti.identifier,1,4), \'-\', substr(ti.identifier,5,4)),null)) ONLINE_ISSN,
 sum(distinct totalCount) YTD_TOTAL,
 sum(distinct ytdHTMLCount) YTD_HTML,
 sum(distinct ytdPDFCount) YTD_PDF,
@@ -258,7 +258,7 @@ overrideTotalCount YTD_OVERRIDE,
 overrideHTMLCount HTML_OVERRIDE,
 overridePDFCount PDF_OVERRIDE,
 replace(replace(replace(t.Title,"A ",""),"An ",""),"The ","") TITLE_SORT
-FROM Title t, TitleISSN ti, Platform, Publisher, PublisherPlatform pp, YearlyUsageSummary yus
+FROM Title t, TitleIdentifier ti, Platform, Publisher, PublisherPlatform pp, YearlyUsageSummary yus
 WHERE t.titleID = yus.titleID
 AND pp.publisherPlatformID = yus.publisherPlatformID
 AND pp.platformID = Platform.platformID
@@ -282,7 +282,7 @@ max(IF(year=2008, totalCount, null)) "2008_ytd",
 sum(totalCount) "all_years",
 t.titleID, pp.platformID,
 replace(replace(replace(t.Title,"A ",""),"An ",""),"The ","") TITLE_SORT
-FROM Title t, (SELECT titleID, MAX(IF(issnType=\'print\', concat(substr(issn,1,4), \'-\', substr(issn,5,4)),null)) PRINT_ISSN, MAX(IF(issnType=\'online\', concat(substr(issn,1,4), \'-\', substr(issn,5,4)),null)) ONLINE_ISSN FROM TitleISSN GROUP BY titleID) ti, Platform, Publisher, PublisherPlatform pp, YearlyUsageSummary yus
+FROM Title t, (SELECT titleID, MAX(IF(identifierType=\'print\', concat(substr(identifier,1,4), \'-\', substr(identifier,5,4)),null)) PRINT_ISSN, MAX(IF(identifierType=\'online\', concat(substr(identifier,1,4), \'-\', substr(identifier,5,4)),null)) ONLINE_ISSN FROM TitleIdentifier GROUP BY titleID) ti, Platform, Publisher, PublisherPlatform pp, YearlyUsageSummary yus
 WHERE t.titleID = yus.titleID
 AND pp.publisherPlatformID = yus.publisherPlatformID
 AND pp.platformID = Platform.platformID
@@ -329,7 +329,7 @@ INSERT INTO `_DATABASE_NAME_`.ReportSum (reportID, reportColumnName, reportGroup
 
 DELETE FROM `_DATABASE_NAME_`.ReportParameter;
 INSERT INTO `_DATABASE_NAME_`.ReportParameter (reportID, parameterDisplayPrompt, parameterAddWhereClause, parameterTypeCode, parameterFormatCode, requiredInd, parameterAddWhereNumber, parameterSQLStatement, parentReportParameterID, parameterSQLRestriction)  VALUES ('1','Do not adjust numbers for use violations','Overriden','chk','','0','0','','0','');
-INSERT INTO `_DATABASE_NAME_`.ReportParameter (reportID, parameterDisplayPrompt, parameterAddWhereClause, parameterTypeCode, parameterFormatCode, requiredInd, parameterAddWhereNumber, parameterSQLStatement, parentReportParameterID, parameterSQLRestriction)  VALUES ('1','ISSN','(ti2.issn = \'PARM\' OR ti2.issn = concat(substr(\'PARM\',1,4), substr(\'PARM\',6,4)))','txt','','0','2','','0','');
+INSERT INTO `_DATABASE_NAME_`.ReportParameter (reportID, parameterDisplayPrompt, parameterAddWhereClause, parameterTypeCode, parameterFormatCode, requiredInd, parameterAddWhereNumber, parameterSQLStatement, parentReportParameterID, parameterSQLRestriction)  VALUES ('1','ISSN','(ti2.identifier = \'PARM\' OR ti2.identifier = concat(substr(\'PARM\',1,4), substr(\'PARM\',6,4)))','txt','','0','2','','0','');
 INSERT INTO `_DATABASE_NAME_`.ReportParameter (reportID, parameterDisplayPrompt, parameterAddWhereClause, parameterTypeCode, parameterFormatCode, requiredInd, parameterAddWhereNumber, parameterSQLStatement, parentReportParameterID, parameterSQLRestriction)  VALUES ('1','Title Search','upper(t2.title) like upper(\'%PARM%\')','txt','','0','2','','0','');
 INSERT INTO `_DATABASE_NAME_`.ReportParameter (reportID, parameterDisplayPrompt, parameterAddWhereClause, parameterTypeCode, parameterFormatCode, requiredInd, parameterAddWhereNumber, parameterSQLStatement, parentReportParameterID, parameterSQLRestriction)  VALUES ('1','Year','mus.year = \'PARM\'','dd','','0','0','SELECT distinct year, year from YearlyUsageSummary ORDER BY 1 desc','0','');
 INSERT INTO `_DATABASE_NAME_`.ReportParameter (reportID, parameterDisplayPrompt, parameterAddWhereClause, parameterTypeCode, parameterFormatCode, requiredInd, parameterAddWhereNumber, parameterSQLStatement, parentReportParameterID, parameterSQLRestriction)  VALUES ('2','Do not adjust numbers for use violations','Overriden','chk','','0','0','','0','');

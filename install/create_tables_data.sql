@@ -52,9 +52,13 @@ CREATE TABLE IF NOT EXISTS `_DATABASE_NAME_`.`ReportSum` (
 
 
 DELETE FROM `_DATABASE_NAME_`.Report;
-INSERT INTO `_DATABASE_NAME_`.Report (reportID, reportName, reportSQL, reportGroupingColumnName, defaultRecPageNumber, groupTotalInd, specialPageURL, orderBySQL, infoDisplayText, excelOnlyInd, reportDatabaseName)  VALUES ('1','Usage Statistics by Titles','SELECT t.Title TITLE, pp.reportDisplayName PUBLISHER, Platform.reportDisplayName PLATFORM, mus.year YEAR,
-MAX(IF(ti.identifierType=\'print\', concat(substr(ti.identifier,1,4), \'-\', substr(ti.identifier,5,4)),null)) PRINT_ISSN,
-MAX(IF(ti.identifierType=\'online\', concat(substr(ti.identifier,1,4), \'-\', substr(ti.identifier,5,4)),null)) ONLINE_ISSN,
+INSERT INTO `_DATABASE_NAME_`.Report (reportID, reportName, reportSQL, reportGroupingColumnName, defaultRecPageNumber, groupTotalInd, specialPageURL, orderBySQL, infoDisplayText, excelOnlyInd, reportDatabaseName)  
+VALUES 
+('1','Usage Statistics by Titles','SELECT t.Title TITLE, pp.reportDisplayName PUBLISHER, Platform.reportDisplayName PLATFORM, mus.year YEAR,
+MAX(IF(ti.identifierType=\'DOI\', ti.identifier, null)) DOI,
+MAX(IF(ti.identifierType=\'ISSN\', concat(substr(ti.identifier,1,4), \'-\', substr(ti.identifier,5,4)),null)) PRINT_ISSN,
+MAX(IF(ti.identifierType=\'eISSN\', concat(substr(ti.identifier,1,4), \'-\', substr(ti.identifier,5,4)),null)) ONLINE_ISSN,
+MAX(IF(ti.identifierType=\'ISBN\', ti.identifier, null)) ISBN,
 MAX(IF(month=1,usageCount,null)) JAN,
 MAX(IF(month=2,usageCount,null)) FEB,
 MAX(IF(month=3,usageCount,null)) MAR,
@@ -113,9 +117,13 @@ GROUP BY t.titleID, t.Title, pp.reportDisplayName, Platform.reportDisplayName, m
 
 
 
-INSERT INTO `_DATABASE_NAME_`.Report (reportID, reportName, reportSQL, reportGroupingColumnName, defaultRecPageNumber, groupTotalInd, specialPageURL, orderBySQL, infoDisplayText, excelOnlyInd, reportDatabaseName)  VALUES ('2','Usage Statistics by Provider / Publisher','SELECT t.Title TITLE, pp.reportDisplayName PUBLISHER, Platform.reportDisplayName PLATFORM, mus.year YEAR,
-MAX(IF(ti.identifierType=\'print\', concat(substr(ti.identifier,1,4), \'-\', substr(ti.identifier,5,4)),null)) PRINT_ISSN,
-MAX(IF(ti.identifierType=\'online\', concat(substr(ti.identifier,1,4), \'-\', substr(ti.identifier,5,4)),null)) ONLINE_ISSN,
+INSERT INTO `_DATABASE_NAME_`.Report (reportID, reportName, reportSQL, reportGroupingColumnName, defaultRecPageNumber, groupTotalInd, specialPageURL, orderBySQL, infoDisplayText, excelOnlyInd, reportDatabaseName)  
+VALUES ('2','Usage Statistics by Provider / Publisher',
+'SELECT t.Title TITLE, pp.reportDisplayName PUBLISHER, Platform.reportDisplayName PLATFORM, mus.year YEAR,
+MAX(IF(ti.identifierType=\'DOI\', ti.identifier, null)) DOI,
+MAX(IF(ti.identifierType=\'ISSN\', concat(substr(ti.identifier,1,4), \'-\', substr(ti.identifier,5,4)),null)) PRINT_ISSN,
+MAX(IF(ti.identifierType=\'eISSN\', concat(substr(ti.identifier,1,4), \'-\', substr(ti.identifier,5,4)),null)) ONLINE_ISSN,
+MAX(IF(ti.identifierType=\'ISBN\', ti.identifier, null)) ISBN,
 MAX(IF(month=1,usageCount,null)) JAN,
 MAX(IF(month=2,usageCount,null)) FEB,
 MAX(IF(month=3,usageCount,null)) MAR,
@@ -173,7 +181,8 @@ GROUP BY t.titleID, t.Title, pp.reportDisplayName, Platform.reportDisplayName, m
 
 
 
-INSERT INTO `_DATABASE_NAME_`.Report (reportID, reportName, reportSQL, reportGroupingColumnName, defaultRecPageNumber, groupTotalInd, specialPageURL, orderBySQL, infoDisplayText, excelOnlyInd, reportDatabaseName)  VALUES ('3','Usage Statistics - Provider Rollup','SELECT Platform.reportDisplayName PLATFORM,
+INSERT INTO `_DATABASE_NAME_`.Report (reportID, reportName, reportSQL, reportGroupingColumnName, defaultRecPageNumber, groupTotalInd, specialPageURL, orderBySQL, infoDisplayText, excelOnlyInd, reportDatabaseName)  VALUES 
+('3','Usage Statistics - Provider Rollup','SELECT Platform.reportDisplayName PLATFORM,
 number_of_titles,
 mus.year,
 sum(IF(month=1,IFNULL(overrideUsageCount,usageCount),null)) JAN,
@@ -248,8 +257,10 @@ INSERT INTO `_DATABASE_NAME_`.Report (reportID, reportName, reportSQL, reportGro
 max(pp.reportDisplayName) PUBLISHER,
 GROUP_CONCAT(distinct Platform.reportDisplayName ORDER BY Platform.reportDisplayName DESC SEPARATOR \', \') PLATFORM,
 yus.year YEAR,
-MAX(IF(ti.identifierType=\'print\', concat(substr(ti.identifier,1,4), \'-\', substr(ti.identifier,5,4)),null)) PRINT_ISSN,
-MAX(IF(ti.identifierType=\'online\', concat(substr(ti.identifier,1,4), \'-\', substr(ti.identifier,5,4)),null)) ONLINE_ISSN,
+MAX(IF(ti.identifierType=\'DOI\', ti.identifier, null)) DOI,
+MAX(IF(ti.identifierType=\'ISSN\', concat(substr(ti.identifier,1,4), \'-\', substr(ti.identifier,5,4)),null)) PRINT_ISSN,
+MAX(IF(ti.identifierType=\'eISSN\', concat(substr(ti.identifier,1,4), \'-\', substr(ti.identifier,5,4)),null)) ONLINE_ISSN,
+MAX(IF(ti.identifierType=\'ISBN\', ti.identifier, null)) ISBN,
 sum(distinct totalCount) YTD_TOTAL,
 sum(distinct ytdHTMLCount) YTD_HTML,
 sum(distinct ytdPDFCount) YTD_PDF,
@@ -273,16 +284,20 @@ PRINT_ISSN,
 ONLINE_ISSN,
 pp.reportDisplayName PUBLISHER,
 Platform.reportDisplayName PLATFORM,
-max(IF(year=2013, totalCount, null)) "2010_ytd",
-max(IF(year=2012, totalCount, null)) "2009_ytd",
-max(IF(year=2011, totalCount, null)) "2008_ytd",
+max(IF(year=2013, totalCount, null)) "2013_ytd",
+max(IF(year=2012, totalCount, null)) "2012_ytd",
+max(IF(year=2011, totalCount, null)) "2011_ytd",
 max(IF(year=2010, totalCount, null)) "2010_ytd",
 max(IF(year=2009, totalCount, null)) "2009_ytd",
 max(IF(year=2008, totalCount, null)) "2008_ytd",
 sum(totalCount) "all_years",
 t.titleID, pp.platformID,
 replace(replace(replace(t.Title,"A ",""),"An ",""),"The ","") TITLE_SORT
-FROM Title t, (SELECT titleID, MAX(IF(identifierType=\'print\', concat(substr(identifier,1,4), \'-\', substr(identifier,5,4)),null)) PRINT_ISSN, MAX(IF(identifierType=\'online\', concat(substr(identifier,1,4), \'-\', substr(identifier,5,4)),null)) ONLINE_ISSN FROM TitleIdentifier GROUP BY titleID) ti, Platform, Publisher, PublisherPlatform pp, YearlyUsageSummary yus
+FROM Title t, (SELECT titleID, 
+  MAX(IF(identifierType=\'ISSN\', concat(substr(identifier,1,4), \'-\', substr(identifier,5,4)),null)) PRINT_ISSN, 
+  MAX(IF(identifierType=\'online\', concat(substr(identifier,1,4), \'-\', substr(identifier,5,4)),null)) ONLINE_ISSN 
+  FROM TitleIdentifier GROUP BY titleID) ti, 
+Platform, Publisher, PublisherPlatform pp, YearlyUsageSummary yus
 WHERE t.titleID = yus.titleID
 AND pp.publisherPlatformID = yus.publisherPlatformID
 AND pp.platformID = Platform.platformID
@@ -329,26 +344,23 @@ INSERT INTO `_DATABASE_NAME_`.ReportSum (reportID, reportColumnName, reportGroup
 
 DELETE FROM `_DATABASE_NAME_`.ReportParameter;
 INSERT INTO `_DATABASE_NAME_`.ReportParameter (reportID, parameterDisplayPrompt, parameterAddWhereClause, parameterTypeCode, parameterFormatCode, requiredInd, parameterAddWhereNumber, parameterSQLStatement, parentReportParameterID, parameterSQLRestriction)  VALUES ('1','Do not adjust numbers for use violations','Overriden','chk','','0','0','','0','');
-INSERT INTO `_DATABASE_NAME_`.ReportParameter (reportID, parameterDisplayPrompt, parameterAddWhereClause, parameterTypeCode, parameterFormatCode, requiredInd, parameterAddWhereNumber, parameterSQLStatement, parentReportParameterID, parameterSQLRestriction)  VALUES ('1','ISSN','(ti2.identifier = \'PARM\' OR ti2.identifier = concat(substr(\'PARM\',1,4), substr(\'PARM\',6,4)))','txt','','0','2','','0','');
+INSERT INTO `_DATABASE_NAME_`.ReportParameter (reportID, parameterDisplayPrompt, parameterAddWhereClause, parameterTypeCode, parameterFormatCode, requiredInd, parameterAddWhereNumber, parameterSQLStatement, parentReportParameterID, parameterSQLRestriction)  VALUES ('1','ISSN/ISBN/DOI','(ti2.identifier = \'PARM\' OR ti2.identifier = REPLACE(\'PARM\',"-",""))','txt','','0','2','','0','');
 INSERT INTO `_DATABASE_NAME_`.ReportParameter (reportID, parameterDisplayPrompt, parameterAddWhereClause, parameterTypeCode, parameterFormatCode, requiredInd, parameterAddWhereNumber, parameterSQLStatement, parentReportParameterID, parameterSQLRestriction)  VALUES ('1','Title Search','upper(t2.title) like upper(\'%PARM%\')','txt','','0','2','','0','');
 INSERT INTO `_DATABASE_NAME_`.ReportParameter (reportID, parameterDisplayPrompt, parameterAddWhereClause, parameterTypeCode, parameterFormatCode, requiredInd, parameterAddWhereNumber, parameterSQLStatement, parentReportParameterID, parameterSQLRestriction)  VALUES ('1','Year','mus.year = \'PARM\'','dd','','0','0','SELECT distinct year, year from YearlyUsageSummary ORDER BY 1 desc','0','');
 INSERT INTO `_DATABASE_NAME_`.ReportParameter (reportID, parameterDisplayPrompt, parameterAddWhereClause, parameterTypeCode, parameterFormatCode, requiredInd, parameterAddWhereNumber, parameterSQLStatement, parentReportParameterID, parameterSQLRestriction)  VALUES ('2','Do not adjust numbers for use violations','Overriden','chk','','0','0','','0','');
-INSERT INTO `_DATABASE_NAME_`.ReportParameter (reportID, parameterDisplayPrompt, parameterAddWhereClause, parameterTypeCode, parameterFormatCode, requiredInd, parameterAddWhereNumber, parameterSQLStatement, parentReportParameterID, parameterSQLRestriction)  VALUES ('2','Provider / Publisher','(concat(\'PL_\', Platform.platformID) = \'PARM\' OR concat(\'PB_\', pp.publisherPlatformID) = \'PARM\')','dd','','0','0','SELECT concat(\'PL_\', platformID), reportDisplayName, upper(reportDisplayName) FROM Platform WHERE reportDropDownInd = 1 UNION SELECT concat(\'PB_\', publisherPlatformID), reportDisplayName, upper(reportDisplayName) FROM PublisherPlatform WHERE reportDropDownInd = 1 ORDER BY 3','0','');
-INSERT INTO `_DATABASE_NAME_`.ReportParameter (reportID, parameterDisplayPrompt, parameterAddWhereClause, parameterTypeCode, parameterFormatCode, requiredInd, parameterAddWhereNumber, parameterSQLStatement, parentReportParameterID, parameterSQLRestriction)  VALUES ('2','Year','mus.year = \'PARM\'','dd','','0','0','SELECT distinct year, year FROM YearlyUsageSummary yus, PublisherPlatform pp WHERE pp.publisherPlatformID=yus.publisherPlatformID ADD_WHERE ORDER BY 1 desc','5','and (concat(\'PB_\', yus.publisherPlatformID) = \'PARM\' or concat(\'PL_\', pp.platformID) = \'PARM\')');
-INSERT INTO `_DATABASE_NAME_`.ReportParameter (reportID, parameterDisplayPrompt, parameterAddWhereClause, parameterTypeCode, parameterFormatCode, requiredInd, parameterAddWhereNumber, parameterSQLStatement, parentReportParameterID, parameterSQLRestriction)  VALUES ('3','Provider','concat(\'PL_\', Platform.platformID) in (\'PARM\')','ms','','0','0','SELECT concat(\'PL_\', platformID), reportDisplayName, upper(reportDisplayName) FROM Platform WHERE reportDropDownInd = 1 ORDER BY 3','0','');
+INSERT INTO `_DATABASE_NAME_`.ReportParameter (reportID, parameterDisplayPrompt, parameterAddWhereClause, parameterTypeCode, parameterFormatCode, requiredInd, parameterAddWhereNumber, parameterSQLStatement, parentReportParameterID, parameterSQLRestriction)  VALUES ('2','Provider / Publisher','(concat(\'PL_\', CAST(Platform.platformID AS CHAR)) = \'PARM\') OR concat(\'PB_\', CAST(pp.publisherPlatformID AS CHAR) = \'PARM\')','dd','','0','0','SELECT concat(\'PL_\', CAST(Platform.platformID AS CHAR)), reportDisplayName, upper(reportDisplayName) FROM Platform WHERE reportDropDownInd = 1 UNION SELECT concat(\'PB_\', CAST(publisherPlatformID AS CHAR)), reportDisplayName, upper(reportDisplayName) FROM PublisherPlatform WHERE reportDropDownInd = 1 ORDER BY 3','0','');
+INSERT INTO `_DATABASE_NAME_`.ReportParameter (reportID, parameterDisplayPrompt, parameterAddWhereClause, parameterTypeCode, parameterFormatCode, requiredInd, parameterAddWhereNumber, parameterSQLStatement, parentReportParameterID, parameterSQLRestriction)  VALUES ('2','Year','mus.year = \'PARM\'','dd','','0','0','SELECT distinct year, year FROM YearlyUsageSummary yus, PublisherPlatform pp WHERE pp.publisherPlatformID=yus.publisherPlatformID ADD_WHERE ORDER BY 1 desc','5','and (concat(\'PB_\', CAST(yus.publisherPlatformID AS CHAR)) = \'PARM\' or concat(\'PL_\', CAST(pp.platformID AS CHAR)) = \'PARM\')');
+INSERT INTO `_DATABASE_NAME_`.ReportParameter (reportID, parameterDisplayPrompt, parameterAddWhereClause, parameterTypeCode, parameterFormatCode, requiredInd, parameterAddWhereNumber, parameterSQLStatement, parentReportParameterID, parameterSQLRestriction)  VALUES ('3','Provider','concat(\'PL_\', CAST(Platform.platformID AS CHAR)) in (\'PARM\')','ms','','0','0','SELECT concat(\'PL_\', CAST(platformID AS CHAR)), reportDisplayName, upper(reportDisplayName) FROM Platform WHERE reportDropDownInd = 1 ORDER BY 3','0','');
 INSERT INTO `_DATABASE_NAME_`.ReportParameter (reportID, parameterDisplayPrompt, parameterAddWhereClause, parameterTypeCode, parameterFormatCode, requiredInd, parameterAddWhereNumber, parameterSQLStatement, parentReportParameterID, parameterSQLRestriction)  VALUES ('3','Year','mus.year = \'PARM\'','dd','','0','0','SELECT distinct year, year FROM YearlyUsageSummary yus, PublisherPlatform pp WHERE pp.publisherPlatformID=yus.publisherPlatformID ADD_WHERE ORDER BY 1 desc','0','');
-INSERT INTO `_DATABASE_NAME_`.ReportParameter (reportID, parameterDisplayPrompt, parameterAddWhereClause, parameterTypeCode, parameterFormatCode, requiredInd, parameterAddWhereNumber, parameterSQLStatement, parentReportParameterID, parameterSQLRestriction)  VALUES ('4','Publisher','concat(\'PB_\', pp.publisherPlatformID) in (\'PARM\')','ms','','0','0','SELECT GROUP_CONCAT(DISTINCT concat(\'PB_\', publisherPlatformID) ORDER BY publisherPlatformID DESC SEPARATOR \', \'), reportDisplayName, upper(reportDisplayName) 
-FROM PublisherPlatform
-WHERE reportDropDownInd = 1 GROUP BY reportDisplayName 
-ORDER BY 3','0','');
+INSERT INTO `_DATABASE_NAME_`.ReportParameter (reportID, parameterDisplayPrompt, parameterAddWhereClause, parameterTypeCode, parameterFormatCode, requiredInd, parameterAddWhereNumber, parameterSQLStatement, parentReportParameterID, parameterSQLRestriction)  VALUES ('4','Publisher','concat(\'PB_\', CAST(pp.publisherPlatformID AS CHAR)) in (\'PARM\')','ms','','0','0','SELECT GROUP_CONCAT(DISTINCT concat(\'PB_\', CAST(publisherPlatformID AS CHAR)) ORDER BY publisherPlatformID DESC SEPARATOR \', \'), reportDisplayName, upper(reportDisplayName) FROM PublisherPlatform WHERE reportDropDownInd = 1 GROUP BY reportDisplayName ORDER BY 3','0','');
 INSERT INTO `_DATABASE_NAME_`.ReportParameter (reportID, parameterDisplayPrompt, parameterAddWhereClause, parameterTypeCode, parameterFormatCode, requiredInd, parameterAddWhereNumber, parameterSQLStatement, parentReportParameterID, parameterSQLRestriction)  VALUES ('4','Year','mus.year = \'PARM\'','dd','','0','0','SELECT distinct year, year FROM YearlyUsageSummary yus, PublisherPlatform pp WHERE pp.publisherPlatformID=yus.publisherPlatformID ADD_WHERE ORDER BY 1 desc','0','');
 INSERT INTO `_DATABASE_NAME_`.ReportParameter (reportID, parameterDisplayPrompt, parameterAddWhereClause, parameterTypeCode, parameterFormatCode, requiredInd, parameterAddWhereNumber, parameterSQLStatement, parentReportParameterID, parameterSQLRestriction)  VALUES ('5','Do not adjust numbers for use violations','Overriden','chk','','0','0','','0','');
 INSERT INTO `_DATABASE_NAME_`.ReportParameter (reportID, parameterDisplayPrompt, parameterAddWhereClause, parameterTypeCode, parameterFormatCode, requiredInd, parameterAddWhereNumber, parameterSQLStatement, parentReportParameterID, parameterSQLRestriction)  VALUES ('5','Limit','limit','dd','','1','0','SELECT 25,25 union SELECT 50,50 union SELECT 100,100 order by 1','0','');
-INSERT INTO `_DATABASE_NAME_`.ReportParameter (reportID, parameterDisplayPrompt, parameterAddWhereClause, parameterTypeCode, parameterFormatCode, requiredInd, parameterAddWhereNumber, parameterSQLStatement, parentReportParameterID, parameterSQLRestriction)  VALUES ('5','Provider / Publisher','(concat(\'PL_\', Platform.platformID) = \'PARM\' OR concat(\'PB_\', pp.publisherPlatformID) = \'PARM\')','dd','','0','0','SELECT concat(\'PL_\', platformID), reportDisplayName, upper(reportDisplayName) FROM Platform WHERE reportDropDownInd = 1 UNION SELECT concat(\'PB_\', publisherPlatformID), reportDisplayName, upper(reportDisplayName) FROM PublisherPlatform WHERE reportDropDownInd = 1 ORDER BY 3','0','');
-INSERT INTO `_DATABASE_NAME_`.ReportParameter (reportID, parameterDisplayPrompt, parameterAddWhereClause, parameterTypeCode, parameterFormatCode, requiredInd, parameterAddWhereNumber, parameterSQLStatement, parentReportParameterID, parameterSQLRestriction)  VALUES ('5','Year','yus.year = \'PARM\'','dd','','0','0','SELECT distinct year, year FROM YearlyUsageSummary yus, PublisherPlatform pp WHERE pp.publisherPlatformID=yus.publisherPlatformID ADD_WHERE ORDER BY 1 desc','13','and (concat(\'PB_\', yus.publisherPlatformID) = \'PARM\' or concat(\'PL_\', pp.platformID) = \'PARM\')');
+INSERT INTO `_DATABASE_NAME_`.ReportParameter (reportID, parameterDisplayPrompt, parameterAddWhereClause, parameterTypeCode, parameterFormatCode, requiredInd, parameterAddWhereNumber, parameterSQLStatement, parentReportParameterID, parameterSQLRestriction)  VALUES ('5','Provider / Publisher','(concat(\'PL_\', CAST(Platform.platformID AS CHAR)) = \'PARM\' OR concat(\'PB_\', CAST(pp.publisherPlatformID AS CHAR)) = \'PARM\')','dd','','0','0','SELECT concat(\'PL_\', CAST(Platform.platformID AS CHAR)), reportDisplayName, upper(reportDisplayName) FROM Platform WHERE reportDropDownInd = 1 UNION SELECT concat(\'PB_\', CAST(publisherPlatformID AS CHAR)), reportDisplayName, upper(reportDisplayName) FROM PublisherPlatform WHERE reportDropDownInd = 1 ORDER BY 3','0','');
+INSERT INTO `_DATABASE_NAME_`.ReportParameter (reportID, parameterDisplayPrompt, parameterAddWhereClause, parameterTypeCode, parameterFormatCode, requiredInd, parameterAddWhereNumber, parameterSQLStatement, parentReportParameterID, parameterSQLRestriction)  VALUES ('5','Year','yus.year = \'PARM\'','dd','','0','0','SELECT distinct year, year FROM YearlyUsageSummary yus, PublisherPlatform pp WHERE pp.publisherPlatformID=yus.publisherPlatformID ADD_WHERE ORDER BY 1 desc','13','and (concat(\'PB_\', CAST(yus.publisherPlatformID AS CHAR)) = \'PARM\' or concat(\'PL_\', CAST(pp.platformID AS CHAR)) = \'PARM\')');
 INSERT INTO `_DATABASE_NAME_`.ReportParameter (reportID, parameterDisplayPrompt, parameterAddWhereClause, parameterTypeCode, parameterFormatCode, requiredInd, parameterAddWhereNumber, parameterSQLStatement, parentReportParameterID, parameterSQLRestriction)  VALUES ('6','Do not adjust numbers for use violations','Overriden','chk','','0','0','','0','');
-INSERT INTO `_DATABASE_NAME_`.ReportParameter (reportID, parameterDisplayPrompt, parameterAddWhereClause, parameterTypeCode, parameterFormatCode, requiredInd, parameterAddWhereNumber, parameterSQLStatement, parentReportParameterID, parameterSQLRestriction)  VALUES ('6','Provider / Publisher','(concat(\'PL_\', Platform.platformID) = \'PARM\' OR concat(\'PB_\', pp.publisherPlatformID) = \'PARM\')','dd','','0','0','SELECT concat(\'PL_\', platformID), reportDisplayName, upper(reportDisplayName) FROM Platform WHERE reportDropDownInd = 1 UNION SELECT concat(\'PB_\', publisherPlatformID), reportDisplayName, upper(reportDisplayName) FROM PublisherPlatform WHERE reportDropDownInd = 1 ORDER BY 3','0','');
-INSERT INTO `_DATABASE_NAME_`.ReportParameter (reportID, parameterDisplayPrompt, parameterAddWhereClause, parameterTypeCode, parameterFormatCode, requiredInd, parameterAddWhereNumber, parameterSQLStatement, parentReportParameterID, parameterSQLRestriction)  VALUES ('6','Year','yus.year = \'PARM\'','dd','','0','0','SELECT distinct year, year FROM YearlyUsageSummary yus, PublisherPlatform pp WHERE pp.publisherPlatformID=yus.publisherPlatformID ADD_WHERE ORDER BY 1 desc','17','and (concat(\'PB_\', yus.publisherPlatformID) = \'PARM\' or concat(\'PL_\', pp.platformID) = \'PARM\')');
+INSERT INTO `_DATABASE_NAME_`.ReportParameter (reportID, parameterDisplayPrompt, parameterAddWhereClause, parameterTypeCode, parameterFormatCode, requiredInd, parameterAddWhereNumber, parameterSQLStatement, parentReportParameterID, parameterSQLRestriction)  VALUES ('6','Provider / Publisher','(concat(\'PL_\', CAST(Platform.platformID AS CHAR)) = \'PARM\' OR concat(\'PB_\', CAST(pp.publisherPlatformID AS CHAR)) = \'PARM\')','dd','','0','0','SELECT concat(\'PL_\', CAST(Platform.platformID AS CHAR)), reportDisplayName, upper(reportDisplayName) FROM Platform WHERE reportDropDownInd = 1 UNION SELECT concat(\'PB_\', CAST(publisherPlatformID AS CHAR)), reportDisplayName, upper(reportDisplayName) FROM PublisherPlatform WHERE reportDropDownInd = 1 ORDER BY 3','0','');
+INSERT INTO `_DATABASE_NAME_`.ReportParameter (reportID, parameterDisplayPrompt, parameterAddWhereClause, parameterTypeCode, parameterFormatCode, requiredInd, parameterAddWhereNumber, parameterSQLStatement, parentReportParameterID, parameterSQLRestriction)  VALUES ('6','Year','yus.year = \'PARM\'','dd','','0','0','SELECT distinct year, year FROM YearlyUsageSummary yus, PublisherPlatform pp WHERE pp.publisherPlatformID=yus.publisherPlatformID ADD_WHERE ORDER BY 1 desc','17','and (concat(\'PB_\', CAST(yus.publisherPlatformID AS CHAR)) = \'PARM\' or concat(\'PL_\', CAST(pp.platformID AS CHAR)) = \'PARM\')');
 
 
 DELETE FROM `_DATABASE_NAME_`.ReportGroupingColumn;

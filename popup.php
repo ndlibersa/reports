@@ -26,7 +26,7 @@ include_once 'directory.php';
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <META HTTP-EQUIV="CACHE-CONTROL" CONTENT="public">
-<title>CORAL E-Journal Usage Statistics Reporting - <?php echo $pageTitle; ?></title>
+<title>CORAL Usage Statistics Reporting - <?php echo $pageTitle; ?></title>
 <link rel="stylesheet" href="css/style.css" type="text/css" media="screen" />
 <link rel="stylesheet" href="css/thickbox.css" type="text/css" media="screen" />
 <link rel="stylesheet" href="css/datePicker.css" type="text/css" media="screen" />

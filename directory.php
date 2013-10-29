@@ -17,6 +17,10 @@
 **************************************************************************************************************************
 */
 
+// Increase memory due to large sized reports
+ini_set('max_execution_time', 1000);
+ini_set("default_socket_timeout", 1000);
+ini_set('memory_limit', '256M');
 
 // Useful directory constants, ending with |/|.
 define('ADMIN_DIR', dirname(__FILE__) . '/admin/');

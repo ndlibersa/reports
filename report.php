@@ -219,7 +219,7 @@ if ($outputType == 'web'){
 		<html xmlns="http://www.w3.org/1999/xhtml">
 		<head>
 		<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-		<title>CORAL E-Journal Usage Statistics Reporting - <?php echo $pageTitle; ?></title>
+		<title>CORAL Usage Statistics Reporting - <?php echo $pageTitle; ?></title>
 		<link rel="stylesheet" href="css/print.css" type="text/css" media="screen" />
 		</head>
 		<body>
@@ -318,7 +318,7 @@ for($a = 1; $a <= $numberLoops; $a++){
   $fieldNameArray = array();
 
   if (($reportID == '1') || ($reportID == '2')){
-	$textAdd = "By Month and Journal";
+	$textAdd = "By Month and Resource";
   }
 
   //archive loop

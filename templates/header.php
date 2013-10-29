@@ -34,7 +34,7 @@ $currentPage = $parts[count($parts) - 1];
 
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-<title>CORAL E-Journal Usage Statistics Reporting - <?php echo $pageTitle; ?></title>
+<title>CORAL Usage Statistics Reporting - <?php echo $pageTitle; ?></title>
 <link rel="stylesheet" href="css/style.css" type="text/css" media="screen" />
 <link rel="stylesheet" href="css/thickbox.css" type="text/css" media="screen" />
 <link rel="stylesheet" href="css/datePicker.css" type="text/css" media="screen" />

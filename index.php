@@ -266,8 +266,6 @@ $reportArray = $reportObj->allAsArray();
 
 
 </center>
-<br />
-<br />
 
 <script type="text/javascript" src="js/index.js"></script>
 

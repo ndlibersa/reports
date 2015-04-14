@@ -1098,7 +1098,7 @@ if ($pubIDs){
 
 <?php if ($outputType == 'print') { ?>
 	<script language="javascript">
-  	<!--
+  	//<!--
   	window.print();
   	//-->
 	</script>

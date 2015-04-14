@@ -1,16 +1,43 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: messages\n"
-"POT-Creation-Date: 2015-04-14 15:33+0100\n"
-"PO-Revision-Date: 2015-04-14 15:35+0100\n"
+"POT-Creation-Date: 2015-04-14 16:39+0100\n"
+"PO-Revision-Date: 2015-04-14 16:40+0100\n"
 "Last-Translator: Cesar <hernandez.antonio.cesar19@gmail.com>\n"
 "Language-Team: \n"
+"Language: fr_FR\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "X-Generator: Poedit 1.6.10\n"
 "X-Poedit-Basepath: /var/www/Coral/reports\n"
 "Plural-Forms: nplurals=2; plural=(n > 1);\n"
-"Language: fr_FR\n"
 "X-Poedit-SourceCharset: UTF-8\n"
 "X-Poedit-SearchPath-0: .\n"
+
+#: templates/footer.php:22
+msgid "Change language:"
+msgstr "Changer la langue:"
+
+#: templates/footer.php:25 templates/footer.php:26
+msgid "French"
+msgstr "Français"
+
+#: templates/footer.php:25 templates/footer.php:26
+msgid "English"
+msgstr "Anglais"
+
+#: templates/header.php:54
+msgid ""
+"JavaScript must be enabled in order for you to use CORAL. However, it seems "
+"JavaScript is either disabled or not supported by your browser. To use "
+"CORAL, enable JavaScript by changing your browser options, then "
+msgstr ""
+"JavaScript doit être activé pour utiliser CORAL. Cependant, on semble qui "
+"JavaScript est desactivé ou n'est pas supporté par votre navigateur. Pour "
+"utiliser CORAL, activez JavaScript en modifiant la configuration de votre "
+"navigateur, après "
+
+#: templates/header.php:54
+msgid "try again"
+msgstr "réessayez"

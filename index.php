@@ -23,7 +23,7 @@ session_start();
 include_once 'directory.php';
 
 //print header
-$pageTitle='Home';
+$pageTitle=_('Home');
 include 'templates/header.php';
 
 
@@ -58,7 +58,7 @@ $reportArray = $reportObj->allAsArray();
 	<div id='div_report'>
 
 
-	<label for="reportID">Select Report</label>
+	<label for="reportID"><?= _("Select Report");?></label>
 
 	<select name='reportID' id='reportID' class='optionStyle'>
 	<option value=''></option>
@@ -104,7 +104,7 @@ $reportArray = $reportObj->allAsArray();
 					}
 
 					if ($parm->requiredInd != '1'){
-						echo "<option value=''>All</option>\n";
+						echo "<option value=''>"._("All")."</option>\n";
 					}
 
 					$rownumber=1;
@@ -141,12 +141,12 @@ $reportArray = $reportObj->allAsArray();
 
 					  if (!$passedParm){
 								echo "<div id='div_show_" . $parm->reportParameterID . "' style='float:left;margin-bottom: 5px'>";
-								echo "<a href=\"javascript:toggleLayer('div_" . $parm->reportParameterID . "','block');toggleLayer('div_show_" . $parm->reportParameterID . "','none');\">-Click to choose " . $parm->parameterDisplayPrompt . "-</a>";
+								echo "<a href=\"javascript:toggleLayer('div_" . $parm->reportParameterID . "','block');toggleLayer('div_show_" . $parm->reportParameterID . "','none');\">-"._("Click to choose ") . $parm->parameterDisplayPrompt . "-</a>";
 								echo "</div>";
 								echo "<div id='div_" . $parm->reportParameterID . "' style='display:none;float:left;margin-bottom: 5px'>";
 					  }else{
 								echo "<div id='div_show_" . $parm->reportParameterID . "' style='display:none;float:left;margin-bottom: 5px'>";
-								echo "<a href=\"javascript:toggleLayer('div_" . $parm->reportParameterID . "','block');toggleLayer('div_show_" . $parm->reportParameterID . "','none');\">-Click to choose " . $parm->parameterDisplayPrompt . "-</a>";
+								echo "<a href=\"javascript:toggleLayer('div_" . $parm->reportParameterID . "','block');toggleLayer('div_show_" . $parm->reportParameterID . "','none');\">-"._("Click to choose ") . $parm->parameterDisplayPrompt . "-</a>";
 								echo "</div>";
 								echo "<div id='div_" . $parm->reportParameterID . "' style='float:left;margin-bottom: 5px;'>";
 					  }
@@ -156,7 +156,7 @@ $reportArray = $reportObj->allAsArray();
 					  echo "<select name='prm_left_" . $parm->reportParameterID . "' id='prm_left_" . $parm->reportParameterID . "' class='optionStyle' size='10' multiple='multiple' style='width:175px'>\n";
 
 					  if ($parm->requiredInd != '1'){
-						echo "<option selected value=''>All</option>\n";
+						echo "<option selected value=''>"._("All")."</option>\n";
 					  }
 
 
@@ -201,7 +201,7 @@ $reportArray = $reportObj->allAsArray();
 					  echo "</select>\n";
 					  echo "</td></tr><tr><td style='border:0px;' colspan='3' align='left'>\n";
 					  echo "<input type='hidden' name='prm_" . $parm->reportParameterID . "' id='prm_" . $parm->reportParameterID . "' value=\"" .  $passedParm . "\">";
-					  echo "<a href=\"javascript:toggleLayer('div_" . $parm->reportParameterID . "','none');toggleLayer('div_show_" . $parm->reportParameterID . "','block');\">-Hide " . $parm->parameterDisplayPrompt . "-</a>";
+					  echo "<a href=\"javascript:toggleLayer('div_" . $parm->reportParameterID . "','none');toggleLayer('div_show_" . $parm->reportParameterID . "','block');\">-"._("Hide ") . $parm->parameterDisplayPrompt . "-</a>";
 					  echo "</td></tr></table>\n";
 					  echo "</div>";
 					  echo "</span>";
@@ -246,8 +246,8 @@ $reportArray = $reportObj->allAsArray();
 	<input type='hidden' name='rprt_output' value='web'>
 	<br />
 	<br />
-	<input type="submit" value="Submit" name="submitbutton" id="submitbutton">
-	<input type="button" value="Reset" name="resetbutton" id="resetbutton" onclick="javascript:clearParms();">
+	<input type="submit" value="<?= _('Submit');?>" name="submitbutton" id="submitbutton">
+	<input type="button" value="<?= _('Reset');?>" name="resetbutton" id="resetbutton" onclick="javascript:clearParms();">
 	</td>
 	</tr>
 	</table>
@@ -256,7 +256,7 @@ $reportArray = $reportObj->allAsArray();
 
 
 <br />
-<a href="mailto:Benjamin.J.Heet.2@ND.EDU">Contact / Help</a>
+<a href="mailto:Benjamin.J.Heet.2@ND.EDU"><?= _("Contact / Help");?></a>
 </td>
 </tr>
 </table>

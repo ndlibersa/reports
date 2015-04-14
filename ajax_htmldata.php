@@ -47,7 +47,7 @@ switch ($_GET['action']) {
 				}
 
 				if ($parm->requiredInd != '1'){
-					echo "<option selected value=''>All</option>\n";
+					echo "<option selected value=''>"._("All")."</option>\n";
 				}
 
 				$rownumber=1;
@@ -66,14 +66,14 @@ switch ($_GET['action']) {
                   echo "<label for='prm_" . $parm->reportParameterID . "'>" . $parm->parameterDisplayPrompt . "</label>\n";
                   echo "<span style='margin-left:-90px'>";
                   echo "<div id='div_show_" . $parm->reportParameterID . "' style='float:left;margin-bottom: 5px'>";
-                  echo "<a href=\"javascript:toggleLayer('div_" . $parm->reportParameterID . "','block');toggleLayer('div_show_" . $parm->reportParameterID . "','none');\">-Click to choose " . $parm->parameterDisplayPrompt . "-</a>";
+                  echo "<a href=\"javascript:toggleLayer('div_" . $parm->reportParameterID . "','block');toggleLayer('div_show_" . $parm->reportParameterID . "','none');\">-"._("Click to choose ") . $parm->parameterDisplayPrompt . "-</a>";
                   echo "</div>";
                   echo "<div id='div_" . $parm->reportParameterID . "' style='display:none;float:left;margin-bottom: 5px;'>";
                   echo "<table class='noborder'> <tr> <td class='noborder'>";
                   echo "<select name='prm_left_" . $parm->reportParameterID . "' id='prm_left_" . $parm->reportParameterID . "' class='optionStyle' size='10' multiple='multiple' style='width:175px'>\n";
 
                   if ($parm->requiredInd != '1'){
-                  	echo "<option selected value=''>All</option>\n";
+                  	echo "<option selected value=''>"._("All")."</option>\n";
                   }
 
 		  		  foreach ($parm->getSelectValues($parmValue[$parm->parentReportParameterID]) as $value){
@@ -100,7 +100,7 @@ switch ($_GET['action']) {
                   echo "</select>\n";
                   echo "</td></tr><tr><td style='border:0px;' colspan='3' align='left'>\n";
                   echo "<input type='hidden' name='prm_" . $parm->reportParameterID . "' id='prm_" . $parm->reportParameterID . "' value=\"\">";
-                  echo "<a href=\"javascript:toggleLayer('div_" . $parm->reportParameterID . "','none');toggleLayer('div_show_" . $parm->reportParameterID . "','block');\">-Hide " . $parm->parameterDisplayPrompt . "-</a>";
+                  echo "<a href=\"javascript:toggleLayer('div_" . $parm->reportParameterID . "','none');toggleLayer('div_show_" . $parm->reportParameterID . "','block');\">-"._("Hide ") . $parm->parameterDisplayPrompt . "-</a>";
                   echo "</td></tr></table>\n";
                   echo "</div>";
                   echo "</span>";
@@ -171,7 +171,7 @@ switch ($_GET['action']) {
 			}
 
 			if ($parm->requiredInd != '1'){
-				echo "<option selected value=''>All</option>\n";
+				echo "<option selected value=''>"._("All")."</option>\n";
 			}
 
 			$rownumber=1;
@@ -190,14 +190,14 @@ switch ($_GET['action']) {
 			  echo "<label for='prm_" . $parm->reportParameterID . "'>" . $parm->parameterDisplayPrompt . "</label>\n";
 			  echo "<span style='margin-left:-90px'>";
 			  echo "<div id='div_show_" . $parm->reportParameterID . "' style='float:left;margin-bottom: 5px'>";
-			  echo "<a href=\"javascript:toggleLayer('div_" . $parm->reportParameterID . "','block');toggleLayer('div_show_" . $parm->reportParameterID . "','none');\">-Click to choose " . $parm->parameterDisplayPrompt . "-</a>";
+			  echo "<a href=\"javascript:toggleLayer('div_" . $parm->reportParameterID . "','block');toggleLayer('div_show_" . $parm->reportParameterID . "','none');\">-"._("Click to choose ") . $parm->parameterDisplayPrompt . "-</a>";
 			  echo "</div>";
 			  echo "<div id='div_" . $parm->reportParameterID . "' style='display:none;float:left;margin-bottom: 5px;'>";
 			  echo "<table class='noborder'> <tr> <td class='noborder'>";
 			  echo "<select name='prm_left_" . $parm->reportParameterID . "' id='prm_left_" . $parm->reportParameterID . "' class='optionStyle' size='10' multiple='multiple' style='width:175px'>\n";
 
 			  if ($parm->requiredInd != '1'){
-				echo "<option selected value=''>All</option>\n";
+				echo "<option selected value=''>"._("All")."</option>\n";
 			  }
 
 			  foreach ($parm->getSelectValues($reportParameterVal) as $value){
@@ -224,7 +224,7 @@ switch ($_GET['action']) {
 			  echo "</select>\n";
 			  echo "</td></tr><tr><td style='border:0px;' colspan='3' align='left'>\n";
 			  echo "<input type='hidden' name='prm_" . $parm->reportParameterID . "' id='prm_" . $parm->reportParameterID . "' value=\"\">";
-			  echo "<a href=\"javascript:toggleLayer('div_" . $parm->reportParameterID . "','none');toggleLayer('div_show_" . $parm->reportParameterID . "','block');\">-Hide " . $parm->parameterDisplayPrompt . "-</a>";
+			  echo "<a href=\"javascript:toggleLayer('div_" . $parm->reportParameterID . "','none');toggleLayer('div_show_" . $parm->reportParameterID . "','block');\">-"._("Hide ") . $parm->parameterDisplayPrompt . "-</a>";
 			  echo "</td></tr></table>\n";
 			  echo "</div>";
 			  echo "</span>";
@@ -237,7 +237,7 @@ switch ($_GET['action']) {
 
 
 	default:
-       echo "Action " . $action . " not set up!";
+       echo _("Action ") . $action . _(" not set up!");
        break;
 
 

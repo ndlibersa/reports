@@ -66,7 +66,7 @@ if ($type == 'report'){
 	</center>
 <?php
 }else{
-	echo 'Invalid type!!';
+	echo _('Invalid type!!');
 }
 
 ?>

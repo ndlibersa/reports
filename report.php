@@ -65,7 +65,7 @@ $showUnadjusted = 'N';
 if ($titleID != ''){
 	$title = $report->getUsageTitle($titleID);
 
-    $paramDisplay = "<b>Title:</b> " . $title . "<br />";
+    $paramDisplay = "<b>"._("Title:")."</b> " . $title . "<br />";
 	$rprt_prm_add = '&titleID=' . $titleID;
 	$hidden_inputs .= '<input type="hidden" name="titleID" value="' . $titleID . '">';
 }
@@ -96,13 +96,13 @@ foreach ($report->getParameters() as $parm) {
 		if (($prm_value == 'on') || ($prm_value == 'Y')){
 		  $showUnadjusted = 'Y';
 		  $hidden_inputs .= '<input type="hidden" name="prm_' . $parm->reportParameterID . '" value="Y">';
-		  $paramDisplay .= "<b>Numbers are not adjusted for use violations</b><br />";
+		  $paramDisplay .= "<b>"._("Numbers are not adjusted for use violations")."</b><br />";
 		}
      }else if ($parm->parameterAddWhereClause == 'limit'){
 		//decide what to do
 		$add_where='';
 		$max_rows=$prm_value;
-		$paramDisplay = $paramDisplay . "<b>Limit:</b> Top " . $prm_value . "<br />";
+		$paramDisplay = $paramDisplay . "<b>"._("Limit:")."</b> Top " . $prm_value . "<br />";
      }else{
 
 		//if the parm comes through as an id (for publisher / platform or title), display actual value for user friendliness
@@ -270,10 +270,10 @@ if ($outputType == 'web'){
 					<input type="hidden" name="outputType" value='web'>
 					<input type="hidden" name="useHidden" value=1>
 					<font size="+1"><?php echo $report->reportName; ?></font>&nbsp;
-					<a href="javascript:showPopup('report','<?php echo $reportID; ?>');" title='Click to show information about this report' style="border:none"><img src='images/help.gif' style="border:none"></a><br />
+					<a href="javascript:showPopup('report','<?php echo $reportID; ?>');" title='<?= _("Click to show information about this report");?>' style="border:none"><img src='images/help.gif' style="border:none"></a><br />
 					<?php echo $paramDisplay; ?>
-					<a href="index.php?&reportID=<?php echo $reportID . $rprt_prm_add; ?>">Modify Parameters</a>&nbsp;
-					<a href="index.php">Create New Report</a>
+					<a href="index.php?&reportID=<?php echo $reportID . $rprt_prm_add; ?>"><?= _("Modify Parameters");?></a>&nbsp;
+					<a href="index.php"><?= _("Create New Report");?></a>
 					<br />
 					<a href="javascript:viewReportOutput('xls');" style="border:none"><img border='0' src="images/xls.gif"></a>
 					<a href="javascript:viewReportOutput('print');" style="border:none"><img border='0' src="images/printer.gif"></a><br />
@@ -318,7 +318,7 @@ for($a = 1; $a <= $numberLoops; $a++){
   $fieldNameArray = array();
 
   if (($reportID == '1') || ($reportID == '2')){
-	$textAdd = "By Month and Resource";
+	$textAdd = _("By Month and Resource");
   }
 
   //archive loop
@@ -332,7 +332,7 @@ for($a = 1; $a <= $numberLoops; $a++){
         	<tr>
         	<td colspan="2" class="shadednoborder" style='text-align:left;border-left: 1px solid #c6d7e8;'>
 			<br />
-			<font size="+1">Number of Successful Full-Text Article Requests from an Archive <?php echo $textAdd; ?></font>
+			<font size="+1"><?= _("Number of Successful Full-Text Article Requests from an Archive "). $textAdd; ?></font>
 			</td>
 			</tr>
         	<tr>
@@ -345,7 +345,7 @@ for($a = 1; $a <= $numberLoops; $a++){
 
 		<tr>
 		<td colspan='2' align='left' class='noborder'>
-		<font size="+1">Number of Successful Full-Text Article Requests from an Archive <?php echo $textAdd; ?></font>
+		<font size="+1"><?= _("Number of Successful Full-Text Article Requests from an Archive ").$textAdd; ?></font>
 		</td>
 		</tr>
 		<tr>
@@ -361,7 +361,7 @@ for($a = 1; $a <= $numberLoops; $a++){
 	?>
         	<tr>
         	<td colspan="2" class="shadednoborder" style='text-align:left;border-left: 1px solid #c6d7e8;'>
-			<font size="+1">Number of Successful Full-Text Article Requests <?php echo $textAdd; ?></font>
+			<font size="+1"><?= _("Number of Successful Full-Text Article Requests ").$textAdd; ?></font>
 			</td>
 			</tr>
         	<tr>
@@ -370,7 +370,7 @@ for($a = 1; $a <= $numberLoops; $a++){
 	<?php }else{ ?>
 		<tr>
 		<td colspan='2' align='left' class='noborder'>
-		<font size="+1">Number of Successful Full-Text Article Requests <?php echo $textAdd; ?></font>
+		<font size="+1"><?= _("Number of Successful Full-Text Article Requests ").$textAdd; ?></font>
 		</td>
 		</tr>
 		<tr>
@@ -487,7 +487,7 @@ for($a = 1; $a <= $numberLoops; $a++){
 			if (($outputType == 'web') && ($print_data != '&nbsp;')){
 				if ($field == 'TITLE'){
 					if ($reportID != '1'){
-						$print_data .= "<br /><font size='-4'><a target='_BLANK' href='report.php?reportID=1&prm_4=" . $showUnadjusted . "&titleID=" . $titleID . "&outputType=web'>view related titles</a></font>";
+						$print_data .= "<br /><font size='-4'><a target='_BLANK' href='report.php?reportID=1&prm_4=" . $showUnadjusted . "&titleID=" . $titleID . "&outputType=web'>"._("view related titles")."</a></font>";
 					}
 
 					//echo link resolver link
@@ -516,7 +516,7 @@ for($a = 1; $a <= $numberLoops; $a++){
 						$resolverURL .= $urlAdd;
 
 
-						$print_data .= "<br /><font size='-4'><a target='_BLANK' href='" . $resolverURL . "'>view in link resolver</a></font>";
+						$print_data .= "<br /><font size='-4'><a target='_BLANK' href='" . $resolverURL . "'>"._("view in link resolver")."</a></font>";
 					}
 
 
@@ -592,7 +592,7 @@ for($a = 1; $a <= $numberLoops; $a++){
 				$total='';
 
 				if ($index==0){
-					$rowoutput[$groupRow] .= "<td class='sum'>Total for " . $hold_rprt_grpng_data . "</td>";
+					$rowoutput[$groupRow] .= "<td class='sum'>"._("Total for ") . $hold_rprt_grpng_data . "</td>";
 					$index++;
 				}else{
 					if ($sumColsArray[$sumfield] == 'dollarsum'){
@@ -739,7 +739,7 @@ if (($outputType != 'xls') && ($perform_subtotal_flag == 'Y') && ($report->group
 			$total='';
 
 			if ($index==0){
-				echo "<td class='sum'>Total for " . $hold_rprt_grpng_data . "</td>";
+				echo "<td class='sum'>"._("Total for ") . $hold_rprt_grpng_data . "</td>";
 				$index++;
 			}else{
 				if ($sumColsArray[$sumfield] == 'dollarsum'){
@@ -782,7 +782,7 @@ if (($outputType != 'xls') && ($perform_subtotal_flag == 'Y') && ($report->group
 
 if (($outputType != 'xls') && ($perform_subtotal_flag == 'Y')) {
 	echo "<tr class='data'>";
-	echo "<td class='sum'>Total for Report</td>";
+	echo "<td class='sum'>"._("Total for Report")."</td>";
 	$colNum=0;
 
 
@@ -816,14 +816,14 @@ if (($outputType != 'xls') && ($perform_subtotal_flag == 'Y')) {
 }
 
 if ($rowcount == 0){
-	echo "<tr class='data'><td colspan='$colcount'><i>Sorry, no rows were returned.</i></td></tr>";
+	echo "<tr class='data'><td colspan='$colcount'><i>"._("Sorry, no rows were returned.")."</i></td></tr>";
 }else{
 	if ($endPage > $rowcount) $endPage = $rowcount;
 	if ($outputType != 'web') $startPage=1; $endPage=$rowcount;
 	if (($max_rows > 0) && ($rowcount > $max_rows)){
-		echo "<tr><td colspan='$colcount' align='right'><i>Showing rows $startPage to $max_rows of $max_rows</i></td></tr>";
+		echo "<tr><td colspan='$colcount' align='right'><i>"._("Showing rows ").$startPage._(" to ").$max_rows._(" of ").$max_rows."</i></td></tr>";
 	}else{
-		echo "<tr><td colspan='$colcount' align='right'><i>Showing rows $startPage to $rowcount of $rowcount</i></td></tr>";
+		echo "<tr><td colspan='$colcount' align='right'><i>"._("Showing rows ").$startPage._(" to ").$rowcount(" of ").$rowcount."</i></td></tr>";
 
 	}
 }
@@ -851,7 +851,7 @@ if ($outputType != 'xls'){
 	?>
 	<table style='width:350px;border-width:1px'>
 	<tr>
-	<td colspan='2'><font style='font-weight:bold'>Key</font></td>
+	<td colspan='2'><font style='font-weight:bold'><?= _("Key");?></font></td>
 	</tr>
 	<tr>
 	<?php
@@ -859,32 +859,32 @@ if ($outputType != 'xls'){
 	if ($showUnadjusted == 'N') {
 	?>
 	<td style='width:20px;' bgcolor='<?php echo $usageFlaggedColor; ?>' class='usageFlagged'>&nbsp;</td>
-	<td>Programmatically flagged as outlier based on previous 12 month average.  The number has not been adjusted.</td>
+	<td><?= _("Programmatically flagged as outlier based on previous 12 month average.  The number has not been adjusted.");?></td>
 	</tr>
 	<tr>
 	<td style='width:20px;' bgcolor='<?php echo $usageOverridenColor; ?>' class='usageOverriden'>&nbsp;</td>
-	<td>Programmatically flagged as outlier based on previous 12 month average.  The number has been adjusted manually by Electronic Resources.</td>
+	<td><?= _("Programmatically flagged as outlier based on previous 12 month average.  The number has been adjusted manually by Electronic Resources.");?></td>
 	</tr>
 	<tr>
 	<td style='width:20px;' bgcolor='<?php echo $usageMergedColor; ?>' class='usageMerged'>&nbsp;</td>
-	<td>Multiple titles with the same print ISSN (generally multiple parts) have been merged together.</td>
+	<td><?= _("Multiple titles with the same print ISSN (generally multiple parts) have been merged together.");?></td>
 	<?php
 	}else{
 	?>
 	<td style='width:20px;' bgcolor='<?php echo $levelColors[1][0]; ?>' class='<?php echo $levelColors[1][1]; ?>'>&nbsp;</td>
-	<td>Programmatically flagged as outlier using the following formula: Count is <?php echo $outlier[1]['overageCount']; ?> over <?php echo $outlier[1]['overagePercent']; ?>% of the previous 12 month average. </td>
+	<td><?= _("Programmatically flagged as outlier using the following formula: Count is ");?><?php echo $outlier[1]['overageCount']; ?><?= _(" over ");?><?php echo $outlier[1]['overagePercent']; ?>% <?= _("of the previous 12 month average.");?></td>
 	</tr>
 	<tr>
 	<td style='width:20px;' bgcolor='<?php echo $levelColors[2][0]; ?>' class='<?php echo $levelColors[2][1]; ?>'>&nbsp;</td>
-	<td>Programmatically flagged as outlier using the following formula: Count is <?php echo $outlier[2]['overageCount']; ?> over <?php echo $outlier[2]['overagePercent']; ?>% of the previous 12 month average. </td>
+	<td><?= _("Programmatically flagged as outlier using the following formula: Count is ");?><?php echo $outlier[2]['overageCount']; ?><?= _(" over ");?><?php echo $outlier[2]['overagePercent']; ?>% <?= _("of the previous 12 month average.");?> </td>
 	</tr>
 	<tr>
 	<td style='width:20px;' bgcolor='<?php echo $levelColors[3][0]; ?>' class='<?php echo $levelColors[3][1]; ?>'>&nbsp;</td>
-	<td>Programmatically flagged as outlier using the following formula: Count is <?php echo $outlier[3]['overageCount']; ?> over <?php echo $outlier[3]['overagePercent']; ?>% of the previous 12 month average. </td>
+	<td><?= _("Programmatically flagged as outlier using the following formula: Count is ");?><?php echo $outlier[3]['overageCount']; ?><?= _(" over ");?><?php echo $outlier[3]['overagePercent']; ?>% <?= _("of the previous 12 month average.");?> </td>
 	</tr>
 	<tr>
 	<td style='width:20px;' bgcolor='<?php echo $usageMergedColor; ?>' class='usageMerged'>&nbsp;</td>
-	<td>Multiple titles with the same print ISSN (generally multiple parts) have been merged together.</td>
+	<td><?= _("Multiple titles with the same print ISSN (generally multiple parts) have been merged together.");?></td>
 	<?php
 	}
 	?>
@@ -899,14 +899,14 @@ if ($outputType != 'xls'){
 	<td colspan='<?php echo $colcount; ?>'>
 	<table style='border:0px;'>
 	<tr>
-	<td class='noborder' align='right'><font style='font-weight:bold'>Color Background Key</font></td>
+	<td class='noborder' align='right'><font style='font-weight:bold'><?= _("Color Background Key");?></font></td>
 	<?php
 
 
 	if ($showUnadjusted == 'N') {
 	?>
 	<td style='width:20px;' bgcolor='<?php echo $usageFlaggedColor; ?>' class='usageFlagged'>&nbsp;</td>
-	<td class='noborder' colspan='<?php echo $modcolcount; ?>'>Programmatically flagged as outlier based on previous 12 month average.  The number has not been adjusted.</td>
+	<td class='noborder' colspan='<?php echo $modcolcount; ?>'><?= _("Programmatically flagged as outlier based on previous 12 month average.  The number has not been adjusted.");?></td>
 	</tr>
 	</table>
 	</td>
@@ -917,7 +917,7 @@ if ($outputType != 'xls'){
 	<tr>
 	<td class='noborder'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td>
 	<td style='width:20px;' bgcolor='<?php echo $usageOverridenColor; ?>' class='usageOverriden'>&nbsp;</td>
-	<td class='noborder' colspan='<?php echo $modcolcount; ?>'>Programmatically flagged as outlier based on previous 12 month average.  The number has been adjusted manually by Electronic Resources.</td>
+	<td class='noborder' colspan='<?php echo $modcolcount; ?>'><?=_("Programmatically flagged as outlier based on previous 12 month average.  The number has been adjusted manually by Electronic Resources.");?></td>
 	</tr>
 	</table>
 	</td>
@@ -928,7 +928,7 @@ if ($outputType != 'xls'){
 	<tr>
 	<td class='noborder'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td>
 	<td style='width:20px;' bgcolor='<?php echo $usageMergedColor; ?>' class='usageMerged'>&nbsp;</td>
-	<td class='noborder'colspan='<?php echo $modcolcount; ?>'>Multiple titles with the same print ISSN (generally multiple parts) have been merged together.</td>
+	<td class='noborder'colspan='<?php echo $modcolcount; ?>'><?= _("Multiple titles with the same print ISSN (generally multiple parts) have been merged together.");?></td>
 	</tr>
 	</table>
 	<?php
@@ -937,7 +937,7 @@ if ($outputType != 'xls'){
 
 	?>
 	<td style='width:20px;' bgcolor='<?php echo $levelColors[1][2]; ?>'>&nbsp;</td>
-	<td class='noborder' colspan='<?php echo $modcolcount; ?>'>Programmatically flagged as outlier using the following formula: Count is <?php echo $outlier[1]['overageCount']; ?> over <?php echo $outlier[1]['overagePercent']; ?>% of the previous 12 month average. </td>
+	<td class='noborder' colspan='<?php echo $modcolcount; ?>'><?=_("Programmatically flagged as outlier using the following formula: Count is ");?><?php echo $outlier[1]['overageCount']; ?><?= _(" over ");?><?php echo $outlier[1]['overagePercent']; ?>% <?= _("of the previous 12 month average.");?> </td>
 	</tr>
 	</table>
 	</td>
@@ -948,7 +948,7 @@ if ($outputType != 'xls'){
 	<tr>
 	<td class='noborder'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td>
 	<td style='width:20px;' bgcolor='<?php echo $levelColors[2][2]; ?>'>&nbsp;</td>
-	<td class='noborder' colspan='<?php echo $modcolcount; ?>'>Programmatically flagged as outlier using the following formula: Count is <?php echo $outlier[2]['overageCount']; ?> over <?php echo $outlier[2]['overagePercent']; ?>% of the previous 12 month average.</td>
+	<td class='noborder' colspan='<?php echo $modcolcount; ?>'><?= _("Programmatically flagged as outlier using the following formula: Count is ");?><?php echo $outlier[2]['overageCount']; ?><?= _(" over ");?><?php echo $outlier[2]['overagePercent']; ?>% <?= _("of the previous 12 month average.");?></td>
 	</tr>
 	</table>
 	</td>
@@ -959,7 +959,7 @@ if ($outputType != 'xls'){
 	<tr>
 	<td class='noborder'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td>
 	<td style='width:20px;' bgcolor='<?php echo $levelColors[3][2]; ?>'>&nbsp;</td>
-	<td class='noborder' colspan='<?php echo $modcolcount; ?>'>Programmatically flagged as outlier using the following formula: Count is <?php echo $outlier[3]['overageCount']; ?> over <?php echo $outlier[3]['overagePercent']; ?>% of the previous 12 month average.</td>
+	<td class='noborder' colspan='<?php echo $modcolcount; ?>'><?= _("Programmatically flagged as outlier using the following formula: Count is ");?><?php echo $outlier[3]['overageCount']; ?><?= _(" over ");?><?php echo $outlier[3]['overagePercent']; ?>% <?= _("of the previous 12 month average.");?></td>
 	</tr>
 	</table>
 	</td>
@@ -970,7 +970,7 @@ if ($outputType != 'xls'){
 	<tr>
 	<td class='noborder'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td>
 	<td style='width:20px;' bgcolor='<?php echo $usageMergedColor; ?>' class='usageMerged'>&nbsp;</td>
-	<td class='noborder' colspan='<?php echo $modcolcount; ?>'>Multiple titles with the same print ISSN (generally multiple parts) have been merged together.</td>
+	<td class='noborder' colspan='<?php echo $modcolcount; ?>'><?= _("Multiple titles with the same print ISSN (generally multiple parts) have been merged together.");?></td>
 	</tr>
 	</table>
 	<?php
@@ -1001,28 +1001,28 @@ if (count($platArray) > 0){
 	//echo out platform information
 
 	echo "<table style='border-width:1px'>";
-	echo "<tr><td colspan='3'><font style='font-weight:bold'>Platform Interface Notes (if available)</font></td></tr>";
+	echo "<tr><td colspan='3'><font style='font-weight:bold'>"._("Platform Interface Notes (if available)")."</font></td></tr>";
 
 	foreach ($report->getPlatformInformation($platIDs) as $platform) {
 			echo "<tr valign='top'>";
 			echo "<td align='right'><font style='font-weight:bold'>" . $platform['reportDisplayName'] . "</font></td>";
 
 			if (($platform['startYear'] != '') && (($platform['endYear'] == '') || ($platform['endYear'] == '0'))){
-					echo "<td>Year: " . $platform['startYear'] . " to present</td>";
+					echo "<td>"._("Year: ") . $platform['startYear'] . _(" to present")."</td>";
 			}else{
-					echo "<td>Years: " . $platform['startYear'] . " to " . $platform['endYear'] . "</td>";
+					echo "<td>"._("Years: ") . $platform['startYear'] . _(" to ") . $platform['endYear'] . "</td>";
 			}
 			echo "<td>";
 
 			if ($platform['counterCompliantInd'] == '1') {
-					echo "This Interface provides COUNTER compliant stats.<br />";
+					echo _("This Interface provides COUNTER compliant stats.")."<br />";
 			}else{
-					echo "This Interface does not provide COUNTER compliant stats.<br />";
+					echo _("This Interface does not provide COUNTER compliant stats.")."<br />";
 			}
 
 
 			if ($platform['noteText']){
-					echo "<br /><i>Interface Notes</i>: " . $platform['noteText'] . "<br />";
+					echo "<br /><i>"._("Interface Notes")."</i>: " . $platform['noteText'] . "<br />";
 			}
 			echo "</td>";
 			echo "</tr>";
@@ -1055,7 +1055,7 @@ if ($pubIDs){
 
 	if (count($publisherArray) > 0){
 		echo "<table style='border-width:1px'>";
-		echo "<tr><td colspan='3'><font style='font-weight:bold'>Publisher Notes (if available)</font></td></tr>";
+		echo "<tr><td colspan='3'><font style='font-weight:bold'>"._("Publisher Notes (if available)")."</font></td></tr>";
 
 		foreach ($publisherArray as $publisher) {
 
@@ -1063,9 +1063,9 @@ if ($pubIDs){
 			echo "<td align='right'><font style='font-weight:bold'>" . $publisher['reportDisplayName'] . "</font></td>";
 
 				if (($publisher['startYear'] != '') && ($publisher['endYear'] == '')){
-						echo "<td>Year: " . $publisher['startYear'] . "</td>";
+						echo "<td>"._("Year: ") . $publisher['startYear'] . "</td>";
 				}else{
-						echo "<td>Years: " . $publisher['startYear'] . " to " . $publisher['endYear'] . "</td>";
+						echo "<td>"._("Years: ") . $publisher['startYear'] . _(" to ") . $publisher['endYear'] . "</td>";
 				}
 
 				echo "<td>" . $publisher['notes'] . "</td>";

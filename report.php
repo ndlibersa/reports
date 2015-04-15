@@ -270,7 +270,7 @@ if ($outputType == 'web'){
 					<input type="hidden" name="outputType" value='web'>
 					<input type="hidden" name="useHidden" value=1>
 					<font size="+1"><?php echo $report->reportName; ?></font>&nbsp;
-					<a href="javascript:showPopup('report','<?php echo $reportID; ?>');" title='<?= _("Click to show information about this report");?>' style="border:none"><img src='images/help.gif' style="border:none"></a><br />
+					<a href="javascript:showPopup('report','<?php echo $reportID; ?>');" title="<?= _("Click to show information about this report");?>" style="border:none"><img src='images/help.gif' style="border:none"></a><br />
 					<?php echo $paramDisplay; ?>
 					<a href="index.php?&reportID=<?php echo $reportID . $rprt_prm_add; ?>"><?= _("Modify Parameters");?></a>&nbsp;
 					<a href="index.php"><?= _("Create New Report");?></a>

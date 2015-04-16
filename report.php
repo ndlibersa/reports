@@ -244,7 +244,7 @@ if ($outputType == 'web'){
 	header("Content-type: application/vnd.ms-excel;");
 	header("Content-Disposition: attachment; filename='" . $excelfile . "'");
 
-	echo "<html><head></head><body>";
+	echo "<html><head><meta charset='UTF-8'></head><body>";
 
 }
 

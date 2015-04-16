@@ -19,122 +19,90 @@
 
 class ReportParameter extends DatabaseObject {
 
-	protected function defineRelationships() {}
-
-	protected function overridePrimaryKeyName() {}
-
-
 	//used only for allowing access to admin page
 	public function getSelectValues($parentValue){
-
+		
 		//get report info so we can determine which database to use
-		$parmReport = new Report(new NamedArguments(array('primaryKey' => $this->reportID)));
+		$parmReport = new Report($this->reportID);
 
 		//point to the report's database
-		$config = new Configuration();
-
-		$theVarStem = "config->database->" . $parmReport->reportDatabaseName;
-		$databaseName = eval("return \$$theVarStem;");
-		$this->db->changeDB($databaseName);
+		Config::init();
+		$this->db->changeDB(Config::$database->{$parmReport->reportDatabaseName});
 
 		//if this is a restricted sql dependent on previous value
 		if ($this->parameterSQLRestriction != ''){
 			if ($parentValue){
-				$parmSQL = str_replace("ADD_WHERE", $this->parameterSQLRestriction, $this->parameterSQLStatement);
-				$parmSQL = str_replace("PARM", $parentValue, $parmSQL);
+				$parmSQL = str_replace("PARM", $parentValue,
+					str_replace("ADD_WHERE", $this->parameterSQLRestriction, $this->parameterSQLStatement));
 			}else{
 				$parmSQL = str_replace("ADD_WHERE", "", $this->parameterSQLStatement);
 			}
-
+			
 		}else{
 			$parmSQL = str_replace("ADD_WHERE", "", $this->parameterSQLStatement);
 		}
 
 		$result = $this->db->processQuery($parmSQL);
-
-		$valueArray = array();
-
-		//need to do this since it could be that there's only one result and this is how the dbservice returns result
-
-		if ((isset($result[0])) && (!is_array($result[0]))){
-			$resultArray = array();
-			$resultArray['cde'] = $result[0];
-			$resultArray['val'] = $result[1];
-
-			array_push($valueArray, $resultArray);
+		if ((isset($result[0])) && !isset($result[0][0]) && (!is_array($result[0]))){
+			$valueArray = new SplFixedArray(1);
+			$valueArray[0] = array('cde' => $result[0],'val'=>$result[1]);
 		}else{
-			foreach ($result as $row) {
-				$resultArray = array();
-				$resultArray['cde'] = $row[0];
-				$resultArray['val'] = $row[1];
-
-				array_push($valueArray, $resultArray);
+			$num_rows = count($result);
+			$valueArray = new SplFixedArray($num_rows);
+			for ($i=0; $i<$num_rows; ++$i) {
+				$valueArray[$i] = array('cde'=>$result[$i][0], 'val'=>$result[$i][1]);
 			}
 		}
-
+		
 		return $valueArray;
-
-
+		
+		
 	}
 
 	//used only for allowing access to admin page
 	public function isParent(){
 
 		//set database to reporting database name
-		$config = new Configuration();
-		$this->db->changeDB($config->database->name);
+		Config::init();
+		$this->db->changeDB(Config::$database->name);
 
-
-		$query = "SELECT count(*) parent_count
-			FROM ReportParameter
-			WHERE parentReportParameterID = '" . $this->reportParameterID . "'";
-
-
-		$result = $this->db->processQuery($query, 'assoc');
-
-
+		$result = $this->db->processQuery(
+			"SELECT count(*) parent_count
+				FROM ReportParameter
+				WHERE parentReportParameterID = '" . $this->reportParameterID . "'",
+			MYSQLI_ASSOC);
 
 		//need to do this since it could be that there's only one request and this is how the dbservice returns result
-		if ($result['parent_count'] > 0){
-			return true;
-		}else{
-			return false;
-		}
-
-
+		return ($result['parent_count']>0);
 	}
-
-
-
+	
+	
 	//removes associated parameters
 	public function getChildren(){
 
 		//set database to reporting database name
-		$config = new Configuration();
-		$this->db->changeDB($config->database->name);
+		Config::init();
+		$this->db->changeDB(Config::$database->name);
 
-
-		$query = "SELECT *
-			FROM ReportParameter
-			WHERE parentReportParameterID = '" . $this->reportParameterID . "'
-			ORDER BY 1";
-
-
-		$result = $this->db->processQuery($query, 'assoc');
-
-		$objects = array();
+		$result = $this->db->processQuery(
+			"SELECT reportParameterID
+				FROM ReportParameter
+				WHERE parentReportParameterID = '" . $this->reportParameterID . "'
+				ORDER BY 1",
+			MYSQLI_ASSOC);
 
 		//need to do this since it could be that there's only one request and this is how the dbservice returns result
 		if (isset($result['reportParameterID'])){
-			$object = new ReportParameter(new NamedArguments(array('primaryKey' => $result['reportParameterID'])));
-			array_push($objects, $object);
+			$objects = new SplFixedArray(1);
+			$objects[0] = new ReportParameter($result['reportParameterID']);
 		}else{
-			foreach ($result as $row) {
-				$object = new ReportParameter(new NamedArguments(array('primaryKey' => $row['reportParameterID'])));
-				array_push($objects, $object);
+			$num_rows = count($result);
+			$objects = new SplFixedArray($num_rows);
+			for ($i=0; $i<$num_rows; ++$i) {
+				$objects[$i] = new ReportParameter($result[$i]['reportParameterID']);
 			}
 		}
-
+		
 		return $objects;
 	}
 
@@ -143,47 +111,33 @@ class ReportParameter extends DatabaseObject {
 	public function getPubPlatDisplayName($id){
 
 		//get report info so we can determine which database to use
-		$parmReport = new Report(new NamedArguments(array('primaryKey' => $this->reportID)));
+		$parmReport = new Report($this->reportID);
 
 		//point to the report's database
-		$config = new Configuration();
-
-		$theVarStem = "config->database->" . $parmReport->reportDatabaseName;
-		$databaseName = eval("return \$$theVarStem;");
-		$this->db->changeDB($databaseName);
-
+		Config::init();
+		$this->db->changeDB(Config::$database->{$parmReport->reportDatabaseName});
 
 		$id = strtoupper($id);
 
-		if (substr($id,0,2) == 'PB'){
-			$query = "select distinct reportDisplayName from PublisherPlatform where concat('PB_', publisherPlatformID) in ('$id') order by 1";
+		if (substr($id,0,2) === 'PB'){
+			$result = $this->db->processQuery(
+				"select distinct reportDisplayName from PublisherPlatform where concat('PB_', publisherPlatformID) in ('$id') order by 1",
+				MYSQLI_ASSOC);
 		}else{
-			$query = "select distinct reportDisplayName from Platform where concat('PL_', platformID) in ('$id') order by 1";
+			$result = $this->db->processQuery(
+				"select distinct reportDisplayName from Platform where concat('PL_', platformID) in ('$id') order by 1",
+				MYSQLI_ASSOC);
 		}
-
-		$result = $this->db->processQuery($query, 'assoc');
-
-		$valueArray = array();
 
 		//need to do this since it could be that there's only one result and this is how the dbservice returns result
-
+		
 		if (isset($result['reportDisplayName'])){
-			$valueArray[] = $result['reportDisplayName'];
-
+			return array($result['reportDisplayName']);
 		}else{
-			foreach ($result as $row) {
-				$valueArray[] = $row['reportDisplayName'];
-			}
+			return array_column($result,'reportDisplayName');
 		}
-
-		return $valueArray;
-
-
 	}
-
-
-
-
+	
 }
 
 ?>

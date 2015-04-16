@@ -44,7 +44,7 @@ size: landscape;
 }
 
 
-td.usageFlagged {background:#f1f0c2;}
-td.usageOverriden {background:#f1e4c2;}
-td.usageMerged {background:#d8d5da;}
+td.flagged {background:#f1f0c2;}
+td.overriden {background:#f1e4c2;}
+td.merged {background:#d8d5da;}
 

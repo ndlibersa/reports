@@ -1,8 +1,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: messages\n"
-"POT-Creation-Date: 2015-04-15 14:47+0100\n"
-"PO-Revision-Date: 2015-04-15 15:09+0100\n"
+"POT-Creation-Date: 2015-04-23 17:03+0100\n"
+"PO-Revision-Date: 2015-04-23 17:03+0100\n"
 "Last-Translator: Cesar <hernandez.antonio.cesar19@gmail.com>\n"
 "Language-Team: \n"
 "Language: fr_FR\n"
@@ -72,7 +72,7 @@ msgstr "Réinitialiser"
 msgid "Contact / Help"
 msgstr "Contact / Aide"
 
-#: popup.php:69
+#: popup.php:82
 msgid "Invalid type!!"
 msgstr "Type incorrect!!"
 
@@ -238,7 +238,7 @@ msgstr "Français"
 msgid "English"
 msgstr "Anglais"
 
-#: templates/header.php:54
+#: templates/header.php:67
 msgid ""
 "JavaScript must be enabled in order for you to use CORAL. However, it seems "
 "JavaScript is either disabled or not supported by your browser. To use "
@@ -249,6 +249,10 @@ msgstr ""
 "utiliser CORAL, activez JavaScript en modifiant la configuration de votre "
 "navigateur, après "
 
-#: templates/header.php:54
+#: templates/header.php:67
 msgid "try again"
 msgstr "réessayez"
+
+#: js/index.js:35
+msgid "Refreshing Contents..."
+msgstr "Rechargements des contenus..."

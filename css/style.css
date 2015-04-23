@@ -1,7 +1,7 @@
 html { 
  height: 100%; 
  margin: 0;
- padding: 0
+ padding: 0;
 }
 
 body {
@@ -10,9 +10,8 @@ body {
  color:  #3D545D;
  font-family: "arial";
  font-size: 8pt;
- font-weight: heavy;
  margin: 5px;
- padding: 0
+ padding: 0;
 }
 
 label{
@@ -131,7 +130,6 @@ border-right: 1px solid #C1DAD7;
 border-bottom: 1px solid #C1DAD7;
 background: #f5f8fb;
 padding: 1px;
-font-weight: heavy;
 color: #3D545D;
 text-align:center;
 /*align:center;*/
@@ -180,8 +178,8 @@ a.headLink{
 color: white;
 }
 
-select option { color: #3D545D; font-family: "arial"; font-size: 8pt; font-weight: medium; }
-.optionStyle { color: #3D545D; font-family: "arial"; font-size: 8pt; font-weight: medium; }
+select option { color: #3D545D; font-family: "arial"; font-size: 8pt; }
+.optionStyle { color: #3D545D; font-family: "arial"; font-size: 8pt; }
 
 /* Change language */
 .dropDownLang{

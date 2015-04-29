@@ -1,5 +1,4 @@
 <?php
-
 /*
 **************************************************************************************************************************
 ** CORAL Usage Statistics Reporting Module v. 1.0
@@ -17,13 +16,18 @@
 **************************************************************************************************************************
 */
 
-class ReportSum extends DatabaseObject {
 
-	protected function defineRelationships() {}
-
-	protected function overridePrimaryKeyName() {}
-
-
+class Config {
+	public static $database;
+	public static $settings;
+	
+	protected static $bInit = null;
+	public function init() {
+		if(!isset(Config::$bInit)){
+			$data = parse_ini_file(BASE_DIR . '/admin/configuration.ini', true);
+			Config::$database = Utility::objectFromArray($data['database']);
+			Config::$settings = Utility::objectFromArray($data['settings']);
+			Config::$bInit = 'y';
+		}
+	}
 }
-
-?>

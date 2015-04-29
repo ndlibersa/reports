@@ -20,297 +20,179 @@
 
 class Report extends DatabaseObject {
 
-	protected function defineRelationships() {}
-
-	protected function overridePrimaryKeyName() {}
-
-
+	
+	
+	
 	//returns outlier array for display at the bottom of reports
 	public function getOutliers(){
-		$config = new Configuration();
-
-		//set database to usage database name
-		$theVarStem = "config->database->" . $this->reportDatabaseName;
-		$databaseName = eval("return \$$theVarStem;");
-		$this->db->changeDB($databaseName);
-
-
-		$query = "SELECT * FROM Outlier ORDER BY 2";
-
-		$result = $this->db->processQuery($query, 'assoc');
-
-		$valueArray = array();
-
-		if (empty($result)){
-			return $valueArray;
-		}else if (is_array($result[0])){
-			foreach ($result as $row) {
-				$resultArray = array();
-				foreach (array_keys($row) as $attributeName) {
-					$resultArray[$attributeName] = $row[$attributeName];
-				}
-				array_push($valueArray, $resultArray);
-			}
-			return $valueArray;
-		}else{
-			foreach (array_keys($result) as $attributeName) {
-				$resultArray[$attributeName] = $result[$attributeName];
-			}
-
-			array_push($valueArray, $resultArray);
-			return $valueArray;
+		$this->db->changeDB(Config::$database->{$this->reportDatabaseName});
+		$outlier = array();
+		foreach($this->db->processQuery2(
+			"SELECT outlierLevel, overageCount, overagePercent FROM Outlier ORDER BY 2",
+			MYSQLI_ASSOC) as $outlierArray) {
+			$outlier[$outlierArray['outlierLevel']]['overageCount'] = $outlierArray['overageCount'];
+			$outlier[$outlierArray['outlierLevel']]['overagePercent'] = $outlierArray['overagePercent'];
+			$outlier[$outlierArray['outlierLevel']]['outlierLevel'] = $outlierArray['outlierLevel'];
 		}
-
+		return $outlier;
 	}
 
-
-
-
+	
+	
+	
+	
+	
 	//returns associated parameters
 	public function getParameters(){
 
 		//set database to reporting database name
-		$config = new Configuration();
-		$this->db->changeDB($config->database->name);
+		Config::init();
+		$this->db->changeDB(Config::$database->name);
 
-		$query = "SELECT *
-			FROM ReportParameter
-			WHERE reportID = '" . $this->reportID . "'
-			ORDER BY 1";
+		$result = $this->db->processQuery(
+			"SELECT reportParameterID
+				FROM ReportParameter
+				WHERE reportID = '" . $this->reportID . "'
+				ORDER BY 1",
+			MYSQLI_ASSOC
+				);
 
-
-		$result = $this->db->processQuery($query, 'assoc');
-
-		$objects = array();
-
-		//need to do this since it could be that there's only one request and this is how the dbservice returns result
 		if (isset($result['reportParameterID'])){
-			$object = new ReportParameter(new NamedArguments(array('primaryKey' => $result['reportParameterID'])));
-			array_push($objects, $object);
+			return array(
+				new ReportParameter($result['reportParameterID']));
 		}else{
+			$objects = array();
 			foreach ($result as $row) {
-				$object = new ReportParameter(new NamedArguments(array('primaryKey' => $row['reportParameterID'])));
-				array_push($objects, $object);
+				$objects[] =
+					new ReportParameter($row['reportParameterID']);
 			}
+			return $objects;
 		}
-
-		return $objects;
+		
 	}
 
 	//removes associated parameters
 	public function getGroupingColumns(){
-
+		
 		//set database to reporting database name
-		$config = new Configuration();
-		$this->db->changeDB($config->database->name);
+		Config::init();
+		$this->db->changeDB(Config::$database->name);
 
-		$query = "SELECT *
-			FROM ReportGroupingColumn
-			WHERE reportID = '" . $this->reportID . "'";
+		$result = $this->db->processQuery(
+					"SELECT reportGroupingColumnName
+						FROM ReportGroupingColumn
+						WHERE reportID = '" . $this->reportID . "'",
+					MYSQLI_ASSOC);
 
-
-		$result = $this->db->processQuery($query, 'assoc');
-
-		$objects = array();
-
-		//need to do this since it could be that there's only one request and this is how the dbservice returns result
-		if (isset($result['reportID'])){
-			$object = new ReportGroupingColumn(new NamedArguments(array('primaryKey' => $result['reportGroupingColumnID'])));
-			array_push($objects, $object);
+		// Get the report grouping columns into groupColsArray for faster lookup later
+		//returns array of objects
+		if (isset($result['reportGroupingColumnName'])){
+			return array($result['reportGroupingColumnName'] => false);
 		}else{
+			$groupColsArray = array();
 			foreach ($result as $row) {
-				$object = new ReportGroupingColumn(new NamedArguments(array('primaryKey' => $row['reportGroupingColumnID'])));
-				array_push($objects, $object);
+				$groupColsArray[$row['reportGroupingColumnName']] = false;
 			}
+			return $groupColsArray;
 		}
-
-		return $objects;
+		
 	}
 
 	//removes associated parameters
 	public function getReportSums(){
-
+		
 		//set database to reporting database name
-		$config = new Configuration();
-		$this->db->changeDB($config->database->name);
+		Config::init();
+		$this->db->changeDB(Config::$database->name);
 
-		$query = "SELECT *
-			FROM ReportSum
-			WHERE reportID = '" . $this->reportID . "'";
+		$result = $this->db->processQuery(
+					"SELECT reportColumnName, reportAction
+						FROM ReportSum
+						WHERE reportID = '" . $this->reportID . "'",
+					MYSQLI_ASSOC);
 
-
-		$result = $this->db->processQuery($query, 'assoc');
-
-		$objects = array();
-
-		//need to do this since it could be that there's only one request and this is how the dbservice returns result
-		if (isset($result['reportID'])){
-			$object = new ReportSum(new NamedArguments(array('primaryKey' => $result['reportSumID'])));
-			array_push($objects, $object);
+		// Get the report summing columns into sumColsArray for faster lookup later
+		//returns array of objects
+		if (isset($result['reportColumnName'])){
+			return array($result['reportColumnName'] => $result['reportAction']);
 		}else{
+			$sumColsArray = array();
 			foreach ($result as $row) {
-				$object = new ReportSum(new NamedArguments(array('primaryKey' => $row['reportSumID'])));
-				array_push($objects, $object);
+				$sumColsArray[$row['reportColumnName']] = $row['reportAction'];
 			}
+			return $sumColsArray;
 		}
-
-		return $objects;
+		
 	}
 
-
-
+	
+	
 	//return the title of the ejournal for this report
 	public function getUsageTitle($titleID){
-		$config = new Configuration();
-
-		$theVarStem = "config->database->" . $this->reportDatabaseName;
-		$databaseName = eval("return \$$theVarStem;");
-		$this->db->changeDB($databaseName);
-
-
-		$query = "SELECT title FROM Title
-			WHERE titleID = '" . $titleID . "'";
-
-
-		$result = $this->db->processQuery($query, 'assoc');
-
+		Config::init();
+		$this->db->changeDB(Config::$database->{$this->reportDatabaseName});
+		$result = $this->db->processQuery(
+					"SELECT title
+						FROM Title
+						WHERE titleID = '" . $titleID . "'",
+					MYSQLI_ASSOC
+				);
 		return $result['title'];
 	}
 
+	public function printPlatformInfo(&$platforms){
+		foreach ($platforms as $platform) {
+			echo'<tr valign="top"><td align="right"><b>'
+				. $platform['reportDisplayName']
+				. '</b></td><td>Year';
 
-
-
-	//return the title of the ejournal for this report
-	public function getReportResults($rprt_sql){
-
-		//point to the report's database
-		$config = new Configuration();
-
-		$theVarStem = "config->database->" . $this->reportDatabaseName;
-		$databaseName = eval("return \$$theVarStem;");
-		$this->db->changeDB($databaseName);
-
-		$result = $this->db->processQuery($rprt_sql, 'assoc');
-
-		$valueArray = array();
-
-		if (empty($result)){
-			return $valueArray;
-		}else if (is_array($result[0])){
-			foreach ($result as $row) {
-				$resultArray = array();
-				foreach (array_keys($row) as $attributeName) {
-					$resultArray[$attributeName] = $row[$attributeName];
-				}
-				array_push($valueArray, $resultArray);
+			if ($platform['startYear'] != '' &&($platform['endYear'] == '' || $platform['endYear'] == '0')){
+				echo ': ' . $platform['startYear'] . ' to present';
+			} else {
+				echo 's: ' . $platform['startYear'] . ' to ' . $platform['endYear'];
 			}
-			return $valueArray;
-		}else{
-			foreach (array_keys($result) as $attributeName) {
-				$resultArray[$attributeName] = $result[$attributeName];
-			}
+			echo '</td><td>This Interface ';
 
-			array_push($valueArray, $resultArray);
-			return $valueArray;
+			if($platform['counterCompliantInd'] == '1'){
+				echo 'provides';
+			} else {
+				echo 'does not provide';
+			}
+			echo ' COUNTER compliant stats.<br>';
+
+			if ($platform['noteText']){
+				echo '<br><i>Interface Notes</i>: '
+					. $platform['noteText'] . '<br>';
+			}
+			echo '</td></tr>';
 		}
-
-
-
-
 	}
 
+	public function printPublisherInfo(&$publishers){
+		foreach ($publishers as $publisher) {
+			echo '<tr valign="top"><td align="right"><b>'
+				. $publisher['reportDisplayName']
+				. '</b></td><td>Year';
 
-
-
-	public function getPlatformInformation($platformIDs){
-
-		$sql = "SELECT startYear, endYear, counterCompliantInd, noteText, reportDisplayName
-				FROM PlatformNote pn, Platform p
-				WHERE p.platformID = pn.platformID
-				AND pn.platformID in (" . $platformIDs . ");";
-
-		$config = new Configuration();
-
-		$theVarStem = "config->database->" . $this->reportDatabaseName;
-		$databaseName = eval("return \$$theVarStem;");
-		$this->db->changeDB($databaseName);
-
-		$result = $this->db->processQuery($sql, 'assoc');
-
-		$valueArray = array();
-
-		if (empty($result)){
-			return $valueArray;
-		}else if (is_array($result[0])){
-			foreach ($result as $row) {
-				$resultArray = array();
-				foreach (array_keys($row) as $attributeName) {
-					$resultArray[$attributeName] = $row[$attributeName];
+				if (($publisher['startYear']!='')&&($publisher['endYear']=='')){
+					echo ': ' . $publisher['startYear'];
+				} else {
+					echo 's: ' . $publisher['startYear'] . ' to ' . $publisher['endYear'];
 				}
-				array_push($valueArray, $resultArray);
+				echo '</td><td>';
+			if(isset($publisher['notes'])){
+				echo $publisher['notes'];
 			}
-			return $valueArray;
-		}else{
-			foreach (array_keys($result) as $attributeName) {
-				$resultArray[$attributeName] = $result[$attributeName];
-			}
-
-			array_push($valueArray, $resultArray);
-			return $valueArray;
+			echo '</td></tr>';
 		}
-
-
-
-
+		
+		
+		
+		
+		
 	}
-
-
-
-
-
-	public function getPublisherInformation($publisherIDs){
-
-		$sql = "SELECT startYear, endYear, noteText, reportDisplayName
-				FROM PublisherPlatformNote pn, PublisherPlatform pp
-				WHERE pp.publisherPlatformID = pn.publisherPlatformID
-				AND pp.publisherPlatformID in (" . $publisherIDs . ");";
-
-		$config = new Configuration();
-
-		$theVarStem = "config->database->" . $this->reportDatabaseName;
-		$databaseName = eval("return \$$theVarStem;");
-		$this->db->changeDB($databaseName);
-
-		$result = $this->db->processQuery($sql, 'assoc');
-
-		$valueArray = array();
-
-		if (empty($result)){
-			return $valueArray;
-		}else if (is_array($result[0])){
-			foreach ($result as $row) {
-				$resultArray = array();
-				foreach (array_keys($row) as $attributeName) {
-					$resultArray[$attributeName] = $row[$attributeName];
-				}
-				array_push($valueArray, $resultArray);
-			}
-			return $valueArray;
-		}else{
-			foreach (array_keys($result) as $attributeName) {
-				$resultArray[$attributeName] = $result[$attributeName];
-			}
-
-			array_push($valueArray, $resultArray);
-			return $valueArray;
-		}
-
-
-
-
-	}
-
-
+	
+	
 }
 
 ?>

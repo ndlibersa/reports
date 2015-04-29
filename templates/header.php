@@ -16,10 +16,7 @@
 **************************************************************************************************************************
 */
 
-
-
-$util = new Utility();
-$config = new Configuration();
+Config::init();
 
 //get the current page to determine which menu button should be depressed
 $currentPage = $_SERVER["SCRIPT_NAME"];
@@ -40,6 +37,7 @@ $currentPage = $parts[count($parts) - 1];
 <link rel="stylesheet" href="css/datePicker.css" type="text/css" media="screen" />
 <link rel="stylesheet" href="css/jquery.autocomplete.css" type="text/css" media="screen" />
 <link rel="stylesheet" href="css/jquery.tooltip.css" type="text/css" media="screen" />
+<link rel="stylesheet" href="css/report.css" type="text/css" media="screen" />
 <link rel="SHORTCUT ICON" href="images/seahorsefavicon.ico" />
 <script type="text/javascript" src="js/plugins/jquery.js"></script>
 <script type="text/javascript" src="js/plugins/ajaxupload.3.5.js"></script>

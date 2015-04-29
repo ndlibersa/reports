@@ -17,79 +17,82 @@
 */
 
 
-class DBService extends Object {
+class DBService {
 
 	protected $db;
-	protected $config;
 	protected $error;
-
-	protected function init(NamedArguments $arguments) {
-		parent::init($arguments);
-		$this->config = new Configuration;
-		$this->connect();
-	}
-
-	protected function dealloc() {
-		$this->disconnect();
-		parent::dealloc();
-	}
-
-	protected function checkForError() {
-		if ($this->error = mysql_error($this->db)) {
-			throw new Exception(_("There was a problem with the database: ") . $this->error);
+	
+	public function __construct($dbname = null) {
+		Config::init();
+		if( ! ($this->db = new mysqli(
+			Config::$database->host,
+			Config::$database->username, 
+			Config::$database->password
+			)))
+		{
+			throw new Exception(_("There was a problem with the database: ") . $this->db->error);
+		} else if ($dbname) {
+			if (! $this->db->select_db($dbname) ) {
+				throw new Exception(_("There was a problem with the database: ") . $this->db->error);
+			}
+		} else if( ! ($this->db->select_db(Config::$database->name))) {
+			throw new Exception(_("There was a problem with the database: ") . $this->db->error);
 		}
+		
+		if($dbname)
+			$this->changeDB($dbname);
 	}
-
-	protected function connect() {
-		$host = $this->config->database->host;
-		$username = $this->config->database->username;
-		$password = $this->config->database->password;
-		$this->db = mysql_connect($host, $username, $password);
-		$this->checkForError();
-
-		$databaseName = $this->config->database->name;
-		mysql_select_db($databaseName, $this->db);
-		$this->checkForError();
-	}
-
-
-	protected function disconnect() {
-		//mysql_close($this->db);
-	}
-
 
 	public function changeDB($databaseName) {
 		//$databaseName='coral_reporting_pprd';
-		mysql_select_db($databaseName, $this->db);
-		$this->checkForError();
-	}
-
-	public function processQuery($sql, $type = NULL) {
-    	//echo $sql. "<br />";
-		$result = mysql_query($sql, $this->db);
-		$this->checkForError();
-		$data = array();
-
-		if (is_resource($result)) {
-			$resultType = MYSQL_NUM;
-			if ($type == 'assoc') {
-				$resultType = MYSQL_ASSOC;
-			}
-			while ($row = mysql_fetch_array($result, $resultType)) {
-				if (mysql_affected_rows($this->db) > 1) {
-					array_push($data, $row);
-				} else {
-					$data = $row;
-				}
-			}
-			mysql_free_result($result);
-		} else if ($result) {
-			$data = mysql_insert_id($this->db);
+		if (! $this->db->select_db($databaseName) ) {
+			throw new Exception(_("There was a problem with the database: ") . $this->db->error);
 		}
-
-		return $data;
 	}
 
+	public function processQuery($sql, $type = MYSQLI_NUM) {
+		if( ! ($result = $this->db->query($sql)) )
+			throw new Exception(_("There was a problem with the database: ") . $this->db->error);
+		else if ($result instanceof mysqli_result) {
+			if($result->num_rows === 1) {
+				$data = $result->fetch_array($type);
+				$result->free();
+				return $data;
+			} else if($result->num_rows === 0) {
+				return array();
+			} else {
+				$data = new SplFixedArray($result->num_rows);
+				for ($i=0; $i<$result->num_rows; ++$i) {
+					$data[$i] = $result->fetch_array($type);
+				}
+				$result->free();
+				return $data;
+			}
+		} else if ($result) {
+			return $this->db->insert_id;
+		}
+		return array();
+	}
+	
+	public function processQuery2($sql, $type = MYSQLI_NUM) {
+		if( ! ($result = $this->db->query($sql)) )
+			throw new Exception(_("There was a problem with the database: ") . $this->db->error);
+		if ($result instanceof mysqli_result) {
+			$data = new SplFixedArray($result->num_rows);
+			for ($i=0; $i<$result->num_rows; ++$i) {
+				$data[$i] = $result->fetch_array($type);
+			}
+			$result->free();
+			return $data;
+		} else if ($result) {
+			return $this->db->insert_id;
+		}
+		return array();
+	}
+	
+	public function sanitize($str) { 
+		return $this->db->real_escape_string($str);
+	}
 }
 
 ?>

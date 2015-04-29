@@ -120,7 +120,7 @@ background: white;
 }
 
 td.old {
-left: expression(offsetParent.scrollTop == 0 ? 0+"px" : -1+"px");
+left: expression((offsetParent.scrollTop == 0) ? 0+"px" : -1+"px");
 color: #6D929B;
 color: #B4AA9D;
 }
@@ -133,11 +133,6 @@ padding: 1px;
 color: #3D545D;
 text-align:center;
 /*align:center;*/
-}
-
-td.alt {
-background: #f5f8fb;
-color: #4b6772;
 }
 
 td.head {
@@ -158,13 +153,6 @@ color: #0d3d6e;
 font-weight: bold;
 }
 
-td.usageFlagged {background:#738291;}
-td.usageOverriden {background:#a9c0d8;}
-td.usageMerged {background:#d8d5da;}
-td.levelOne {background:#e9e33c;}
-td.levelTwo {background:#e9913c;}
-td.levelThree {background:#e93c3c;}
-
 form {
 margin: 0;
 padding: 0;
@@ -179,7 +167,7 @@ color: white;
 }
 
 select option { color: #3D545D; font-family: "arial"; font-size: 8pt; }
-.optionStyle { color: #3D545D; font-family: "arial"; font-size: 8pt; }
+.opt { color: #3D545D; font-family: "arial"; font-size: 8pt; }
 
 /* Change language */
 .dropDownLang{

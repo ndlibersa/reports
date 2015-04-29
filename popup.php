@@ -55,28 +55,28 @@ include_once 'directory.php';
 <script type="text/javascript" src="js/common.js"></script>
 </head>
 <body>
-
-
+	
+	
 <?php
 $type = $_GET['type'];
 
-if ($type == 'report'){
+if ($type === 'report'){
 
-	$report = new Report(new NamedArguments(array('primaryKey' => $_GET['value'])));
+	$report = new Report($_GET['value']);
 
-	?>
-	<br />
-	<center>
-	<table width='400'>
-	<tr>
-	<td>
-	<h2><?php echo $report->reportName; ?></h2>
-	<?php echo $report->infoDisplayText; ?>
-	<br /><br />
-	</td>
-	</tr>
-	</table>
-	</center>
+?>
+<br />
+<center>
+<table width='400'>
+<tr>
+<td>
+<h2><?php echo $report->reportName; ?></h2>
+<?php echo $report->infoDisplayText; ?>
+<br /><br />
+</td>
+</tr>
+</table>
+</center>
 <?php
 }else{
 	echo _('Invalid type!!');

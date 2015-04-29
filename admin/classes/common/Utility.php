@@ -19,7 +19,7 @@
 
 class Utility {
 
-	public function unixTimeFromMysqlTimestamp($timestamp) {
+	public static function unixTimeFromMysqlTimestamp($timestamp) {
 
 		// taken from Dan Green, and then modified to be correct
 		// http://www.weberdev.com/get_example-1427.html
@@ -36,12 +36,13 @@ class Utility {
 
 	}
 
-	public function secondsFromDays($days) {
-		return $days * 24 * 60 * 60;
+	public static function secondsFromDays($days) {
+		return $days * 86400;
+		//return $days * 24 * 60 * 60;
 	}
 
-	public function objectFromArray($array) {
-		$object = new DynamicObject;
+	public static function objectFromArray($array) {
+		$object = new Object();
 		foreach ($array as $key => $value) {
 			if (is_array($value)) {
 				$object->$key = Utility::objectFromArray($value);
@@ -53,12 +54,11 @@ class Utility {
 	}
 
 	//returns file path up to /coral/
-	public function getCORALPath(){
+	public static function getCORALPath(){
 		$pagePath = $_SERVER["DOCUMENT_ROOT"];
-
-		$currentFile = $_SERVER["SCRIPT_NAME"];
-		$parts = Explode('/', $currentFile);
-		for($i=0; $i<count($parts) - 2; $i++){
+		$parts = Explode('/', $_SERVER["SCRIPT_NAME"]);
+		$n = count($parts)-2;
+		for($i=0; $i<$n; ++$i){
 			$pagePath .= $parts[$i] . '/';
 		}
 
@@ -66,7 +66,7 @@ class Utility {
 	}
 
 	//returns page URL up to /coral/
-	public function getCORALURL(){
+	public static function getCORALURL(){
 		$pageURL = 'http';
 		if ($_SERVER["HTTPS"] == "on") {$pageURL .= "s";}
 		$pageURL .= "://";
@@ -75,10 +75,9 @@ class Utility {
 		} else {
 		  $pageURL .= $_SERVER["SERVER_NAME"];
 		}
-
-		$currentFile = $_SERVER["PHP_SELF"];
-		$parts = Explode('/', $currentFile);
-		for($i=0; $i<count($parts) - 2; $i++){
+		$parts = Explode('/', $_SERVER["PHP_SELF"]);
+		$n = count($parts)-2;
+		for($i=0; $i<$n; ++$i){
 			$pageURL .= $parts[$i] . '/';
 		}
 
@@ -86,12 +85,12 @@ class Utility {
 	}
 
 	//returns page URL up to /organizations/
-	public function getPageURL(){
-		return $this->getCORALURL() . "organizations/";
+	public static function getPageURL(){
+		return Utility::getCORALURL() . "organizations/";
 	}
 
-	public function getLicensingURL(){
-		return $this->getCORALURL() . "licensing/license.php?licenseID=";
+	public static function getLicensingURL(){
+		return Utility::getCORALURL() . "licensing/license.php?licenseID=";
 	}
 
 }

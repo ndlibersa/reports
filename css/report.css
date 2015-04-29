@@ -1,0 +1,80 @@
+/*
+To change this license header, choose License Headers in Project Properties.
+To change this template file, choose Tools | Templates
+and open the template in the editor.
+*/
+/* 
+    Created on : Aug 13, 2014, 10:32:08 AM
+    Author     : bgarcia
+*/
+
+.table {
+	/* here is some css that will make your floated table headers have a 10px gap */
+	margin-top: 10px !important;
+}
+
+.table.floatThead-table {
+	/* and here is how you would fix that issue */
+	margin-top: 0px !important;
+}
+
+td.rtitle{
+	border-width:0px;
+	border-spacing:0px;
+	padding:0px;
+	margin:0px;
+	border-collapse: collapse;
+	background: white;
+	text-align:left;
+	border-left: 1px solid #c6d7e8;
+	font-size: 2em;
+}
+
+table.rep-res tbody tr{
+	border-width: 1px;
+}
+
+table.rep-res tbody tr:nth-of-type(odd){
+	background: #f5f8fb;
+	color: #4b6772;
+}
+
+table.rep-res tbody tr td{
+	background: inherit;
+	color: inherit;
+	border-width: 1px;
+}
+
+td.flagged {
+	background:#738291;
+	width: 20px;
+}
+
+td.overriden {
+	background:#a9c0d8;
+	width: 20px;
+}
+
+td.merged {
+	background:#d8d5da;
+	width: 20px;
+}
+
+td.l1 {
+	background:#e9e33c;
+	width: 20px;
+}
+
+td.l2 {
+	background:#e9913c;
+	width: 20px;
+}
+
+td.l3 {
+	background:#e93c3c;
+	width: 20px;
+}
+
+th {
+	text-align: center;
+}

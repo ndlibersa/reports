@@ -1,8 +1,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: messages\n"
-"POT-Creation-Date: 2015-04-23 17:03+0100\n"
-"PO-Revision-Date: 2015-04-23 17:03+0100\n"
+"POT-Creation-Date: 2015-04-29 13:47+0100\n"
+"PO-Revision-Date: 2015-04-29 13:47+0100\n"
 "Last-Translator: Cesar <hernandez.antonio.cesar19@gmail.com>\n"
 "Language-Team: \n"
 "Language: fr_FR\n"
@@ -14,8 +14,14 @@ msgstr ""
 "Plural-Forms: nplurals=2; plural=(n > 1);\n"
 "X-Poedit-SourceCharset: UTF-8\n"
 "X-Poedit-SearchPath-0: .\n"
+"X-Poedit-SearchPathExcluded-0: /var/www/Coral/reports/js/plugins/jquery.js\n"
 
-#: admin/classes/common/DBService.php:39
+#: admin/classes/common/DBService.php:33 admin/classes/common/DBService.php:36
+#: admin/classes/common/DBService.php:39 admin/classes/common/DBService.php:49
+#: admin/classes/common/DBService.php:55 admin/classes/common/DBService.php:79
+#: admin/classes/domain/ReportResult.php:30
+#: admin/classes/domain/ReportResult.php:32
+#: admin/classes/domain/ReportResult.php:34
 msgid "There was a problem with the database: "
 msgstr "Il y avait un problème avec la base de données: "
 
@@ -23,32 +29,69 @@ msgstr "Il y avait un problème avec la base de données: "
 msgid "Could not connect to "
 msgstr "Ne pouvait pas se connecter à "
 
-#: admin/classes/common/Object.php:63
-msgid "Cannot set value for undefined key ("
-msgstr "Ne pouvait pas asigner un valeur indefini ("
+#: admin/classes/domain/ReportHelper.php:161
+msgid "view related titles"
+msgstr "Regarder les titres connexes"
 
-#: admin/classes/common/Object.php:72
-msgid "Cannot get value for undefined key ("
-msgstr "Ne peut pas récupérer le valeur par une clé indefini ("
+#: admin/classes/domain/ReportHelper.php:168
+msgid "view in link resolver"
+msgstr "Regarder dans le résoudre des liens"
 
-#: ajax_htmldata.php:50 ajax_htmldata.php:76 ajax_htmldata.php:174
-#: ajax_htmldata.php:200 index.php:107 index.php:159
+#: admin/classes/domain/ReportHelper.php:229
+#: admin/classes/domain/ReportHelper.php:259
+msgid "Total for "
+msgstr "Total pour "
+
+#: admin/classes/domain/ReportHelper.php:270
+msgid "Total for Report"
+msgstr "Total par rapport"
+
+#: admin/classes/domain/ReportHelper.php:285
+msgid "Sorry, no rows were returned."
+msgstr "Désolé, aucun résultat est retourné."
+
+#: admin/classes/domain/ReportHelper.php:287
+msgid "Showing rows "
+msgstr "Rangées affichées "
+
+#: admin/classes/domain/ReportHelper.php:287
+msgid " to "
+msgstr " par "
+
+#: admin/classes/domain/ReportHelper.php:349
+msgid "Title:"
+msgstr "Titre:"
+
+#: admin/classes/domain/ReportHelper.php:364
+msgid "Numbers are not adjusted for use violations"
+msgstr "Les nombres ne sont pas ajustés pour violations d'utilisation"
+
+#: admin/classes/domain/ReportHelper.php:370
+msgid "Limit:"
+msgstr "Limit:"
+
+#: admin/classes/domain/ReportHelper.php:370
+msgid " Top "
+msgstr " Haute "
+
+#: ajax_htmldata.php:55 ajax_htmldata.php:91 ajax_htmldata.php:181
+#: ajax_htmldata.php:213
 msgid "All"
 msgstr "Tous"
 
-#: ajax_htmldata.php:69 ajax_htmldata.php:193 index.php:144 index.php:149
+#: ajax_htmldata.php:81 ajax_htmldata.php:202
 msgid "Click to choose "
 msgstr "Cliquez pour choisir "
 
-#: ajax_htmldata.php:103 ajax_htmldata.php:227 index.php:204
+#: ajax_htmldata.php:129 ajax_htmldata.php:249
 msgid "Hide "
 msgstr "Cacher "
 
-#: ajax_htmldata.php:240
+#: ajax_htmldata.php:254
 msgid "Action "
 msgstr "Action "
 
-#: ajax_htmldata.php:240
+#: ajax_htmldata.php:254
 msgid " not set up!"
 msgstr " ne pas etabli!"
 
@@ -56,19 +99,19 @@ msgstr " ne pas etabli!"
 msgid "Home"
 msgstr "Accueil"
 
-#: index.php:61
+#: index.php:55
 msgid "Select Report"
 msgstr "Selectionner le Rapport"
 
-#: index.php:249
+#: index.php:261
 msgid "Submit"
 msgstr "Confirmer"
 
-#: index.php:250
+#: index.php:262
 msgid "Reset"
 msgstr "Réinitialiser"
 
-#: index.php:259
+#: index.php:270
 msgid "Contact / Help"
 msgstr "Contact / Aide"
 
@@ -76,79 +119,35 @@ msgstr "Contact / Aide"
 msgid "Invalid type!!"
 msgstr "Type incorrect!!"
 
-#: report.php:68
-msgid "Title:"
-msgstr "Titre:"
-
-#: report.php:99
-msgid "Numbers are not adjusted for use violations"
-msgstr "Les nombres ne sont pas ajustés pour violations d'utilisation"
-
-#: report.php:105
-msgid "Limit:"
-msgstr "Limit:"
-
-#: report.php:273
+#: report.php:92
 msgid "Click to show information about this report"
 msgstr "Clic pour montrer l'information à propos de ce rapport"
 
-#: report.php:275
+#: report.php:94
 msgid "Modify Parameters"
 msgstr "Modifier les paramètres"
 
-#: report.php:276
+#: report.php:95
 msgid "Create New Report"
 msgstr "Créer un Nouveau Rapport"
 
-#: report.php:321
+#: report.php:121
 msgid "By Month and Resource"
 msgstr "Par Mois et Ressource"
 
-#: report.php:335 report.php:348
-msgid "Number of Successful Full-Text Article Requests from an Archive "
-msgstr "Nombre des Resultats des Articles rémplis correctement d'un dossier "
+#: report.php:126 report.php:139
+msgid "Number of Successful Full-Text Article Requests"
+msgstr "Nombre des Resultats des Articles rémplis correctement"
 
-#: report.php:364 report.php:373
-msgid "Number of Successful Full-Text Article Requests "
-msgstr "Nombre des Resultats des Articles rémplis correctement "
+#: report.php:156 report.php:171
+msgid "Number of Successful Full-Text Article Requests from an Archive"
+msgstr "Nombre des Resultats des Articles d'un archive rémplis correctement"
 
-#: report.php:490
-msgid "view related titles"
-msgstr "Regarder les titres connexes"
-
-#: report.php:519
-msgid "view in link resolver"
-msgstr "Regarder dans le résoudre des liens"
-
-#: report.php:595 report.php:742
-msgid "Total for "
-msgstr "Total pour "
-
-#: report.php:785
-msgid "Total for Report"
-msgstr "Total par rapport"
-
-#: report.php:819
-msgid "Sorry, no rows were returned."
-msgstr "Désolé, aucun résultat est retourné."
-
-#: report.php:824 report.php:826
-msgid "Showing rows "
-msgstr "Rangées affichées "
-
-#: report.php:824 report.php:826 report.php:1013 report.php:1068
-msgid " to "
-msgstr " par "
-
-#: report.php:824
-msgid " of "
-msgstr " de "
-
-#: report.php:854
+#: report.php:202
 msgid "Key"
 msgstr "Clé"
 
-#: report.php:862 report.php:909
+#: report.php:210 report.php:255
 msgid ""
 "Programmatically flagged as outlier based on previous 12 month average.  The "
 "number has not been adjusted."
@@ -156,7 +155,7 @@ msgstr ""
 "Programme marqué comme valeur aberrante basé en la moyenne précédente de 12 "
 "mois. Le nombre n'a pas été ajusté."
 
-#: report.php:866 report.php:920
+#: report.php:214 report.php:266
 msgid ""
 "Programmatically flagged as outlier based on previous 12 month average.  The "
 "number has been adjusted manually by Electronic Resources."
@@ -164,7 +163,7 @@ msgstr ""
 "Programme marqué comme valeur aberrante basé en la moyenne précédente de 12 "
 "mois. Le nombre a été ajusté manuellemente par les Ressources Électroniques."
 
-#: report.php:870 report.php:887 report.php:931 report.php:973
+#: report.php:218 report.php:235 report.php:277 report.php:326
 msgid ""
 "Multiple titles with the same print ISSN (generally multiple parts) have "
 "been merged together."
@@ -172,57 +171,33 @@ msgstr ""
 "Multiples titres avec le même ISSN (géneralement multi parts) ont été "
 "fusionnés."
 
-#: report.php:875 report.php:879 report.php:883 report.php:940 report.php:951
-#: report.php:962
+#: report.php:223 report.php:227 report.php:231 report.php:293 report.php:304
+#: report.php:315
 msgid ""
-"Programmatically flagged as outlier using the following formula: Count is "
+"Programmatically flagged as outlier using the following formula: Count is"
 msgstr ""
 "Programme marqué comme valeur aberrante basé dans la suivante formule: Comte "
-"est "
+"est"
 
-#: report.php:875 report.php:879 report.php:883 report.php:940 report.php:951
-#: report.php:962
-msgid " over "
-msgstr " sur "
+#: report.php:223 report.php:227 report.php:231 report.php:293 report.php:304
+#: report.php:315
+msgid "over"
+msgstr "sur"
 
-#: report.php:875 report.php:879 report.php:883 report.php:940 report.php:951
-#: report.php:962
+#: report.php:223 report.php:227 report.php:231 report.php:293 report.php:304
+#: report.php:315
 msgid "of the previous 12 month average."
 msgstr "de la moyenne de l'année précéndent."
 
-#: report.php:902
+#: report.php:253 report.php:291
 msgid "Color Background Key"
 msgstr "Coleur de la clé d'arrière"
 
-#: report.php:1004
+#: report.php:344
 msgid "Platform Interface Notes (if available)"
 msgstr "Notes de l'interface de la Plate-forme (s'il y a existant)"
 
-#: report.php:1011 report.php:1066
-msgid "Year: "
-msgstr "Année: "
-
-#: report.php:1011
-msgid " to present"
-msgstr " jusqu'à maintenant"
-
-#: report.php:1013 report.php:1068
-msgid "Years: "
-msgstr "Années: "
-
-#: report.php:1018
-msgid "This Interface provides COUNTER compliant stats."
-msgstr "Cette interface fournit des statistiques conformes à COUNTER."
-
-#: report.php:1020
-msgid "This Interface does not provide COUNTER compliant stats."
-msgstr "Cette interface ne fournit pas des statistiques conformes à COUNTER."
-
-#: report.php:1025
-msgid "Interface Notes"
-msgstr "Notes de l'interface"
-
-#: report.php:1058
+#: report.php:356
 msgid "Publisher Notes (if available)"
 msgstr "Notes de l'éditeur (s'il y a existants)"
 
@@ -238,7 +213,7 @@ msgstr "Français"
 msgid "English"
 msgstr "Anglais"
 
-#: templates/header.php:67
+#: templates/header.php:66
 msgid ""
 "JavaScript must be enabled in order for you to use CORAL. However, it seems "
 "JavaScript is either disabled or not supported by your browser. To use "
@@ -249,10 +224,38 @@ msgstr ""
 "utiliser CORAL, activez JavaScript en modifiant la configuration de votre "
 "navigateur, après "
 
-#: templates/header.php:67
+#: templates/header.php:66
 msgid "try again"
 msgstr "réessayez"
 
-#: js/index.js:35
+#: js/index.js:21
 msgid "Refreshing Contents..."
 msgstr "Rechargements des contenus..."
+
+#~ msgid "Cannot set value for undefined key ("
+#~ msgstr "Ne pouvait pas asigner un valeur indefini ("
+
+#~ msgid "Cannot get value for undefined key ("
+#~ msgstr "Ne peut pas récupérer le valeur par une clé indefini ("
+
+#~ msgid " of "
+#~ msgstr " de "
+
+#~ msgid "Year: "
+#~ msgstr "Année: "
+
+#~ msgid " to present"
+#~ msgstr " jusqu'à maintenant"
+
+#~ msgid "Years: "
+#~ msgstr "Années: "
+
+#~ msgid "This Interface provides COUNTER compliant stats."
+#~ msgstr "Cette interface fournit des statistiques conformes à COUNTER."
+
+#~ msgid "This Interface does not provide COUNTER compliant stats."
+#~ msgstr ""
+#~ "Cette interface ne fournit pas des statistiques conformes à COUNTER."
+
+#~ msgid "Interface Notes"
+#~ msgstr "Notes de l'interface"

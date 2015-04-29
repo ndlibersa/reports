@@ -158,14 +158,14 @@ class ReportHelper{
 						if ($this->ID != '1') {
 							$print_data .= '<br><font size="-4"><a target="_BLANK" href="report.php?reportID=1&prm_4=' . ($this->showUnadjusted ?'Y':'N') . '&titleID='
 								. $currentRow['titleID']
-								. '&outputType=web">view related titles</a></font>';
+								. '&outputType=web">'._("view related titles").'</a></font>';
 						}
 
 						//echo link resolver link
 						if ((($currentRow['PRINT_ISSN']) || ($currentRow['ONLINE_ISSN'])) && isset($this->baseURL)) {
 							$print_data .= '<br><font size="-4"><a target="_BLANK" href="'
 								. $this->getLinkResolverLink($currentRow)
-								. '">view in link resolver</a></font>';
+								. '">'._("view in link resolver").'</a></font>';
 						}
 					}
 
@@ -226,7 +226,7 @@ class ReportHelper{
 					$rowoutput .= "</tr>";
 
 					if ($countForGrouping > 1) {
-						$rowoutput .= '<tr class="data"><td class="sum">Total for '
+						$rowoutput .= '<tr class="data"><td class="sum">'._("Total for ")
 							. $hold_rprt_grpng_data . '</td>';
 						foreach($reportArray->fields as $field) {
 							$rowoutput .= '<td class="sum">'
@@ -256,7 +256,7 @@ class ReportHelper{
 				if ($this->report->groupTotalInd === '1' && $hold_rprt_grpng_data) {
 					//  one last grouping summary
 					if ($countForGrouping > 1) {
-						$grp .= '<tr class="data"><td class="sum">Total for '
+						$grp .= '<tr class="data"><td class="sum">'._("Total for ")
 							. $hold_rprt_grpng_data . '</td>';
 						foreach($reportArray->fields as $field) {
 							$grp .= '<td class="sum">'
@@ -267,7 +267,7 @@ class ReportHelper{
 					}
 					echo "<tr class='data'><td colspan=" . $reportArray->numFields . ">&nbsp;</td></tr>";
 				}
-				echo '<tr class="data"><td class="sum">Total for Report</td>';
+				echo '<tr class="data"><td class="sum">'._("Total for Report").'</td>';
 				$total = '';
 				for ($colNum=1; $colNum < $reportArray->numFields; ++$colNum) {
 					if(isset($this->sumColsArray[$reportArray->fields[$colNum]])){
@@ -282,9 +282,9 @@ class ReportHelper{
 			}
 
 			if ($rowNum === 0){
-				echo '<tr class="data"><td colspan="' . $reportArray->numFields . '"><i>Sorry, no rows were returned.</i></td></tr>';
+				echo '<tr class="data"><td colspan="' . $reportArray->numFields . '"><i>'._("Sorry, no rows were returned.").'</i></td></tr>';
 			}else{
-				echo "<tr><td colspan='$reportArray->numFields' align='right'><i>Showing rows {$this->startPage} to ";
+				echo "<tr><td colspan='$reportArray->numFields' align='right'><i>"._("Showing rows ").$this->startPage._(" to ");
 				if (($this->maxRows>0)&&($rowNum>$this->maxRows)){
 					echo "$this->maxRows of $this->maxRows</i></td></tr>";
 				} else {
@@ -346,7 +346,7 @@ class ReportHelper{
 			$this->paramDisplay = '';
 			$this->rprt_prm_add = '';
 		}else {
-			$this->paramDisplay = '<b>Title:</b> ' . $this->report->getUsageTitle($this->titleID) . '<br>';
+			$this->paramDisplay = '<b>'._("Title:").'</b> ' . $this->report->getUsageTitle($this->titleID) . '<br>';
 			$this->rprt_prm_add = '&titleID=' . $this->titleID;
 
 			$this->hidden_inputs->addReportID($this->ID)
@@ -361,13 +361,13 @@ class ReportHelper{
 					if (($prm_value === 'on') || ($prm_value === 'Y')) {
 						$this->showUnadjusted = true;
 						$this->hidden_inputs->addParam($parm->reportParameterID,'Y');
-						$this->paramDisplay .= '<b>Numbers are not adjusted for use violations</b><br>';
+						$this->paramDisplay .= '<b>'._("Numbers are not adjusted for use violations").'</b><br>';
 					}
 				} else if ($parm->parameterAddWhereClause === 'limit') {
 					//decide what to do
 					$this->addWhere[0] = ''; //changed from $add_where. Assumed mistake.
 					$this->maxRows = $prm_value;
-					$this->paramDisplay .= '<b>Limit:</b> Top '
+					$this->paramDisplay .= '<b>'._("Limit:").'</b>'._(" Top ")
 						. $prm_value
 						. '<br>';
 				} else {

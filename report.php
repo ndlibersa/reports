@@ -43,7 +43,7 @@ if ($report->outputType==='web'){
     <body>
 
         <?php
-                                          }else if($report->outputType==='pop'){
+}else if($report->outputType==='pop'){
     $pageTitle = $report->report->reportName;
     include 'templates/header.php';
 }else{

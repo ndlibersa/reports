@@ -12,21 +12,20 @@
  * @author bgarcia
  */
 class HiddenInputs {
-	public $str = '';
-
+	protected $str = '';
+	public function getStr(){
+		return $this->str;
+	}
 	public function addReportID($id){
 		$this->str .= '<input type="hidden" name="reportID" value="' . $id . '">';
 		return $this;
 	}
-
 	public function addTitleID($id){
 		$this->str .= '<input type="hidden" name="titleID" value="' . $id . '">';
 		return $this;
 	}
-
 	public function addParam($paramID, $val){
-		$this->str .= '<input type="hidden" name="prm_'
-			. $paramID . '" value="' . $val . '">';
+		$this->str .= '<input type="hidden" name="prm_' . $paramID . '" value="' . $val . '">';
 		return $this;
 	}
 }

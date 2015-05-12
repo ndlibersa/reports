@@ -1,198 +1,172 @@
 <?php
 
 /*
-**************************************************************************************************************************
-** CORAL Usage Statistics Reporting Module v. 1.0
-**
-** Copyright (c) 2010 University of Notre Dame
-**
-** This file is part of CORAL.
-**
-** CORAL is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
-**
-** CORAL is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more details.
-**
-** You should have received a copy of the GNU General Public License along with CORAL.  If not, see <http://www.gnu.org/licenses/>.
-**
-**************************************************************************************************************************
-*/
-
-
-class Report extends DatabaseObject {
-
+ * *************************************************************************************************************************
+ * * CORAL Usage Statistics Reporting Module v. 1.0
+ * *
+ * * Copyright (c) 2010 University of Notre Dame
+ * *
+ * * This file is part of CORAL.
+ * *
+ * * CORAL is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
+ * *
+ * * CORAL is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
+ * *
+ * * You should have received a copy of the GNU General Public License along with CORAL. If not, see <http://www.gnu.org/licenses/>.
+ * *
+ * *************************************************************************************************************************
+ */
+class Report {
+	protected $db;
+	protected $ID;
+	protected $name;
+	protected $dbname;
+	protected $sql;
+	protected $bGroupTotalInd;
+	public $orderBySQL;
+	protected $infoText;
 	
+	public function __construct($id){
+        if (!isset($id)){
+            die();
+        } 
+        $this->db = new DBService();
+        $result = $this->db
+            ->query("SELECT * FROM Report WHERE reportID = '$id' LIMIT 1")
+            ->fetchRow(MYSQLI_ASSOC);
+
+        $this->ID = $id;
+        $this->name = $result['reportName'];
+        $this->dbname = $result['reportDatabaseName'];
+        $this->bGroupTotalInd = ($result['groupTotalInd'] === '1') ? true : false;
+        $this->orderBySQL = $result['orderBySQL'];
+        $this->infoText = $result['infoDisplayText'];
+        $this->sql = $result['reportSQL'];
+	}
 	
+	public function getID(){return $this->ID;}
+	public function getName(){return $this->name;}
+	public function getDBName(){return $this->dbname;}
+	public function getInfoText(){return $this->infoText;}
+	public function hasGroupTotalInd(){return $this->bGroupTotalInd;}
 	
-	//returns outlier array for display at the bottom of reports
+	public function run($archiveInd, $ADD_WHERE1, $ADD_WHERE2, $orderBy){
+		if (stripos($this->sql, 'mus')) $ch = 'm';
+		else $ch = 'y';
+		$sql = str_replace('ADD_WHERE', "$ADD_WHERE1 AND $ch" . "us.archiveInd = $archiveInd", str_replace('ADD_WHERE2', $ADD_WHERE2, $this->sql)) . $orderBy;
+		$db = new DBService(Config::$database->{$this->getDBName()});
+		return $db->query($sql);
+	}
+	
+	// returns outlier array for display at the bottom of reports
 	public function getOutliers(){
-		$this->db->changeDB(Config::$database->{$this->reportDatabaseName});
 		$outlier = array();
-		foreach($this->db->processQuery2(
-			"SELECT outlierLevel, overageCount, overagePercent FROM Outlier ORDER BY 2",
-			MYSQLI_ASSOC) as $outlierArray) {
+		foreach ( $this->db->changeDB(Config::$database->{$this->dbname})->query("SELECT outlierLevel, overageCount, overagePercent FROM Outlier ORDER BY 2")->fetchRows(MYSQLI_ASSOC) as $outlierArray ){
 			$outlier[$outlierArray['outlierLevel']]['overageCount'] = $outlierArray['overageCount'];
 			$outlier[$outlierArray['outlierLevel']]['overagePercent'] = $outlierArray['overagePercent'];
 			$outlier[$outlierArray['outlierLevel']]['outlierLevel'] = $outlierArray['outlierLevel'];
 		}
 		return $outlier;
 	}
-
 	
-	
-	
-	
-	
-	//returns associated parameters
+	// returns associated parameters
 	public function getParameters(){
-
-		//set database to reporting database name
+		// set database to reporting database name
 		Config::init();
 		$this->db->changeDB(Config::$database->name);
-
-		$result = $this->db->processQuery(
-			"SELECT reportParameterID
-				FROM ReportParameter
-				WHERE reportID = '" . $this->reportID . "'
-				ORDER BY 1",
-			MYSQLI_ASSOC
-				);
-
-		if (isset($result['reportParameterID'])){
-			return array(
-				new ReportParameter($result['reportParameterID']));
-		}else{
-			$objects = array();
-			foreach ($result as $row) {
-				$objects[] =
-					new ReportParameter($row['reportParameterID']);
-			}
-			return $objects;
-		}
 		
+		$objects = array();
+		foreach ( $this->db
+				->query("SELECT reportParameterID
+					FROM ReportParameter
+					WHERE reportID = '{$this->ID}'
+					ORDER BY 1")
+				->fetchRows(MYSQLI_ASSOC) as $row ){
+			$objects[] = new ReportParameter($row['reportParameterID']);
+		}
+		return $objects;
 	}
-
-	//removes associated parameters
+	
+	// removes associated parameters
 	public function getGroupingColumns(){
-		
-		//set database to reporting database name
+		// set database to reporting database name
 		Config::init();
 		$this->db->changeDB(Config::$database->name);
-
-		$result = $this->db->processQuery(
-					"SELECT reportGroupingColumnName
-						FROM ReportGroupingColumn
-						WHERE reportID = '" . $this->reportID . "'",
-					MYSQLI_ASSOC);
-
 		// Get the report grouping columns into groupColsArray for faster lookup later
-		//returns array of objects
-		if (isset($result['reportGroupingColumnName'])){
-			return array($result['reportGroupingColumnName'] => false);
-		}else{
-			$groupColsArray = array();
-			foreach ($result as $row) {
-				$groupColsArray[$row['reportGroupingColumnName']] = false;
-			}
-			return $groupColsArray;
+		// returns array of objects
+		$groupColsArray = array();
+		foreach ( $this->db
+				->query("SELECT reportGroupingColumnName 
+						FROM ReportGroupingColumn 
+						WHERE reportID = '{$this->ID}'")
+				->fetchRows(MYSQLI_ASSOC) as $row ){
+			$groupColsArray[$row['reportGroupingColumnName']] = false;
 		}
-		
+		return $groupColsArray;
 	}
-
-	//removes associated parameters
+	
+	// removes associated parameters
 	public function getReportSums(){
-		
-		//set database to reporting database name
 		Config::init();
-		$this->db->changeDB(Config::$database->name);
-
-		$result = $this->db->processQuery(
-					"SELECT reportColumnName, reportAction
-						FROM ReportSum
-						WHERE reportID = '" . $this->reportID . "'",
-					MYSQLI_ASSOC);
-
 		// Get the report summing columns into sumColsArray for faster lookup later
-		//returns array of objects
-		if (isset($result['reportColumnName'])){
-			return array($result['reportColumnName'] => $result['reportAction']);
-		}else{
-			$sumColsArray = array();
-			foreach ($result as $row) {
-				$sumColsArray[$row['reportColumnName']] = $row['reportAction'];
-			}
-			return $sumColsArray;
+		// returns array of objects
+		$sumColsArray = array();
+		foreach($this->db
+				->changeDB(Config::$database->name)
+				->query("SELECT reportColumnName, reportAction 
+						FROM ReportSum 
+						WHERE reportID = '{$this->ID}'")
+				->fetchRows(MYSQLI_ASSOC) as $row ){
+			$sumColsArray[$row['reportColumnName']] = $row['reportAction'];
 		}
-		
+		return $sumColsArray;
 	}
-
 	
-	
-	//return the title of the ejournal for this report
+	// return the title of the ejournal for this report
 	public function getUsageTitle($titleID){
 		Config::init();
-		$this->db->changeDB(Config::$database->{$this->reportDatabaseName});
-		$result = $this->db->processQuery(
-					"SELECT title
-						FROM Title
-						WHERE titleID = '" . $titleID . "'",
-					MYSQLI_ASSOC
-				);
-		return $result['title'];
+		$row = $this->db
+			->changeDB(Config::$database->{$this->dbname})
+			->query("SELECT title FROM Title WHERE titleID = '$titleID'")
+            ->fetchRow(MYSQLI_ASSOC);
+        return $row['title'];
 	}
-
+	
 	public function printPlatformInfo(&$platforms){
-		foreach ($platforms as $platform) {
-			echo'<tr valign="top"><td align="right"><b>'
-				. $platform['reportDisplayName']
-				. '</b></td><td>Year';
-
-			if ($platform['startYear'] != '' &&($platform['endYear'] == '' || $platform['endYear'] == '0')){
-				echo ': ' . $platform['startYear'] . ' to present';
-			} else {
-				echo 's: ' . $platform['startYear'] . ' to ' . $platform['endYear'];
+		foreach ( $platforms as $platform ){
+			echo "<tr valign='top'><td align='right'><b>{$platform['reportDisplayName']}</b></td><td>Year";
+			if ($platform['startYear'] != '' && ($platform['endYear'] == '' || $platform['endYear'] == '0')){
+				echo ": {$platform['startYear']} to present";
+			}else{
+				echo "s: {$platform['startYear']} to {$platform['endYear']}";
 			}
 			echo '</td><td>This Interface ';
-
-			if($platform['counterCompliantInd'] == '1'){
-				echo 'provides';
-			} else {
-				echo 'does not provide';
+			if ($platform['counterCompliantInd'] == '1'){
+				echo 'provides COUNTER compliant stats.<br>';
+			}else{
+				echo 'does not provide COUNTER compliant stats.<br>';
 			}
-			echo ' COUNTER compliant stats.<br>';
-
 			if ($platform['noteText']){
-				echo '<br><i>Interface Notes</i>: '
-					. $platform['noteText'] . '<br>';
+				echo "<br><i>Interface Notes</i>: {$platform['noteText']}<br>";
 			}
 			echo '</td></tr>';
 		}
 	}
-
+	
 	public function printPublisherInfo(&$publishers){
-		foreach ($publishers as $publisher) {
-			echo '<tr valign="top"><td align="right"><b>'
-				. $publisher['reportDisplayName']
-				. '</b></td><td>Year';
-
-				if (($publisher['startYear']!='')&&($publisher['endYear']=='')){
-					echo ': ' . $publisher['startYear'];
-				} else {
-					echo 's: ' . $publisher['startYear'] . ' to ' . $publisher['endYear'];
-				}
-				echo '</td><td>';
-			if(isset($publisher['notes'])){
+		foreach ( $publishers as $publisher ){
+			echo "<tr valign='top'><td align='right'><b>{$publisher['reportDisplayName']}</b></td><td>Year";
+			if (($publisher['startYear'] != '') && ($publisher['endYear'] == '')){
+				echo ": {$publisher['startYear']}";
+			}else{
+				echo "s: {$publisher['startYear']} to {$publisher['endYear']}";
+			}
+			echo '</td><td>';
+			if (isset($publisher['notes'])){
 				echo $publisher['notes'];
 			}
 			echo '</td></tr>';
 		}
-		
-		
-		
-		
-		
 	}
-	
-	
 }
-
 ?>

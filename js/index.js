@@ -144,4 +144,43 @@ function toggleLayer(whichLayer, state) {
 	}
 }
 
-   
+function updateDateRange(isMin) { // d:document, r:range, f:function, y:year, m:month 
+    var d = document;
+    var r = {m:{a:null,b:null},y:{a:null,b:null}};
+
+	if(d.getElementById) {  // this is the way the standards work
+        d.f = d.getElementById;
+		r.m.a = d.f('from_date_month');
+		r.y.a = d.f('from_date_year');
+		r.m.b = d.f('to_date_month');
+		r.y.b = d.f('to_date_year');
+    } else if(d.all) {      // this is the way old msie versions work
+		r.m.a = d.all['from_date_month'];
+		r.y.a = d.all['from_date_year'];
+		r.m.b = d.all['to_date_month'];
+		r.y.b = d.all['to_date_year'];
+    } else if(d.layers) {   // this is the way nn4 works
+		elem = d.layers[whichLayer];
+		r.m.a = d.layers['from_date_month'];
+		r.y.a = d.layers['from_date_year'];
+		r.m.b = d.layers['to_date_month'];
+		r.y.b = d.layers['to_date_year'];
+    }
+
+    if (r && r.y && r.m && r.y.a && r.y.b && r.m.a && r.m.b){
+        if (r.y.a.value >= r.y.b.value) {
+            if (isMin) {
+                r.y.b.value = r.y.a.value;
+            } else {
+                r.y.a.value = r.y.b.value;
+            }
+            if(r.m.a.value > r.m.b.value){
+                if (isMin) {
+                    r.m.b.value = r.m.a.value;
+                } else {
+                    r.m.a.value = r.m.b.value;
+                }
+            }
+        }
+    }
+}

@@ -27,5 +27,16 @@ class HiddenInputs {
 	public function addParam($paramID, $val){
 		$this->str .= '<input type="hidden" name="prm_' . $paramID . '" value="' . $val . '">';
 		return $this;
-	}
+    }
+
+    public function addDateRange($paramID, $from, $to) {
+        $common = "<input type='hidden' name=\"prm_$paramID";
+
+        $this->str .= "$common\['from']['month']\" value={$from['month']}>"
+                    . "$common\['from']['year']\" value={$from['year']}>"
+                    . "$common\['to']['month']\" value={$to['month']}>"
+                    . "$common\['to']['year']\" value={$to['year']}>";
+
+		return $this;
+    }
 }

@@ -27,9 +27,6 @@ class Report {
 	protected $infoText;
 	
 	public function __construct($id){
-        if (!isset($id)){
-            die();
-        } 
         $this->db = new DBService();
         $result = $this->db
             ->query("SELECT * FROM Report WHERE reportID = '$id' LIMIT 1")
@@ -50,12 +47,22 @@ class Report {
 	public function getInfoText(){return $this->infoText;}
 	public function hasGroupTotalInd(){return $this->bGroupTotalInd;}
 	
-	public function run($archiveInd, $ADD_WHERE1, $ADD_WHERE2, $orderBy){
-		if (stripos($this->sql, 'mus')) $ch = 'm';
-		else $ch = 'y';
-		$sql = str_replace('ADD_WHERE', "$ADD_WHERE1 AND $ch" . "us.archiveInd = $archiveInd", str_replace('ADD_WHERE2', $ADD_WHERE2, $this->sql)) . $orderBy;
-		$db = new DBService(Config::$database->{$this->getDBName()});
-		return $db->query($sql);
+    public function run(array $ignoreCols, $isArchive, array $addWhere, $orderBy){
+        foreach ($ignoreCols as $COL) {
+            if (stripos(" $COL",$this->sql)) {
+                preg_replace("[ ,]?$COL", "",$this->sql, $limit=1);
+            }
+        }
+
+        if (stripos($this->sql, 'mus')) {
+            $field = 'mus.archiveInd = ' . (0+$isArchive);
+        } else {
+            $field = 'yus.archiveInd = ' . (0+$isArchive);
+        }
+        $sql = str_replace('ADD_WHERE2', $addWhere[1], $this->sql);
+        $sql = str_replace('ADD_WHERE', "{$addWhere[0]} AND $field", $sql);
+        $db = new DBService(Config::$database->{$this->getDBName()});
+		return $db->query("$sql $orderBy");
 	}
 	
 	// returns outlier array for display at the bottom of reports
@@ -85,20 +92,23 @@ class Report {
 			$objects[] = new ReportParameter($row['reportParameterID']);
 		}
 		return $objects;
-	}
-	
+    }
+
 	// removes associated parameters
-	public function getGroupingColumns(){
+	public function getGroupingColumns(array $ignoreList){
 		// set database to reporting database name
 		Config::init();
 		$this->db->changeDB(Config::$database->name);
 		// Get the report grouping columns into groupColsArray for faster lookup later
 		// returns array of objects
-		$groupColsArray = array();
+        $groupColsArray = array();
+        $exceptions = implode("', '",$ignoreList);
 		foreach ( $this->db
 				->query("SELECT reportGroupingColumnName 
 						FROM ReportGroupingColumn 
-						WHERE reportID = '{$this->ID}'")
+                        WHERE reportID = '{$this->ID}' 
+                        AND reportGroupingColumnName NOT IN ('$exceptions')"
+                    )
 				->fetchRows(MYSQLI_ASSOC) as $row ){
 			$groupColsArray[$row['reportGroupingColumnName']] = false;
 		}
@@ -106,16 +116,19 @@ class Report {
 	}
 	
 	// removes associated parameters
-	public function getReportSums(){
+	public function getReportSums($ignoreList){
 		Config::init();
 		// Get the report summing columns into sumColsArray for faster lookup later
 		// returns array of objects
-		$sumColsArray = array();
+        $sumColsArray = array();
+        $exceptions = implode("', '",$ignoreList);
 		foreach($this->db
 				->changeDB(Config::$database->name)
 				->query("SELECT reportColumnName, reportAction 
 						FROM ReportSum 
-						WHERE reportID = '{$this->ID}'")
+                        WHERE reportID = '{$this->ID}' 
+                        AND reportColumnName NOT IN ('$exceptions')"
+                    )
 				->fetchRows(MYSQLI_ASSOC) as $row ){
 			$sumColsArray[$row['reportColumnName']] = $row['reportAction'];
 		}

@@ -56,7 +56,6 @@ class DBResult {
 				break;
 			$fields[] = $fld->name;
 		}
-		$this->numFields = count($fields); // workaround for report.php
 		return $fields;
 	}
 }

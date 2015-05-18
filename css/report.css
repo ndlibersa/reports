@@ -13,12 +13,49 @@ and open the template in the editor.
 	margin-top: 10px !important;
 }
 
-.table.floatThead-table {
+table.floatThead-table {
 	/* and here is how you would fix that issue */
 	margin-top: 0px !important;
 }
 
-td.rtitle{
+td.report-head-info-box {
+    height: 98;
+    max-height: 124px;
+    min-width: 300px;
+    width: 100%;
+}
+
+td.report-head-info-box table {
+    min-width: 300px;
+    min-height: 98px;
+    max-height: 124px;
+    width: 100%;
+}
+
+td.report-head-info-box table tr{
+    vertical-align: bottom;
+}
+
+td.report-head-img-box {
+    min-height: 98px;
+    width: 480px; 
+    background-image: url('../images/reportingtitlereport.gif');
+    background-repeat: no-repeat;
+}
+
+td.report-head-img-box a {
+    border: none;
+    outline: none;
+    -moz-outline-style: none;
+}
+
+.report-head-img {
+    width: 480px;
+    height: 98px;
+    border: none;
+}
+
+tr.rtitle td{
 	border-width:0px;
 	border-spacing:0px;
 	padding:0px;
@@ -28,6 +65,18 @@ td.rtitle{
 	text-align:left;
 	border-left: 1px solid #c6d7e8;
 	font-size: 2em;
+}
+
+table.rep-res thead tr th div {
+    width: 100%;
+    min-width: 22px;
+    align: center;
+    margin: 0px;
+    padding: 0px;
+}
+
+table.rep-res thead tr th div a {
+    border: none;
 }
 
 table.rep-res tbody tr{
@@ -77,4 +126,9 @@ td.l3 {
 
 th {
 	text-align: center;
+}
+
+div.param {
+    float:left;
+    margin-bottom: 5px;
 }

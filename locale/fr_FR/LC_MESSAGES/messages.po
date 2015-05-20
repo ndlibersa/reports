@@ -1,8 +1,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: messages\n"
-"POT-Creation-Date: 2015-04-29 13:47+0100\n"
-"PO-Revision-Date: 2015-04-29 13:47+0100\n"
+"POT-Creation-Date: 2015-05-20 11:01+0100\n"
+"PO-Revision-Date: 2015-05-20 11:01+0100\n"
 "Last-Translator: Cesar <hernandez.antonio.cesar19@gmail.com>\n"
 "Language-Team: \n"
 "Language: fr_FR\n"
@@ -15,6 +15,14 @@ msgstr ""
 "X-Poedit-SourceCharset: UTF-8\n"
 "X-Poedit-SearchPath-0: .\n"
 "X-Poedit-SearchPathExcluded-0: /var/www/Coral/reports/js/plugins/jquery.js\n"
+
+#: LangCodes.php:17
+msgid "French"
+msgstr "Français"
+
+#: LangCodes.php:18
+msgid "English"
+msgstr "Anglais"
 
 #: admin/classes/common/DBService.php:33 admin/classes/common/DBService.php:36
 #: admin/classes/common/DBService.php:39 admin/classes/common/DBService.php:49
@@ -75,11 +83,11 @@ msgid " Top "
 msgstr " Haute "
 
 #: ajax_htmldata.php:55 ajax_htmldata.php:91 ajax_htmldata.php:181
-#: ajax_htmldata.php:213
+#: ajax_htmldata.php:213 index.php:111 index.php:167
 msgid "All"
 msgstr "Tous"
 
-#: ajax_htmldata.php:81 ajax_htmldata.php:202
+#: ajax_htmldata.php:81 ajax_htmldata.php:202 index.php:149
 msgid "Click to choose "
 msgstr "Cliquez pour choisir "
 
@@ -101,7 +109,7 @@ msgstr "Accueil"
 
 #: index.php:55
 msgid "Select Report"
-msgstr "Selectionner le Rapport"
+msgstr "Selectionner le rapport"
 
 #: index.php:261
 msgid "Submit"
@@ -115,7 +123,15 @@ msgstr "Réinitialiser"
 msgid "Contact / Help"
 msgstr "Contact / Aide"
 
-#: popup.php:82
+#: index.php:279
+msgid "Change language:"
+msgstr "Changer la langue:"
+
+#: index.php:295
+msgid "Invalid translation route!"
+msgstr "Le chemin aux traductions n'est pas valide!"
+
+#: popup.php:70
 msgid "Invalid type!!"
 msgstr "Type incorrect!!"
 
@@ -129,19 +145,19 @@ msgstr "Modifier les paramètres"
 
 #: report.php:95
 msgid "Create New Report"
-msgstr "Créer un Nouveau Rapport"
+msgstr "Créer un nouveau rapport"
 
 #: report.php:121
 msgid "By Month and Resource"
-msgstr "Par Mois et Ressource"
+msgstr "Par mois et ressource"
 
 #: report.php:126 report.php:139
 msgid "Number of Successful Full-Text Article Requests"
-msgstr "Nombre des Resultats des Articles rémplis correctement"
+msgstr "Nombre des résultats des articles rémplis correctement"
 
 #: report.php:156 report.php:171
 msgid "Number of Successful Full-Text Article Requests from an Archive"
-msgstr "Nombre des Resultats des Articles d'un archive rémplis correctement"
+msgstr "Nombre des résultats des articles d'un archive rémplis correctement"
 
 #: report.php:202
 msgid "Key"
@@ -201,19 +217,7 @@ msgstr "Notes de l'interface de la Plate-forme (s'il y a existant)"
 msgid "Publisher Notes (if available)"
 msgstr "Notes de l'éditeur (s'il y a existants)"
 
-#: templates/footer.php:22
-msgid "Change language:"
-msgstr "Changer la langue:"
-
-#: templates/footer.php:25 templates/footer.php:26
-msgid "French"
-msgstr "Français"
-
-#: templates/footer.php:25 templates/footer.php:26
-msgid "English"
-msgstr "Anglais"
-
-#: templates/header.php:66
+#: templates/header.php:68
 msgid ""
 "JavaScript must be enabled in order for you to use CORAL. However, it seems "
 "JavaScript is either disabled or not supported by your browser. To use "
@@ -224,38 +228,10 @@ msgstr ""
 "utiliser CORAL, activez JavaScript en modifiant la configuration de votre "
 "navigateur, après "
 
-#: templates/header.php:66
+#: templates/header.php:68
 msgid "try again"
 msgstr "réessayez"
 
 #: js/index.js:21
 msgid "Refreshing Contents..."
 msgstr "Rechargements des contenus..."
-
-#~ msgid "Cannot set value for undefined key ("
-#~ msgstr "Ne pouvait pas asigner un valeur indefini ("
-
-#~ msgid "Cannot get value for undefined key ("
-#~ msgstr "Ne peut pas récupérer le valeur par une clé indefini ("
-
-#~ msgid " of "
-#~ msgstr " de "
-
-#~ msgid "Year: "
-#~ msgstr "Année: "
-
-#~ msgid " to present"
-#~ msgstr " jusqu'à maintenant"
-
-#~ msgid "Years: "
-#~ msgstr "Années: "
-
-#~ msgid "This Interface provides COUNTER compliant stats."
-#~ msgstr "Cette interface fournit des statistiques conformes à COUNTER."
-
-#~ msgid "This Interface does not provide COUNTER compliant stats."
-#~ msgstr ""
-#~ "Cette interface ne fournit pas des statistiques conformes à COUNTER."
-
-#~ msgid "Interface Notes"
-#~ msgstr "Notes de l'interface"

@@ -52,7 +52,7 @@ include 'templates/header.php';
 <div id='div_report'>
 	
 	
-<label for="reportID"><?= _("Select Report");?></label>
+<label for="reportID"><?php echo _("Select Report");?></label>
 
 <select name='reportID' id='reportID' class='opt'>
 <option value=''></option>
@@ -108,7 +108,7 @@ include 'templates/header.php';
 				echo ">";
 
 				if ($parm->requiredInd != '1'){
-					echo "<option value=''>All</option>";
+					echo "<option value=''>"._("All")."</option>";
 				}
 
 				$rownumber=1;
@@ -146,7 +146,7 @@ include 'templates/header.php';
 					$parm->reportParameterID,
 					"','block');toggleLayer('div_show_",
 					$parm->reportParameterID,
-					"','none');\">-Click to choose ",
+					"','none');\">-"._("Click to choose "),
 					$parm->parameterDisplayPrompt,
 					"-</a></div><div id='div_",
 					$parm->reportParameterID,
@@ -164,7 +164,7 @@ include 'templates/header.php';
 
 				
 				if ($parm->requiredInd != '1'){
-					echo "<option value='' selected>All</option>";
+					echo "<option value='' selected>"._("All")."</option>";
 				}
 				
 				
@@ -258,8 +258,8 @@ include 'templates/header.php';
 	<input type='hidden' name='rprt_output' value='web'>
 	<br />
 	<br />
-	<input type="submit" value="<?= _('Submit');?>" name="submitbutton" id="submitbutton">
-	<input type="button" value="<?= _('Reset');?>" name="resetbutton" id="resetbutton" onclick="javascript:clearParms();">
+	<input type="submit" value="<?php echo _('Submit');?>" name="submitbutton" id="submitbutton">
+	<input type="button" value="<?php echo _('Reset');?>" name="resetbutton" id="resetbutton" onclick="javascript:clearParms();">
 	</td>
 	</tr>
 	</table>
@@ -267,7 +267,7 @@ include 'templates/header.php';
 	
 	
 <br />
-<a href="mailto:Benjamin.J.Heet.2@ND.EDU"><?= _("Contact / Help");?></a>
+<a href="mailto:Benjamin.J.Heet.2@ND.EDU"><?php echo _("Contact / Help");?></a>
 </td>
 </tr>
 </table>
@@ -275,7 +275,63 @@ include 'templates/header.php';
 <br />
 <br />
 
+<div class='boxRight'>
+    <p class="fontText"><?php echo _("Change language:");?></p>
+    <select name="lang" id="lang" class="dropDownLang">
+       <?php
+        // Get all translations on the 'locale' folder
+        $route='locale';
+        $lang[]="en_US"; // add default language
+        if (is_dir($route) && is_readable($route)) { 
+            if ($dh = opendir($route)) { 
+                while (($file = readdir($dh)) !== false) {
+                    if (is_dir("$route/$file") && $file!="." && $file!=".."){
+                        $lang[]=$file;
+                    } 
+                } 
+                closedir($dh); 
+            } 
+        }else {
+            echo "<br>"._("Invalid translation route!"); 
+        }
+        // Get language of navigator
+        $defLang = substr($_SERVER["HTTP_ACCEPT_LANGUAGE"],0,2);
 
+        // Show an ordered list
+        sort($lang); 
+        for($i=0; $i<count($lang); $i++){
+            if(isset($_COOKIE["lang"])){
+                if($_COOKIE["lang"]==$lang[$i]){
+                    echo "<option value='".$lang[$i]."' selected='selected'>".$lang_name->getNameLang(substr($lang[$i],0,2))."</option>";
+                }else{
+                    echo "<option value='".$lang[$i]."'>".$lang_name->getNameLang(substr($lang[$i],0,2))."</option>";
+                }
+            }else{
+                if($defLang==substr($lang[$i],0,2)){
+                    echo "<option value='".$lang[$i]."' selected='selected'>".$lang_name->getNameLang(substr($lang[$i],0,2))."</option>";
+                }else{
+                    echo "<option value='".$lang[$i]."'>".$lang_name->getNameLang(substr($lang[$i],0,2))."</option>";
+                }
+            }
+        }
+        ?>
+
+    </select>
+</div>
+<script>
+    $("#lang").change(function() {
+        setLanguage($("#lang").val());
+        location.reload();
+    });
+
+    function setLanguage(lang) {
+        var wl = window.location, now = new Date(), time = now.getTime();
+        var cookievalid=2592000000; // 30 days (1000*60*60*24*30)
+        time += cookievalid;
+        now.setTime(time);
+        document.cookie ='lang='+lang+';path=/'+';domain='+wl.host+';expires='+now;
+    }
+</script>
 </center>
 
 <script type="text/javascript" src="js/index.js"></script>

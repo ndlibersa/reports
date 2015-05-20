@@ -12,43 +12,36 @@
  * @author bgarcia
  */
 class ReportNotes {
-	public $pubIDs = array();
-	public $platIDs = array();
-	public $dbname;
-
-	public function __construct($dbname) {
+	protected $pubIDs = array();
+	protected $platIDs = array();
+	protected $dbname;
+	public function __construct($dbname){
 		$this->dbname = $dbname;
 	}
-
-	public function hasPublishers() {
+	public function addPublisher($id){
+		$this->pubIDs[$id] = '';
+	}
+	public function addPlatform($id){
+		$this->platIDs[$id] = '';
+	}
+	public function hasPublishers(){
 		return !empty($this->pubIDs);
 	}
-
-	public function hasPlatforms() {
+	public function hasPlatforms(){
 		return !empty($this->platIDs);
 	}
-
-	public function platformNotes() {
+	public function platformNotes(){
 		$db = new DBService(Config::$database->{$this->dbname});
-		return $db->processQuery2(
-			"SELECT startYear, endYear, counterCompliantInd, noteText, reportDisplayName
+		return $db->query("SELECT startYear, endYear, counterCompliantInd, noteText, reportDisplayName
 				FROM PlatformNote pn, Platform p
 				WHERE p.platformID = pn.platformID
-				AND pn.platformID in ("
-			. $db->sanitize(join(',', array_keys($this->platIDs)))
-			. ");",
-			MYSQLI_ASSOC);
+				AND pn.platformID in (" . $db->sanitize(join(',', array_keys($this->platIDs))) . ");")->fetchRows(MYSQLI_ASSOC);
 	}
-
-	public function publisherNotes() {
+	public function publisherNotes(){
 		$db = new DBService(Config::$database->{$this->dbname});
-		return $db->processQuery2(
-			"SELECT startYear, endYear, noteText, reportDisplayName
+		return $db->query("SELECT startYear, endYear, noteText, reportDisplayName
 				FROM PublisherPlatformNote pn, PublisherPlatform pp
 				WHERE pp.publisherPlatformID = pn.publisherPlatformID
-				AND pp.publisherPlatformID in ("
-			. $db->sanitize(join(',', array_keys($this->pubIDs)))
-			. ");",
-		MYSQLI_ASSOC);
+				AND pp.publisherPlatformID in (" . $db->sanitize(join(',', array_keys($this->pubIDs))) . ");")->fetchRows(MYSQLI_ASSOC);
 	}
 }

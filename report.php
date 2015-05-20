@@ -63,7 +63,7 @@ if ($report->outputType==='web'){
            . strtr($report->report->reportName,' ','_')
            . "'");
 
-    echo "<html><head><meta charset='UTF-8'></head><body>";
+    echo "<html><head><meta http-equiv='Content-Type' content='text/html; charset=utf-8' /></head><body>";
 
 }
 

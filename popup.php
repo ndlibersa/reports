@@ -62,8 +62,8 @@ if ($type === 'report'){
 		<table width='400'>
 			<tr>
 				<td>
-					<h2><?php echo $report->getName(); ?></h2>
-<?php echo $report->getInfoText(); ?>
+					<h2><?php echo $report->name; ?></h2>
+<?php echo $report->infoText; ?>
 <br /> <br />
 				</td>
 			</tr>

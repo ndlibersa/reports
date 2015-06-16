@@ -18,33 +18,26 @@
 $("#reportID").change(function(){
 	//updateParms;
 	if ($("#reportID").val() != "") {
-		$("#div_parm").html("<br><label for=''>&nbsp;</label><img src='images/circle.gif'>  Refreshing Contents...");
+		genericGetById('div_parm').innerHTML = "<br><label for=''>&nbsp;</label><img src='images/circle.gif'>  Refreshing Contents...";
 		$.ajax({
 		 type:       "GET",
 		 url:        "ajax_htmldata.php",
 		 cache:      false,
 		 data:       "action=getReportParameters&reportID=" + $("#reportID").val(),
 		 success:    function(html) {
-				$("#div_parm").html(html);
+                genericGetById('div_parm').innerHTML = html;
 			}
-
-
 		});
 	}else{
-		$("#div_parm").html("");
+        genericGetById('div_parm').innerHTML = "";
 	}
-	
-	
 });
 
 
 
 function clearParms() {
-	
-	$("#reportID").val("");
-	$("#div_parm").html("");
-	
-	
+    genericGetById('reportID').value = "";
+    genericGetById('div_parm').innerHTML = "";
 }
 
 
@@ -69,20 +62,10 @@ function updateChildren(parmID){
 				 success:    function(html) {
 					$("#div_parm_" + childParmArray[i]).html(html);
 					}
-					
-					
 				});
-				
-				
-				
-				
-			}
-			
+			}	
 		}
-		
-		
 	});
-	
 }
 
 function moveOptions(theSelFrom, theSelTo)
@@ -131,56 +114,41 @@ function placeInHidden(delim, selStr, hidStr)
 }
 
 function toggleLayer(whichLayer, state) {
-	var elem;
-	if(document.getElementById) // this is the way the standards work
-		elem = document.getElementById(whichLayer);
-	else if(document.all) // this is the way old msie versions work
-		elem = document.all[whichLayer];
-	else if(document.layers) // this is the way nn4 works
-		elem = document.layers[whichLayer];
-
-	if (elem){
-		elem.style.display = state;
-	}
+    var elem = genericGetById(whichLayer);
+    if (elem){
+        elem.style.display = state;
+    }
 }
 
-function updateDateRange(isMin) { // d:document, r:range, f:function, y:year, m:month 
-    var d = document;
-    var r = {m:{a:null,b:null},y:{a:null,b:null}};
+function daterange_onchange(isMax) {
+    var m0 = genericGetById('date0m');
+    var y0 = genericGetById('date0y');
+    var m1 = genericGetById('date1m');
+    var y1 = genericGetById('date1y');
 
-	if(d.getElementById) {  // this is the way the standards work
-        d.f = d.getElementById;
-		r.m.a = d.f('from_date_month');
-		r.y.a = d.f('from_date_year');
-		r.m.b = d.f('to_date_month');
-		r.y.b = d.f('to_date_year');
-    } else if(d.all) {      // this is the way old msie versions work
-		r.m.a = d.all['from_date_month'];
-		r.y.a = d.all['from_date_year'];
-		r.m.b = d.all['to_date_month'];
-		r.y.b = d.all['to_date_year'];
-    } else if(d.layers) {   // this is the way nn4 works
-		elem = d.layers[whichLayer];
-		r.m.a = d.layers['from_date_month'];
-		r.y.a = d.layers['from_date_year'];
-		r.m.b = d.layers['to_date_month'];
-		r.y.b = d.layers['to_date_year'];
-    }
-
-    if (r && r.y && r.m && r.y.a && r.y.b && r.m.a && r.m.b){
-        if (r.y.a.value >= r.y.b.value) {
-            if (isMin) {
-                r.y.b.value = r.y.a.value;
-            } else {
-                r.y.a.value = r.y.b.value;
+    if (isMax) {
+        if (parseInt(y0.value) >= parseInt(y1.value)) {
+            y0.value = y1.value;
+            if (parseInt(m0.value) > parseInt(m1.value)) {
+                m0.value = m1.value;
             }
-            if(r.m.a.value > r.m.b.value){
-                if (isMin) {
-                    r.m.b.value = r.m.a.value;
-                } else {
-                    r.m.a.value = r.m.b.value;
-                }
+        }
+    } else {
+        if (parseInt(y0.value) >= parseInt(y1.value)) {
+            y1.value = y0.value;
+            if (parseInt(m0.value) > parseInt(m1.value)) {
+                m1.value = m0.value;
             }
         }
     }
+}
+
+function daterange_onsubmit() {
+    genericGetById('daterange').value = 
+             ('00'+genericGetById('date0m').value).slice(-2)
+           + ('0000'+genericGetById('date0y').value).slice(-4)
+           + ('0000'+genericGetById('date1m').value).slice(-2)
+           + ('00'+genericGetById('date1y').value).slice(-4);
+
+    return true;
 }

@@ -9,13 +9,13 @@ class ReportHelper {
     public $report;
     public $outputType = 'web';
     public $startPage = 1;
-    public $sortColumn = null;
-    public $sortOrder = null;
+    public $sortColumn = 1;
+    public $sortOrder = 'asc';
     public $titleID = null;
     public $addWhere = array('','');
     public $hidden_inputs;
+    public $visible_inputs;
     public $paramDisplay = '';
-    public $rprt_prm_add = '';
     public $showUnadjusted = false;
     public $maxRows;
     public $outlier;
@@ -26,34 +26,48 @@ class ReportHelper {
     private $dropMonths = array();
     
     public function __construct() {
-        if (isset($_REQUEST['reportID'])) {
-            $this->report = new Report($_REQUEST['reportID']);
-        } else {
-            $this->report = new Report(header('Location: index.php'));
+        if (! isset($_REQUEST['reportID'])) {
+			error_log("missing reportID");
+			header("location: index.php");
+			exit();
         }
+
+		$this->report = new Report($_REQUEST['reportID']);
+        $hiddenInputs = FormInputs::GetHidden();
+        $visibleInputs = FormInputs::GetVisible();
         
+        $visibleInputs->addParam('reportID',$this->report->id);
+        $hiddenInputs->addParam('useHidden',1);
+
         if (isset($_REQUEST['outputType'])) {
             $this->outputType = $_REQUEST['outputType'];
         }
+        $hiddenInputs->addParam('outputType',$this->outputType);
+
         if ($this->outputType === 'web' && isset($_REQUEST['startPage'])) {
             $this->startPage = $_REQUEST['startPage'];
-        }       
+        }
+
         if (isset($_REQUEST['sortColumn'])) {
             $this->sortColumn = $_REQUEST['sortColumn'];
         }
+        $hiddenInputs->addParam('sortColumn',$this->sortColumn);
+
         if (isset($_REQUEST['sortOrder'])) {
             $this->sortOrder = $_REQUEST['sortOrder'];
         }
+        $hiddenInputs->addParam('sortOrder',$this->sortOrder);
 
-        $this->hidden_inputs = new HiddenInputs();
-        $this->hidden_inputs->addReportID($this->report->getID());
+
         if (isset($_REQUEST['titleID']) && $_REQUEST['titleID']) {
             $this->titleID = $_REQUEST['titleID'];
             $this->paramDisplay = '<b>Title:</b> ' . $this->report->getUsageTitle($this->titleID) . '<br>';
-            $this->rprt_prm_add = "&titleID=$this->titleID";
-            $this->hidden_inputs->addTitleID($this->titleID);
+            $visibleInputs->addParam('titleID',$this->titleID);
         }
 
+        $this->hidden_inputs = $hiddenInputs;
+        $this->visible_inputs = $visibleInputs;
+        
         $this->loopThroughParams();
 
         $this->sumColsArray = $this->report->getReportSums($this->dropMonths);
@@ -71,10 +85,10 @@ class ReportHelper {
         }
     }
 
-    public function numFields() {
-        $flds = $this->reportTable->numFields();
+    public function nfields() {
+        $flds = $this->reportTable->nfields();
         if($flds===null)
-            die("reportTable->numFields() returned null!");
+            die("reportTable->nfields() returned null!");
         return $flds;
     }
     
@@ -86,12 +100,32 @@ class ReportHelper {
 
         $this->reportTable = new ReportTable($this->outputType, $reportArray->fetchFields());
         $this->reportTable->dropFields($this->dropMonths);
-        
-        if (! $this->reportTable->numFields()) {
+
+        if (! $this->reportTable->nfields()) {
             return;
         }
 
-        $this->reportTable->printHeader($this->sortColumn, $this->sortOrder);
+		$i = 1;
+        echo "<thead>";
+        foreach ( $this->reportTable->fields() as $field ) {
+            echo "<th>" . ucwords(strtolower(strtr($field, '_', ' ')));
+            if ($this->outputType === 'web') {
+                echo "<div><a
+					href=\"javascript:sortRecords('$i', 'asc');\"> <img
+                    align='center' src='images/arrowdown";
+                if ($this->sortColumn == $i && $this->sortOrder === 'asc')
+                    echo '_sel';
+                echo ".gif' border=0></a>&nbsp; <a
+                    href=\"javascript:sortRecords('$i', 'desc');\"> <img
+                    align='center' src='images/arrowup";
+                if ($this->sortColumn == $i && $this->sortOrder === 'desc')
+                    echo '_sel';
+                echo ".gif' border=0></a></div>";
+            }   
+            echo "</th>";
+            ++$i;
+        }
+        echo "</thead>";
         echo '<tbody>';
 
         // loop through resultset
@@ -127,7 +161,7 @@ class ReportHelper {
                     $data = '&nbsp;';
 
                 // if sort is explicitly requested we will group on this column if it is allowed according to DB
-                if (isset($holdArray[$colNum]) && isset($this->groupColsArray[$field]) && ($data != $holdArray[$colNum])) {  
+                if (isset($holdArray[$colNum],$this->groupColsArray[$field]) && ($data != $holdArray[$colNum])) {  
                     if ($this->sortColumn === $colNum + 1) {
                         $hold_rprt_grpng_data = $holdArray[$colNum];
                         $print_subtotal_flag = true;
@@ -159,7 +193,7 @@ class ReportHelper {
                 if ($this->outputType === 'web' 
                     && ($print_data !== '&nbsp;') && $field === 'TITLE'
                 ) {
-                    if ($this->report->getID() != '1') {
+                    if ($this->report->id != '1') {
                         $print_data .= '<br><font size="-4"><a target="_BLANK" href="report.php?reportID=1&prm_4=' . ($this->showUnadjusted ? 'Y' : 'N') . "&titleID={$currentRow['titleID']}&outputType=web'>view related titles</a></font>";
                     }
                     // echo link resolver link
@@ -174,9 +208,9 @@ class ReportHelper {
                     } else {
                         if ($this->showUnadjusted) {
                             if ($currentRow[$field . '_OUTLIER'] >= 4) {
-                                $tmp_outlier_color = Color::$levelColors[$currentRow[$field . '_OUTLIER'] - 3];
+                                $tmp_outlier_color = Color::$levels[$currentRow[$field . '_OUTLIER'] - 3];
                             } else {
-                                $tmp_outlier_color = Color::$levelColors[$currentRow[$field . '_OUTLIER']];
+                                $tmp_outlier_color = Color::$levels[$currentRow[$field . '_OUTLIER']];
                             }
                             $rowoutput .= "<td class='$tmp_outlier_color[1]'>$print_data</td>";
                             unset($tmp_outlier_color);
@@ -216,7 +250,7 @@ class ReportHelper {
 
             // loop through the group arrays, if any are N then echo flag is N otherwise it will be left to Y
             // determine if the current row needs to be grouped
-            if ($this->outputType != 'xls' && !($performCheck && in_array(false, $this->groupColsArray, true) !== false) && $print_subtotal_flag && $this->report->hasGroupTotalInd()) {
+            if ($this->outputType != 'xls' && !($performCheck && in_array(false, $this->groupColsArray, true) !== false) && $print_subtotal_flag && $this->report->hasGroupTotalInd) {
                 $rowoutput .= "</tr>";
                 if ($countForGrouping > 1) {
                     $rowparms = array("Total for $hold_rprt_grpng_data");
@@ -236,7 +270,7 @@ class ReportHelper {
         }
 
         if ($this->outputType != 'xls' && $this->perform_subtotal_flag) {
-            if ($this->report->hasGroupTotalInd() && $hold_rprt_grpng_data) {
+            if ($this->report->hasGroupTotalInd && $hold_rprt_grpng_data) {
                 // one last grouping summary
                 if ($countForGrouping > 1) {
                     $grp[] = array("Total for $hold_rprt_grpng_data");
@@ -250,7 +284,7 @@ class ReportHelper {
             $rowparms = array();
             $total = '';
             foreach ($this->reportTable->fields() as $field) {
-                if (isset($this->sumColsArray[$field]) && isset($totalSumArray[$field])) {
+                if (isset($this->sumColsArray[$field],$totalSumArray[$field])) {
                     $total = $this->sumColTotal($this->sumColsArray[$field], $totalSumArray[$field], $rowNum);
                 }
                 if ($total) 
@@ -265,7 +299,7 @@ class ReportHelper {
         if ($rowNum === 0) {
             echo $this->reportTable->prep_colspan_row('<i>Sorry, no rows were returned.</i>','');
         } else {
-            echo "<tr><td colspan=" . $this->reportTable->numFields() . " align='right'><i>Showing rows {$this->startPage} to ";
+            echo "<tr><td colspan=" . $this->reportTable->nfields() . " align='right'><i>Showing rows {$this->startPage} to ";
             if (($this->maxRows > 0) && ($rowNum > $this->maxRows)) {
                 echo "$this->maxRows of $this->maxRows";
             } else {
@@ -284,7 +318,7 @@ class ReportHelper {
                 if ($parm->typeCode === 'chk') {
                     if (($prm_value === 'on') || ($prm_value === 'Y')) {
                         $this->showUnadjusted = true;
-                        $this->hidden_inputs->addParam($parm->ID, 'Y');
+                        $this->visible_inputs->addParam("prm_$parm->ID", 'Y');
                     }
                 } else if ($parm->addWhereClause === 'limit') {
                     // decide what to do
@@ -300,22 +334,22 @@ class ReportHelper {
                     $this->addWhere[$addWhereNum] .= " AND $parm->addWhereClause";
 
                     if ($parm->typeCode === 'dddr') {
-                        if ($prm_value['from']['year'] === $prm_value['to']['year']) {
+                        if ($prm_value['y0'] === $prm_value['y1']) {
                             $months = array(
                                 'JAN','FEB','MAR','APR','MAY','JUN','JUL','AUG','SEP','OCT','NOV','DEC');
                             for ($i=0; $i<12; ++$i) {
-                                if (! ($i>=$prm_value['from']['month']-1 && $i<=$prm_value['to']['month']-1)) {
+                                if (! ($i>=$prm_value['m0']-1 && $i<=$prm_value['m1']-1)) {
                                     $this->dropMonths[] = $months[$i];
                                 }
                             }
                         }
-                        $this->hidden_inputs->addDateRange($parm->ID, $prm_value['from'], $prm_value['to']);
+                        $this->visible_inputs->addParam("prm_$parm->ID",DateRange::Encode($prm_value));
                     } else {
                         $prm_value = strtoupper($prm_value);
                         $this->addWhere[$addWhereNum] = preg_replace(
                             '/PARM/', $prm_value, $this->addWhere[$addWhereNum]
                         );
-                        $this->hidden_inputs->addParam($parm->ID, $prm_value);
+                        $this->visible_inputs->addParam("prm_$parm->ID", $prm_value);
                     }
                 }
 
@@ -335,8 +369,8 @@ class ReportHelper {
                             . implode(', ', $parm->getPubPlatDisplayName($prm_value)) . '<br>';
                     } else {
                         if ($parm->typeCode === 'dddr') {
-                            $prm_value = $prm_value['from']['month'] . '/' . $prm_value['from']['year'] . '-'
-                                . $prm_value['to']['month'] . '/' . $prm_value['to']['year'];
+                            $prm_value = $prm_value['m0'] . '/' . $prm_value['y0'] . '-'
+                                . $prm_value['m1'] . '/' . $prm_value['y1'];
                         }
                         //only display the param info at the top if it was entered
                         $this->paramDisplay .= "<b>{$parm->displayPrompt}:</b> '$prm_value'<br>"; 
@@ -346,7 +380,7 @@ class ReportHelper {
         }
         
         // if titleID was passed in, add that to addwhere
-        if (($this->report->getID() === '1') && ($this->titleID != '')) {
+        if (($this->report->id === '1') && ($this->titleID != '')) {
             $this->addWhere[1] .= " AND t.titleID = $this->titleID";
         }
     }

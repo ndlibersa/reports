@@ -17,35 +17,33 @@
  * *************************************************************************************************************************
  */
 class Report {
-	protected $db;
-	protected $ID;
-	protected $name;
-	protected $dbname;
-	protected $sql;
-	protected $bGroupTotalInd;
+	public $db;
+    public $id;
+	public $name;
+	public $dbname;
+	public $sql;
+	public $hasGroupTotalInd;
 	public $orderBySQL;
-	protected $infoText;
+	public $infoText;
 	
 	public function __construct($id){
+		if ($id === null) {
+			//throw new BadMethodCallException("Report constructor did not receive a valid id.");
+		}
+
         $this->db = new DBService();
         $result = $this->db
             ->query("SELECT * FROM Report WHERE reportID = '$id' LIMIT 1")
             ->fetchRow(MYSQLI_ASSOC);
 
-        $this->ID = $id;
+        $this->id = $id;
         $this->name = $result['reportName'];
         $this->dbname = $result['reportDatabaseName'];
-        $this->bGroupTotalInd = ($result['groupTotalInd'] === '1') ? true : false;
+        $this->hasGroupTotalInd = ($result['groupTotalInd'] === '1') ? true : false;
         $this->orderBySQL = $result['orderBySQL'];
         $this->infoText = $result['infoDisplayText'];
         $this->sql = $result['reportSQL'];
 	}
-	
-	public function getID(){return $this->ID;}
-	public function getName(){return $this->name;}
-	public function getDBName(){return $this->dbname;}
-	public function getInfoText(){return $this->infoText;}
-	public function hasGroupTotalInd(){return $this->bGroupTotalInd;}
 	
     public function run(array $ignoreCols, $isArchive, array $addWhere, $orderBy){
         foreach ($ignoreCols as $COL) {
@@ -61,14 +59,18 @@ class Report {
         }
         $sql = str_replace('ADD_WHERE2', $addWhere[1], $this->sql);
         $sql = str_replace('ADD_WHERE', "{$addWhere[0]} AND $field", $sql);
-        $db = new DBService(Config::$database->{$this->getDBName()});
+        $db = new DBService(Config::$database->{$this->dbname});
 		return $db->query("$sql $orderBy");
 	}
 	
 	// returns outlier array for display at the bottom of reports
 	public function getOutliers(){
+		Config::init();
 		$outlier = array();
-		foreach ( $this->db->changeDB(Config::$database->{$this->dbname})->query("SELECT outlierLevel, overageCount, overagePercent FROM Outlier ORDER BY 2")->fetchRows(MYSQLI_ASSOC) as $outlierArray ){
+		foreach ( $this->db
+				->selectDB(Config::$database->{$this->dbname})
+				->query("SELECT outlierLevel, overageCount, overagePercent FROM Outlier ORDER BY 2")
+				->fetchRows(MYSQLI_ASSOC) as $outlierArray ){
 			$outlier[$outlierArray['outlierLevel']]['overageCount'] = $outlierArray['overageCount'];
 			$outlier[$outlierArray['outlierLevel']]['overagePercent'] = $outlierArray['overagePercent'];
 			$outlier[$outlierArray['outlierLevel']]['outlierLevel'] = $outlierArray['outlierLevel'];
@@ -80,13 +82,13 @@ class Report {
 	public function getParameters(){
 		// set database to reporting database name
 		Config::init();
-		$this->db->changeDB(Config::$database->name);
+		$this->db->selectDB(Config::$database->name);
 		
 		$objects = array();
 		foreach ( $this->db
 				->query("SELECT reportParameterID
 					FROM ReportParameter
-					WHERE reportID = '{$this->ID}'
+					WHERE reportID = '{$this->id}'
 					ORDER BY 1")
 				->fetchRows(MYSQLI_ASSOC) as $row ){
 			$objects[] = new ReportParameter($row['reportParameterID']);
@@ -98,7 +100,7 @@ class Report {
 	public function getGroupingColumns(array $ignoreList){
 		// set database to reporting database name
 		Config::init();
-		$this->db->changeDB(Config::$database->name);
+		$this->db->selectDB(Config::$database->name);
 		// Get the report grouping columns into groupColsArray for faster lookup later
 		// returns array of objects
         $groupColsArray = array();
@@ -106,7 +108,7 @@ class Report {
 		foreach ( $this->db
 				->query("SELECT reportGroupingColumnName 
 						FROM ReportGroupingColumn 
-                        WHERE reportID = '{$this->ID}' 
+                        WHERE reportID = '{$this->id}' 
                         AND reportGroupingColumnName NOT IN ('$exceptions')"
                     )
 				->fetchRows(MYSQLI_ASSOC) as $row ){
@@ -123,10 +125,10 @@ class Report {
         $sumColsArray = array();
         $exceptions = implode("', '",$ignoreList);
 		foreach($this->db
-				->changeDB(Config::$database->name)
+				->selectDB(Config::$database->name)
 				->query("SELECT reportColumnName, reportAction 
 						FROM ReportSum 
-                        WHERE reportID = '{$this->ID}' 
+                        WHERE reportID = '{$this->id}' 
                         AND reportColumnName NOT IN ('$exceptions')"
                     )
 				->fetchRows(MYSQLI_ASSOC) as $row ){
@@ -139,7 +141,7 @@ class Report {
 	public function getUsageTitle($titleID){
 		Config::init();
 		$row = $this->db
-			->changeDB(Config::$database->{$this->dbname})
+			->selectDB(Config::$database->{$this->dbname})
 			->query("SELECT title FROM Title WHERE titleID = '$titleID'")
             ->fetchRow(MYSQLI_ASSOC);
         return $row['title'];

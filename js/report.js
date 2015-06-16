@@ -31,8 +31,6 @@ function viewReportOutput(reportOutput) {
 function sortRecords(columnIndex, sortOrder){
 	document.viewreport.sortColumn.value=columnIndex;
 	document.viewreport.sortOrder.value=sortOrder;
-	document.viewreport.outputType.value='web';
-	document.viewreport.target='';
 	document.viewreport.submit();
 
 }

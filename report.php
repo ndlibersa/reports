@@ -23,27 +23,24 @@ ob_start('minify_output');
 include_once 'directory.php';
 
 $reportHelper = new ReportHelper();
+$report = $reportHelper->report;
+$outlier_cls = array('flagged','overriden','merged');
+$pageTitle = $report->name;
 
-if ($reportHelper->outputType === 'web') {
-    $pageTitle = $reportHelper->report->getName();  
-    include 'templates/header.php';
-} else if ($reportHelper->outputType === 'print') {?>
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml">
-<head>
-<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-<title>CORAL Usage Statistics Reporting - <?php echo $reportHelper->report->getName(); ?></title>
-<link rel="stylesheet" href="css/print.css" type="text/css"
-    media="screen" />
-</head>
-<body>
+if ($reportHelper->outputType === 'print') {
+    echo "<!DOCTYPE html PUBLIC '-//W3C//DTD XHTML 1.0 Transitional//EN' 'http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd'>
+        <html xmlns='http://www.w3.org/1999/xhtml'>
+        <head>
+        <meta http-equiv='Content-Type' content='text/html; charset=utf-8' />
+        <title>CORAL Usage Statistics Reporting - $report->name</title>
+        <link rel='stylesheet' href='css/print.css' type='text/css'
+        media='screen' />
+        </head>
+        <body>";
 
-<?php
-} else if ($reportHelper->outputType === 'pop') {
-    $pageTitle = $reportHelper->report->getName();
+} else if ($reportHelper->outputType === 'web' || $reportHelper->outputType==='pop') {
     include 'templates/header.php';
 } else {
-    
     // required to allow downloads in IE 6 and 7
     header("Pragma: public");
     header("Expires: 0");
@@ -52,325 +49,213 @@ if ($reportHelper->outputType === 'web') {
     header("Content-Type: application/octet-stream");
     header("Content-Type: application/download");
     header("Content-Transfer-Encoding: binary");
-    
     header("Content-type: application/vnd.ms-excel;");
-    header("Content-Disposition: attachment; filename='" . strtr($reportHelper->report->getName(), ' ', '_') . "'");
-    
+    header("Content-Disposition: attachment; filename='" . strtr($report->name, ' ', '_') . "'");
+
     echo "<html><head></head><body>";
 }
 
-?>  
-    <center>
-        <table class='noborder' style='width: 780px;'>
-            <tr>
-                <td class='noborder' align='center' colspan='2'>
-                    <table class='noborder' style='text-align: left;'>
-                        <tr>
-<?php if ($reportHelper->outputType === 'web'){ ?>
-                            <td class="head report-head-img-box" align='left' valign='top'><a
-                                href='index.php'><img
-                                    class='report-head-img'
-                                    src='images/transparent.gif'></a></td>
-                            <td class='noborder report-head-info-box' align='left' valign='bottom'>
-                                <table class="noborder">
-                                    <tr valign="bottom">
-                                        <td class="head" style="padding: 5px; vertical-align: bottom;">
-                                            <form name='viewreport' method='post' target='_self'>
-<?php echo $reportHelper->hidden_inputs->getStr(); ?>
-                                                <input type="hidden" name="sortColumn"
-                                                    value='<?php echo $reportHelper->sortColumn; ?>'> <input
-                                                    type="hidden" name="sortOrder"
-                                                    value='<?php echo $reportHelper->sortOrder; ?>'> <input
-                                                    type="hidden" name="outputType" value='web'> <input
-                                                    type="hidden" name="useHidden" value=1> <font size="+1"><?php echo $reportHelper->report->getName(); ?></font>&nbsp;<a href="javascript:showPopup('report','<?php echo $reportHelper->report->getID(); ?>');"
-                                                        title='Click to show information about this report'
-                                                        style="border: none"><img src='images/help.gif'
-                                                            style="border: none"></a><br>
-<?php echo $reportHelper->paramDisplay; ?><a href="index.php?&reportID=<?php echo $reportHelper->report->getID() . $reportHelper->rprt_prm_add; ?>">Modify Parameters</a>&nbsp; <a href="index.php">Create New Report</a> <br /> <a
-                                                                href="javascript:viewReportOutput('xls');"
-                                                                style="border: none"><img border='0'
-                                                                    src="images/xls.gif"></a> <a
-                                                                href="javascript:viewReportOutput('print');"
-                                                                style="border: none"><img border='0'
-                                                                    src="images/printer.gif"></a><br>
-                                            
-                                            </form>
-                                        </td>
-                                        <td class="head" align="right" valign="top">&nbsp;</td>
-                                    </tr>
-                                </table>
-                            </td>
-<?php } else { ?>
-                            <td class='head'><font size="+1"><?php echo $reportHelper->report->getName(); ?></font><br>
-<?php echo $reportHelper->paramDisplay; ?>
-                            <br /></td>
-<?php } ?>
-                        </tr> <?php
-                    unset($reportHelper->hidden_inputs, $reportHelper->rprt_prm_add, $reportHelper->paramDisplay);
-                    
-                    $notes = new ReportNotes($reportHelper->report->getDBName());
-                    
-                    $reportArray = $reportHelper->getReportResults(false);
-                    $textAdd = (($reportHelper->report->getID() === '1') || ($reportHelper->report->getID() === '2')) ? 'By Month and Resource' : '';
-                    if ($reportHelper->outputType === 'web') { ?>
-                        <tr class="rtitle">
-                            <td colspan="2">
-Number of Successful Full-Text Article Requests <?php echo $textAdd; ?>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td colspan="2" class="shadednoborder">
-                                <table id='R1' class="table rep-res" style="width: 100%">
-<?php $reportHelper->process($reportArray,$notes); ?>
-                                </table>
-                            </td>
-                        </tr>
-<?php } else { ?>
-                        <tr>
-                            <td colspan='2' align='left' class='noborder'><font size="+1">Number of Successful Full-Text Article Requests <?php echo $textAdd; ?></font>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td colspan='2' align='center' class='noborder'>
-                                <table id='R1' class="table rep-res" border='1'>
-<?php $reportHelper->process($reportArray,$notes); ?>
-                                </table>
-                            </td>
-                        </tr><?php
-                    }
-                    $reportArray = $reportHelper->getReportResults(true); // archive query
-                    
-                    if ($reportArray) {
-                        if ($reportHelper->outputType === 'web') { ?>
-                        <tr class="rtitle">
-                            <td colspan="2">
-Number of Successful Full-Text Article Requests from an Archive <?php echo $textAdd; ?>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td colspan="2" class="shadednoborder">
-                                <table id='R2' class="table rep-res" style="width: 100%">
-<?php $reportHelper->process($reportArray, $notes); ?>
-</table>
-                            </td>
-                        </tr>
-                    <?php } else { ?>
-                        <tr>
-                            <td colspan='2' align='left' class='noborder'>&nbsp;</td>
-                        </tr>
-                        <tr>
-                            <td colspan='2' align='left' class='noborder'>&nbsp;</td>
-                        </tr>
-                        <tr>
-                            <td colspan='2' align='left' class='noborder'><font size="+1">Number of Successful Full-Text Article Requests from an Archive <?php echo $textAdd; ?></font>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td colspan='2' align='center' class='noborder'>
-                                <table id='R2' class="table rep-res" border='1'>
-                                    <?php $reportHelper->process($reportArray, $notes); ?>
-                                </table>
-                            </td>
-                        </tr><?php
+echo "<center>
+    <table class='noborder' style='width: 780px;'>
+    <tr>
+    <td class='noborder' align=center colspan='2'>
+    <table class='noborder' style='text-align: left;'>
+    <tr>";
+if ($reportHelper->outputType === 'web'){
+    echo "<td class='head report-head-img-box' align=left valign='top'><a
+        href='index.php'><img
+        class='report-head-img'
+            src='images/transparent.gif'></a></td>
+            <td class='noborder report-head-info-box' align=left valign='bottom'>
+            <table class='noborder'>
+            <tr valign='bottom'><td class='head' style='padding: 5px; vertical-align: bottom;'>
+            <form name='viewreport' method='post' action='report.php",$reportHelper->visible_inputs->getStr(),"'>",
+            $reportHelper->hidden_inputs->getStr();
+    echo "<font size='+1'>$report->name</font>&nbsp;<a href=\"javascript:showPopup('report','$report->id');\"
+        title='Click to show information about this report'
+        style='border: none'><img src='images/help.gif'
+        style='border: none'></a><br>
+        $reportHelper->paramDisplay<a href='index.php",$reportHelper->visible_inputs->getStr(),"'>Modify Parameters</a>&nbsp; <a href='index.php'>Create New Report</a> <br>";
+    $html = array('xls','print');
+    for($i=0;$i<2;$i++){
+        echo "<a href=\"javascript:viewReportOutput('{$html[$i]}');\"
+            style=\"border: none\"><img border='0'
+            src=\"images/{$html[$i]}" . (($i)?'er':'') . ".gif\"></a> ";
     }
-}?>
-</table>
-                </td>
-            </tr>
-            <tr>
-                <td class='noborder' style='text-align: left;'><br /> <br />
-<?php
+    echo "<br></form></td>
+        <td class='head' align=right valign='top'>&nbsp;</td></tr>
+        </table>";
+} else {
+    echo "<td class='head'><font size='+1'>$report->name</font><br>$reportHelper->paramDisplay<br>";
+}
+echo "</td></tr>";
 
-// echo $rprt_sql;
+$notes = new ReportNotes($report->dbname);
+
+$reportArray = $reportHelper->getReportResults(false);
+$textAdd = (($report->id === '1') || ($report->id === '2')) ? 'By Month and Resource' : '';
+$r1_title = "Number of Successful Full-Text Article Requests $textAdd";
+$r1_tbl = "table id='R1' class='table rep-res'";
+if ($reportHelper->outputType === 'web') {
+    echo "
+        <tr class='rtitle'><td colspan='2'>
+        $r1_title
+        </td></tr>
+        <tr><td colspan='2' class='shadednoborder'><$r1_tbl style='width: 100%'>";
+} else {
+    echo "
+        <tr><td colspan='2' align=left class='noborder'>
+        <font size='+1'>$r1_title</font>
+        </td></tr>
+        <tr><td colspan='2' align=center class='noborder'><$r1_tbl border='1'>";
+}
+echo $reportHelper->process($reportArray,$notes),"</table></td></tr>";
+$reportArray = $reportHelper->getReportResults(true); // archive query
+$rp_fldcnt = $reportHelper->nfields();
+
+if ($reportArray) {
+    $r2_title = "Number of Successful Full-Text Article Requests from an Archive $textAdd";
+    $r2_tbl = "table id='R2' class='table rep-res'";
+    if ($reportHelper->outputType === 'web') {
+        echo "<tr class='rtitle'><td colspan='2'>
+            $r2_title
+            </td></tr>
+            <tr><td colspan='2' class='shadednoborder'><$r2_tbl style='width: 100%'>";
+    } else {
+        for($i=0;$i<2;$i++) {
+            echo "<tr><td colspan='2' align=left class='noborder'>&nbsp;</td></tr>";
+        }
+        echo "<tr><td colspan='2' align=left class='noborder'>
+            <font size='+1'>$r2_title</font>
+            </td></tr>
+            <tr><td colspan='2' align=center class='noborder'><$r2_tbl border='1'>";
+    }
+    echo $reportHelper->process($reportArray, $notes),"</table></td></tr>";
+}
+$rp_fldcnt = $reportHelper->nfields();
+echo "</table>
+    </td>
+    </tr>
+    <tr>
+    <td class='noborder' style='text-align: left;'><br> <br>";
+
+
 // for excel
-$modcolcount = $reportHelper->numFields() - 2;
+$modcolcount = $rp_fldcnt - 2;
+$nbsp6 = '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
+$txt_merged = "Multiple titles with the same print ISSN (generally multiple parts) have been merged together";
+if ($reportHelper->outputType != 'xls') {
+    echo "<table style='width: 350px; border-width: 1px'>
+        <tr>
+        <td colspan='2'><b>Key</b></td>
+        </tr>";
+    if (!$reportHelper->showUnadjusted) {
+        $outlier_txt = array('not been adjusted','been adjusted manually by Electronic Resources',$txt_merged);
 
-if ($reportHelper->outputType != 'xls') { ?>
-                    <table style='width: 350px; border-width: 1px'>
-                        <tr>
-                            <td colspan='2'><b>Key</b></td>
-                        </tr>
-        <?php if (!$reportHelper->showUnadjusted) { ?>
-                        <tr>
-                            <td class='flagged'>&nbsp;</td>
-                            <td>Programmatically flagged as outlier based on previous 12
-                                month average. The number has not been adjusted.</td>
-                        </tr>
-                        <tr>
-                            <td class='overriden'>&nbsp;</td>
-                            <td>Programmatically flagged as outlier based on previous 12
-                                month average. The number has been adjusted manually by
-                                Electronic Resources.</td>
-                        </tr>
-                        <tr>
-                            <td class='merged'>&nbsp;</td>
-                            <td>Multiple titles with the same print ISSN (generally multiple
-                                parts) have been merged together.</td>
-                        </tr>
-         <?php } else { ?>
-                        <tr>
-                            <td class='l1'>&nbsp;</td>
-                            <td>Programmatically flagged as outlier using the following formula: Count is <?php echo $reportHelper->outlier[1]['overageCount']; ?> over <?php echo $reportHelper->outlier[1]['overagePercent']; ?>% of the previous 12 month average. </td>
-                        </tr>
-                        <tr>
-                            <td class='l2'>&nbsp;</td>
-                            <td>Programmatically flagged as outlier using the following formula: Count is <?php echo $reportHelper->outlier[2]['overageCount']; ?> over <?php echo $reportHelper->outlier[2]['overagePercent']; ?>% of the previous 12 month average. </td>
-                        </tr>
-                        <tr>
-                            <td class='l3'>&nbsp;</td>
-                            <td>Programmatically flagged as outlier using the following formula: Count is <?php echo $reportHelper->outlier[3]['overageCount']; ?> over <?php echo $reportHelper->outlier[3]['overagePercent']; ?>% of the previous 12 month average. </td>
-                        </tr>
-                        <tr>
-                            <td class='merged'>&nbsp;</td>
-                            <td>Multiple titles with the same print ISSN (generally multiple
-                                parts) have been merged together.</td>
-                        </tr>
-    <?php } ?>
-    </table>
-    <?php
+        for ($i=0;$i<3;$i++) {
+            echo "<tr>
+                <td class='{$outlier_cls[$i]}'>&nbsp;</td>
+                <td>Programmatically flagged as outlier based on previous 12
+                month average. The number has {$outlier_txt[$i]}.</td>
+                </tr>";
+        }
+    } else {
+        for ($i=1;$i<=3;++$i) {
+            echo "<tr>
+                <td class='l$i'>&nbsp;</td>
+                <td>Programmatically flagged as outlier using the following formula: Count is {$reportHelper->outlier[$i]['overageCount']} over {$reportHelper->outlier[$i]['overagePercent']}% of the previous 12 month average. </td>
+                </tr>";
+        }
+        echo "<tr>
+            <td class='{$outlier_cls[2]}'>&nbsp;</td>
+            <td>$txt_merged.</td>
+            </tr>";
+    }
+    echo "</table>";
     // excel
-} else { ?>
-    <table style='border-width: 1px'>
-    <?php if (!$reportHelper->showUnadjusted) { ?>
-                        <tr>
-                            <td colspan='<?php echo $reportHelper->numFields(); ?>'>
-                                <table style='border: 0px;'>
-                                    <tr>
-                                        <td class='noborder' align='right'><b>Color Background Key</b></td>
-                                        <td class='flagged'>&nbsp;</td>
-                                        <td class='noborder' colspan='<?php echo $modcolcount; ?>'>Programmatically
-                                            flagged as outlier based on previous 12 month average. The
-                                            number has not been adjusted.</td>
-                                    </tr>
-                                </table>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td colspan='<?php echo $reportHelper->numFields(); ?>'>
-                                <table style='border: 0px;'>
-                                    <tr>
-                                        <td class='noborder'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td>
-                                        <td class='overriden'>&nbsp;</td>
-                                        <td class='noborder' colspan='<?php echo $modcolcount; ?>'>Programmatically
-                                            flagged as outlier based on previous 12 month average. The
-                                            number has been adjusted manually by Electronic Resources.</td>
-                                    </tr>
-                                </table>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td colspan='<?php echo $reportHelper->numFields(); ?>'>
-                                <table style='border: 0px;'>
-                                    <tr>
-                                        <td class='noborder'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td>
-                                        <td class='merged'>&nbsp;</td>
-                                        <td class='noborder' colspan='<?php echo $modcolcount; ?>'>Multiple
-                                            titles with the same print ISSN (generally multiple parts)
-                                            have been merged together.</td>
-                                    </tr>
-                                </table>
-                            </td>
-                        </tr>
-    <?php } else {?>
-                        <tr>
-                            <td colspan='<?php echo $reportHelper->numFields(); ?>'>
-                                <table style='border: 0px;'>
-                                    <tr>
-                                        <td class='noborder' align='right'><b>Color Background Key</b></td>
-                                        <td style='width: 20px;'
-                                            bgcolor='<?php echo Color::$levelColors[1][2]; ?>'>&nbsp;</td>
-                                        <td class='noborder' colspan='<?php echo $modcolcount; ?>'>Programmatically flagged as outlier using the following formula: Count is <?php echo $reportHelper->outlier[1]['overageCount']; ?> over <?php echo $reportHelper->outlier[1]['overagePercent']; ?>% of the previous 12 month average. </td>
-                                    </tr>
-                                </table>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td colspan='<?php echo $reportHelper->numFields(); ?>'>
-                                <table style='border: 0px;'>
-                                    <tr>
-                                        <td class='noborder'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td>
-                                        <td style='width: 20px;'
-                                            bgcolor='<?php echo Color::$levelColors[2][2]; ?>'>&nbsp;</td>
-                                        <td class='noborder' colspan='<?php echo $modcolcount; ?>'>Programmatically flagged as outlier using the following formula: Count is <?php echo $reportHelper->outlier[2]['overageCount']; ?> over <?php echo $reportHelper->outlier[2]['overagePercent']; ?>% of the previous 12 month average.</td>
-                                    </tr>
-                                </table>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td colspan='<?php echo $reportHelper->numFields(); ?>'>
-                                <table style='border: 0px;'>
-                                    <tr>
-                                        <td class='noborder'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td>
-                                        <td style='width: 20px;'
-                                            bgcolor='<?php echo Color::$levelColors[3][2]; ?>'>&nbsp;</td>
-                                        <td class='noborder' colspan='<?php echo $modcolcount; ?>'>Programmatically flagged as outlier using the following formula: Count is <?php echo $reportHelper->outlier[3]['overageCount']; ?> over <?php echo $reportHelper->outlier[3]['overagePercent']; ?>% of the previous 12 month average.</td>
-                                    </tr>
-                                </table>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td colspan='<?php echo $reportHelper->numFields(); ?>'>
-                                <table style='border: 0px;'>
-                                    <tr>
-                                        <td class='noborder'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td>
-                                        <td class='merged'>&nbsp;</td>
-                                        <td class='noborder' colspan='<?php echo $modcolcount; ?>'>Multiple
-                                            titles with the same print ISSN (generally multiple parts)
-                                            have been merged together.</td>
-                                    </tr>
-                                </table>
-                            </td>
-                        </tr>
-    <?php
+} else {
+    $html = array('ab'=>"Programmatically flagged as outlier based on previous 12 month average. The number has",
+        'c'=>"Multiple titles with the same print ISSN (generally multiple parts) have been merged together");
+
+    echo "<table style='border-width: 1px'>";
+    if (!$reportHelper->showUnadjusted) {
+        echo "<tr><td colspan='$rp_fldcnt'><table style='border: 0px;'><tr>
+            <td class='noborder' align=right><b>Color Background Key</b></td>
+            <td class='{$outlier_cls[0]}'>&nbsp;</td>
+            <td class='noborder' colspan='$modcolcount'>{$html['ab']} not been adjusted.</td>
+            </tr></table></td></tr>";
+        echo "<tr><td colspan='$rp_fldcnt'><table style='border: 0px;'><tr>
+            <td class='noborder'>$nbsp6</td>
+            <td class='{$outlier_cls[1]}'>&nbsp;</td>
+            <td class='noborder' colspan='$modcolcount'>{$html['ab']} been adjusted manually by Electronic Resources.</td>
+            </tr></table></td></tr>";
+
+        echo "                        <tr><td colspan='$rp_fldcnt'><table style='border: 0px;'><tr>
+            <td class='noborder'>$nbsp6</td>
+            <td class='{$outlier_cls[2]}'>&nbsp;</td>
+            <td class='noborder' colspan='$modcolcount'>{$html['c']}.</td>
+            </tr></table></td></tr>";
+    } else {
+        $txt_label = "Programmatically flagged as outlier using the following formula: Count is";
+        $html = array();
+        for ($i=1;$i<=3;$i++) {
+            $arr = $reportHelper->outlier[$i];
+            $col = Color::$levelColors[$i];
+            $html[$i] = array('col'=>$col[2],'cnt'=>$arr['overageCount'],'%'=>$arr['overagePercent']);
+        }
+
+
+        $html_top = "<tr><td colspan='$rp_fldcnt'><table style='border: 0px;'><tr>";
+        $html_bot = "</tr></table></td></tr>";
+
+        $html_top_opt = array("align=right><b>Color Background Key</b>",">$nbsp6",">$nbsp6");
+        for ($i=1;$i<=3;++$i) {
+            echo "$html_top<td class='noborder' {$html_top_opt[$i-1]}</td>
+                <td style='width: 20px;' bgcolor='{$html[$i]['col']}'>&nbsp;</td>
+                <td class='noborder' colspan='$modcolcount'>$txt_label {$html[$i]['cnt']} over {$html[$i]['%']}% of the previous 12 month average.</td>$html_bot";
+        }
+
+        echo $html_top,
+            "<td class='noborder'>$nbsp6</td>
+            <td class='{$outlier_cls[2]}'>&nbsp;</td>
+            <td class='noborder' colspan='$modcolcount'>$txt_merged.</td>",
+            $html_bot;
+
+
+
+
     }
 }
 unset($reportHelper->showUnadjusted, $reportHelper->outlier);
-?>
-<tr>
-                            <td class='noborder' style='text-align: left;'>
-<?php if ($notes->hasPlatforms()) { ?>
-<br> <br>
-                                <table style='border-width: 1px'>
-                                    <tr>
-                                        <td colspan='3'><b>Platform Interface Notes (if available)</b></td>
-                                    </tr>
-<?php $reportHelper->report->printPlatformInfo($notes->platformNotes()); ?>
-</table><?php
-}
+echo "<tr><td class='noborder' style='text-align: left;'>";
 
-if ($notes->hasPublishers()) {
-    ?>
-<br><br>
-                                <table style="border-width: 1px">
-                                    <tr>
-                                        <td colspan="3"><b>Publisher Notes (if available)</b></td>
-                                    </tr>
-<?php $reportHelper->report->printPublisherInfo($notes->publisherNotes()); ?>
-                                </table><?php
+if ($notes->hasPlatforms() || $notes->hasPublishers()) {
+    $note_type = array('Platform Interface','Publisher');
+    for ($i=0;$i<2;$i++) {
+        echo "<br> <br>
+            <table style='border-width: 1px'>
+            <tr><td colspan='3'><b>{$note_type[$i]} Notes (if available)</b></td></tr>";
+        if (!($i) && $notes->hasPlatforms()) {
+            $report->printPlatformInfo($notes->platformNotes());
+        } else if ($notes->hasPublishers()) {
+            $report->printPublisherInfo($notes->publisherNotes());
+        }
+        echo '</table>';
+    }
 }
-?>
-
-                            
-                            
-                            
-                            
-                            
-                        </td>
-                    </tr>
-                </table> <br /></td>
-            <td class='noborder'>&nbsp;</td>
-        </tr>
+echo "</td>
+    </tr>
+    </table> <br></td>
+    <td class='noborder'>&nbsp;</td>
+    </tr>
     </table>
-</center>
+    </center>
+    <script type='text/javascript' src='js/report.js'></script>";
 
-
-<script type="text/javascript" src="js/report.js"></script>
-
-
-<?php if ($reportHelper->outputType === 'print') { ?>
+if ($reportHelper->outputType === 'print') {?>
 <script type="text/javascript">
-<!--
-window.print();
+    <!--
+    window.print();
 //-->
 </script>
 <?php
@@ -379,4 +264,3 @@ window.print();
 // echo footer
 include 'templates/footer.php';
 ob_end_flush();
-?>

@@ -38,75 +38,51 @@ class ReportParameter {
         $this->sqlRestriction = $result['parameterSQLRestriction'];
 
         if($this->displayPrompt === 'Year') {
-            $this->makeDateRange();
+            DateRange::Convert($this);
         }
     }
 
     public function printHTMLdateRangePicker() {
-        $name = "prm_$this->ID";
+        $vals = $this->getValue();
+        if (! $vals) {
+            $vals = array('m0'=>1,'y0'=>-1,'m1'=>12,'y1'=>-1);
+        }
 
-        $m = "<option value=1>January</option>
-            <option value=2>February</option>
-            <option value=3>March</option>
-            <option value=4>April</option>
-            <option value=5>May</option>
-            <option value=6>June</option>
-            <option value=7>July</option>
-            <option value=8>August</option>
-            <option value=9>September</option>
-            <option value=10>October</option>
-            <option value=11>November</option>
-            <option value=12>December</option>";
-
-        $y = "";
         $varname_parentID = "prm_$this->parentReportParameterID";
         $parentID = null;
         if (isset($_GET[$varname_parentID])) {
             $parentID = $_GET[$varname_parentID];
         }
 
-        foreach ($this->getSelectValues($parentID) as $value) {
-            $y .= "<option value='{$value['cde']}'>{$value['val']}</option>";
-        }
-        $cls_event = "class='opt' onchange='javascript:updateDateRange";
+        $months = array('','January','February','March','April','May','June','July','August','September','October','November','December');
+        $years = $this->getSelectValues($parentID);
         echo "<div id='div_parm_$this->ID' class='param'>
-            <br><fieldset>
-            <legend>From date:</legend>
-            <select id='from_date_month' name=\"{$name}[from][month]\" value=1 $cls_event(true);' >$m</select>
-            <select id='from_date_year' name=\"{$name}[from][year]\" value='' $cls_event(true);' >$y</select>
-            </fieldset>
-            <br><fieldset>
-            <legend>Through date:</legend>
-            <select id='to_date_month' name=\"{$name}[to][month]\" value=12 $cls_event(false);' >$m</select>
-            <select id='to_date_year' name=\"{$name}[to][year]\" value='' $cls_event(false);'>$y</select>
-            </fieldset>
-            </div>";
-    }
-
-    private function makeDateRange() {
-        $this->requiredInd = 1;
-        $this->displayPrompt = "Date Range";
-        $this->typeCode = 'dddr';
-
-        if (stripos($this->sql, 'mus')) {
-            $field = 'mus.year';
-        } else {
-            $field = 'yus.year';
-        }
-        
-        $val = $this->getValue();
-        $from = $val['from'];
-        $to = $val['to']; 
-
-        if ($from['year']==$to['year']) {
-            $this->addWhereClause = "($field={$from['year']} AND month BETWEEN {$from['month']} AND {$to['month']})";
-        } else {
-            $this->addWhereClause = "($field={$from['year']} AND month BETWEEN {$from['month']} AND 12)";
-            for ($y=$from['year']; $y<$to['year']; ++$y) {
-                $this->addWhereClause .= " OR ($field=$y AND month BETWEEN 1 AND 12)";
+            <input type='hidden' id='daterange' name='prm_$this->ID' />";
+        for ($i=0;$i<2;$i++) {
+            $mOpts = "";
+            $yOpts = "";
+            $legendtxt = ($i)?'Through date':'From date';
+            for ($mi=1;$mi<count($months);$mi++) {
+                $sel = ($vals["m$i"]==$mi)?'selected="selected"':'';
+                $mOpts .= "<option value='$mi' $sel>{$months[$mi]}</option>";
             }
-            $this->addWhereClause .=  " OR ($field={$to['year']} AND month BETWEEN 1 and {$to['month']})";
+
+            foreach ($years as $y) {
+                $sel = ($vals["y$i"]==$y['cde'])?'selected="selected"':'';
+                $yOpts .= "<option value=\"{$y['cde']}\" $sel>{$y['val']}</option>";
+            }
+            echo "<br />
+                <fieldset>
+                    <legend>$legendtxt:</legend>
+                    <select id='date{$i}m' class='opt' onchange='javascript:daterange_onchange($i);'>
+                        $mOpts
+                    </select>
+                    <select id='date{$i}y' class='opt' onchange='javascript:daterange_onchange($i);'>
+                        $yOpts
+                    </select>
+                </fieldset>";
         }
+        echo "</div>";
     }
 
     public function getValue() {
@@ -116,7 +92,7 @@ class ReportParameter {
         if ($this->typeCode === 'ms' && (!isset($_REQUEST['useHidden']) || $_REQUEST['useHidden'] == null)) {
             return implode("', '", explode(',', str_replace('\\\\', ',', $_REQUEST["prm_$this->ID"])));
         } else if ($this->typeCode === 'dddr') {
-            return $_REQUEST["prm_$this->ID"]; 
+            return DateRange::Decode($_REQUEST["prm_$this->ID"]); 
         } else {
             return trim($_REQUEST["prm_$this->ID"]);
         }
@@ -142,7 +118,7 @@ class ReportParameter {
             $parmSQL = str_replace("ADD_WHERE", "", $this->sql);
         }
         $result = $this->db
-            ->changeDB(Config::$database->{$parmReport->getDBName()})
+            ->selectDB(Config::$database->{$parmReport->dbname})
             ->query($parmSQL)
             ->fetchRows();
         $num_rows = count($result);
@@ -158,7 +134,7 @@ class ReportParameter {
         // set database to reporting database name
         Config::init();
         $row = $this->db
-            ->changeDB(Config::$database->name)
+            ->selectDB(Config::$database->name)
             ->query("SELECT count(*) parent_count 
             FROM ReportParameter 
             WHERE parentReportParameterID = '{$this->ID}'")
@@ -170,7 +146,7 @@ class ReportParameter {
     public function getChildren() {
         Config::init();
         $result = $this->db
-            ->changeDB(Config::$database->name)
+            ->selectDB(Config::$database->name)
             ->query("SELECT reportParameterID 
             FROM ReportParameter 
             WHERE parentReportParameterID = '{$this->ID}' ORDER BY 1")
@@ -197,7 +173,7 @@ class ReportParameter {
         }
         $sql .= " in ('$id') order by 1";
         $result = $this->db
-            ->changeDB(Config::$database->{$parmReport->getDBName()})
+            ->selectDB(Config::$database->{$parmReport->dbname})
             ->query($sql)
             ->fetchRows(MYSQLI_ASSOC);
         return array_column($result, 'reportDisplayName');

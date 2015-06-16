@@ -32,39 +32,11 @@ class ReportTable {
         return $this->_fields;
     }
 
-    public function numFields() {
+    public function nfields() {
         if ($this->_needToCheck) {
-            die('Not ready to call numFields()!');
+            die('Not ready to call nfields()!');
         }
         return count($this->_fields);
-    }
-
-    public function printHeader($sortColumn,$sortOrder) {
-        if ($this->_needToCheck) {
-            die('Not ready to call printHeader()!');
-        }
-        $output = "";
-        $colcount = 1;
-        echo "<thead>";
-        foreach ( $this->fields() as $field ) {
-            echo "<th>" . ucwords(strtolower(strtr($field, '_', ' ')));
-            if ($this->_outputType === 'web') {
-                echo "<div><a
-                    href=\"javascript:sortRecords('$colcount', 'asc');\"> <img
-                    align='center' src='images/arrowdown";
-                if ($sortColumn == $colcount && $sortOrder === 'asc')
-                    echo '_sel';
-                echo ".gif' border=0></a>&nbsp; <a
-                    href=\"javascript:sortRecords('$colcount', 'desc');\"> <img
-                    align='center' src='images/arrowup";
-                if ($sortColumn == $colcount && $sortOrder === 'desc')
-                    echo '_sel';
-                echo ".gif' border=0></a></div>";
-            }   
-            echo "</th>";
-            ++$colcount;
-        }
-        echo "</thead>";
     }
 
     //returns rather than prints the string it prepares
@@ -100,6 +72,6 @@ class ReportTable {
     }
 
     public function prep_colspan_row($text,$td_opts){
-        return "<tr class='data'><td colspan=" . $this->numFields() . " $td_opts>$text</td></tr>";
+        return "<tr class='data'><td colspan=" . $this->nfields() . " $td_opts>$text</td></tr>";
     }
 }

@@ -31,9 +31,9 @@ class DBService {
 		}
 		
 		if ($dbname)
-			$this->changeDB($dbname);
+			$this->selectDB($dbname);
 	}
-	public function changeDB($databaseName){
+	public function selectDB($databaseName){
 		// $databaseName='coral_reporting_pprd';
 		if (!$this->db->select_db($databaseName)){
 			throw new Exception("There was a problem with the database: " . $this->db->error);

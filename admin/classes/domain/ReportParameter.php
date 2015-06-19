@@ -122,9 +122,9 @@ class ReportParameter {
             ->query($parmSQL)
             ->fetchRows();
         $num_rows = count($result);
-        $valueArray = new SplFixedArray($num_rows);
+        $valueArray = array();
         for ($i = 0; $i < $num_rows; ++$i) {
-            $valueArray[$i] = array('cde' => $result[$i][0],'val' => $result[$i][1]);
+            $valueArray[] = array('cde' => $result[$i][0],'val' => $result[$i][1]);
         }
         return $valueArray;
     }
@@ -152,9 +152,9 @@ class ReportParameter {
             WHERE parentReportParameterID = '{$this->ID}' ORDER BY 1")
             ->fetchRows(MYSQLI_ASSOC);
         $num_rows = count($result);
-        $objects = new SplFixedArray($num_rows);
+        $objects = array();
         for ($i = 0; $i < $num_rows; ++$i) {
-            $objects[$i] = new ReportParameter($result[$i]['reportParameterID']);
+            $objects[] = new ReportParameter($result[$i]['reportParameterID']);
         }
         return $objects;
     }

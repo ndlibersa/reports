@@ -7,6 +7,8 @@
  */
 class ReportHelper {
     public $report;
+    public $table;
+    public $notes;
     public $outputType = 'web';
     public $startPage = 1;
     public $sortColumn = 1;
@@ -27,12 +29,13 @@ class ReportHelper {
     
     public function __construct() {
         if (! isset($_REQUEST['reportID'])) {
-			error_log("missing reportID");
-			header("location: index.php");
-			exit();
+            error_log("missing reportID; redirecting to index.php");
+            header("location: index.php");
+            exit();
         }
 
-		$this->report = new Report($_REQUEST['reportID']);
+        $this->report = new Report($_REQUEST['reportID']);
+        $this->notes = new ReportNotes($this->report->dbname);
         $hiddenInputs = FormInputs::GetHidden();
         $visibleInputs = FormInputs::GetVisible();
         
@@ -85,33 +88,27 @@ class ReportHelper {
         }
     }
 
-    public function nfields() {
-        $flds = $this->reportTable->nfields();
-        if($flds===null)
-            die("reportTable->nfields() returned null!");
-        return $flds;
-    }
-    
-    public function process(DBResult &$reportArray, ReportNotes &$notes) {
+    public function process(DBResult &$reportArray) {
+        $notes = $this->notes;
         $countForGrouping = 0;
         $sumArray = array();
         $totalSumArray = array();
         $holdArray = array();
 
-        $this->reportTable = new ReportTable($this->outputType, $reportArray->fetchFields());
-        $this->reportTable->dropFields($this->dropMonths);
+        $this->table = new ReportTable($this->outputType, $reportArray->fetchFields());
+        $this->table->dropFields($this->dropMonths);
 
-        if (! $this->reportTable->nfields()) {
+        if (! $this->table->nfields()) {
             return;
         }
 
-		$i = 1;
+        $i = 1;
         echo "<thead>";
-        foreach ( $this->reportTable->fields() as $field ) {
+        foreach ( $this->table->fields() as $field ) {
             echo "<th>" . ucwords(strtolower(strtr($field, '_', ' ')));
             if ($this->outputType === 'web') {
                 echo "<div><a
-					href=\"javascript:sortRecords('$i', 'asc');\"> <img
+                    href=\"javascript:sortRecords('$i', 'asc');\"> <img
                     align='center' src='images/arrowdown";
                 if ($this->sortColumn == $i && $this->sortOrder === 'asc')
                     echo '_sel';
@@ -254,14 +251,14 @@ class ReportHelper {
                 $rowoutput .= "</tr>";
                 if ($countForGrouping > 1) {
                     $rowparms = array("Total for $hold_rprt_grpng_data");
-                    foreach ( $this->reportTable->fields() as $field ) {
+                    foreach ( $this->table->fields() as $field ) {
                         $rowparms[] = $this->sumField($this->sumColsArray[$field], $sumArray[$field]);
                     }
-                    $rowoutput .= $this->reportTable->prepare_row_as_str($rowparms);
+                    $rowoutput .= $this->table->prepare_row_as_str($rowparms);
                 }
                 $sumArray = array();
                 $countForGrouping = 0;
-                $rowoutput .= $this->reportTable->prepare_colspan_row('&nbsp;','') . "</tr>";
+                $rowoutput .= $this->table->prepare_colspan_row('&nbsp;','') . "</tr>";
             }
             ++$rowNum;
 
@@ -274,16 +271,16 @@ class ReportHelper {
                 // one last grouping summary
                 if ($countForGrouping > 1) {
                     $grp[] = array("Total for $hold_rprt_grpng_data");
-                    foreach ( $this->reportTable->fields() as $field ) {
+                    foreach ( $this->table->fields() as $field ) {
                         $grp[] = $this->sumField($this->sumColsArray[$field], $sumArray[$field]);
                     }
-                    $this->reportTable->printRow($grp);
+                    $this->table->printRow($grp);
                 }
-                echo $this->reportTable->prep_colspan_row('&nbsp;','');
+                echo $this->table->prep_colspan_row('&nbsp;','');
             }
             $rowparms = array();
             $total = '';
-            foreach ($this->reportTable->fields() as $field) {
+            foreach ($this->table->fields() as $field) {
                 if (isset($this->sumColsArray[$field],$totalSumArray[$field])) {
                     $total = $this->sumColTotal($this->sumColsArray[$field], $totalSumArray[$field], $rowNum);
                 }
@@ -293,13 +290,13 @@ class ReportHelper {
                     $rowparms[] = '&nbsp;';
             }
             $rowparms[0] = "Total for Report";
-            $this->reportTable->printRow($rowparms);
+            $this->table->printRow($rowparms);
         }
 
         if ($rowNum === 0) {
-            echo $this->reportTable->prep_colspan_row('<i>Sorry, no rows were returned.</i>','');
+            echo $this->table->prep_colspan_row('<i>Sorry, no rows were returned.</i>','');
         } else {
-            echo "<tr><td colspan=" . $this->reportTable->nfields() . " align='right'><i>Showing rows {$this->startPage} to ";
+            echo "<tr><td colspan=" . $this->table->nfields() . " align='right'><i>Showing rows {$this->startPage} to ";
             if (($this->maxRows > 0) && ($rowNum > $this->maxRows)) {
                 echo "$this->maxRows of $this->maxRows";
             } else {
@@ -386,15 +383,7 @@ class ReportHelper {
     }
     
     public function getReportResults($isArchive) {
-        if ($isArchive) {
-            $orderBy = '';
-        } else if ($this->sortColumn) {
-            $orderBy = "ORDER BY $this->sortColumn $this->sortOrder";
-        } else {
-            $orderBy = $this->report->orderBySQL;
-        }
-        
-        return $this->report->run($this->dropMonths,$isArchive, $this->addWhere, $orderBy);
+        return $this->report->run($this->dropMonths,$isArchive, $this->addWhere, $this->sortColumn, $this->sortOrder, $this->table);
     }
     
     public function getLinkResolverLink(&$thisRow) {

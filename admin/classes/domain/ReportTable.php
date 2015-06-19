@@ -7,7 +7,7 @@ class ReportTable {
 
     public function __construct($outputType, array $fields) {
         if ($fields===null || $outputType===null) {
-            die("ReportTable constructor received a null param!");
+            throw new RuntimeException("ReportTable constructor received a null param!");
         }
         $this->_outputType = $outputType;
         $this->_fields = $fields;
@@ -27,14 +27,18 @@ class ReportTable {
 
     public function fields() {
         if ($this->_needToCheck) {
-            die('Not ready to call fields()!');
+            throw new Exception('Not ready to call fields()!');
         }
         return $this->_fields;
     }
 
+    public function fieldAt($index) {
+        return $this->_fields[$index];
+    }
+
     public function nfields() {
         if ($this->_needToCheck) {
-            die('Not ready to call nfields()!');
+            throw new Exception('Not ready to call nfields()!');
         }
         return count($this->_fields);
     }
@@ -42,7 +46,7 @@ class ReportTable {
     //returns rather than prints the string it prepares
     public function prepareRow(array $row) {
         if ($this->_needToCheck) {
-            die('Not ready to call prepareRow()!');
+            throw new Exception('Not ready to call prepareRow()!');
         }
 
         $tr_pieces = array("<tr class='data'><td class='sum'>","</tr>");
@@ -57,7 +61,7 @@ class ReportTable {
 
     public function prepare_row_as_str(array $row) {
         if ($this->_needToCheck) {
-            die('Not ready to call printRow()!');
+            throw new Exception('Not ready to call printRow()!');
         }
 
         $td = '';

@@ -24,6 +24,7 @@ include_once 'directory.php';
 
 $reportHelper = new ReportHelper();
 $report = $reportHelper->report;
+$notes = $reportHelper->notes;
 $outlier_cls = array('flagged','overriden','merged');
 $pageTitle = $report->name;
 
@@ -90,9 +91,6 @@ if ($reportHelper->outputType === 'web'){
 }
 echo "</td></tr>";
 
-$notes = new ReportNotes($report->dbname);
-
-$reportArray = $reportHelper->getReportResults(false);
 $textAdd = (($report->id === '1') || ($report->id === '2')) ? 'By Month and Resource' : '';
 $r1_title = "Number of Successful Full-Text Article Requests $textAdd";
 $r1_tbl = "table id='R1' class='table rep-res'";
@@ -109,9 +107,10 @@ if ($reportHelper->outputType === 'web') {
         </td></tr>
         <tr><td colspan='2' align=center class='noborder'><$r1_tbl border='1'>";
 }
+$reportArray = $reportHelper->getReportResults(false);
 echo $reportHelper->process($reportArray,$notes),"</table></td></tr>";
+
 $reportArray = $reportHelper->getReportResults(true); // archive query
-$rp_fldcnt = $reportHelper->nfields();
 
 if ($reportArray) {
     $r2_title = "Number of Successful Full-Text Article Requests from an Archive $textAdd";
@@ -132,7 +131,6 @@ if ($reportArray) {
     }
     echo $reportHelper->process($reportArray, $notes),"</table></td></tr>";
 }
-$rp_fldcnt = $reportHelper->nfields();
 echo "</table>
     </td>
     </tr>
@@ -141,7 +139,7 @@ echo "</table>
 
 
 // for excel
-$modcolcount = $rp_fldcnt - 2;
+$modcolcount = $reportHelper->table->nfields() - 2;
 $nbsp6 = '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
 $txt_merged = "Multiple titles with the same print ISSN (generally multiple parts) have been merged together";
 if ($reportHelper->outputType != 'xls') {
@@ -236,9 +234,38 @@ if ($notes->hasPlatforms() || $notes->hasPublishers()) {
             <table style='border-width: 1px'>
             <tr><td colspan='3'><b>{$note_type[$i]} Notes (if available)</b></td></tr>";
         if (!($i) && $notes->hasPlatforms()) {
-            $report->printPlatformInfo($notes->platformNotes());
+            foreach ( $notes->platformNotes() as $platform ){
+                echo "<tr valign='top'><td align='right'><b>{$platform['reportDisplayName']}</b></td><td>Year";
+                if ($platform['startYear'] != '' && ($platform['endYear'] == '' || $platform['endYear'] == '0')){
+                    echo ": {$platform['startYear']} to present";
+                }else{
+                    echo "s: {$platform['startYear']} to {$platform['endYear']}";
+                }
+                echo '</td><td>This Interface ';
+                if ($platform['counterCompliantInd'] == '1'){
+                    echo 'provides COUNTER compliant stats.<br>';
+                }else{
+                    echo 'does not provide COUNTER compliant stats.<br>';
+                }
+                if ($platform['noteText']){
+                    echo "<br><i>Interface Notes</i>: {$platform['noteText']}<br>";
+                }
+                echo '</td></tr>';
+            }
         } else if ($notes->hasPublishers()) {
-            $report->printPublisherInfo($notes->publisherNotes());
+            foreach ( $notes->publisherNotes() as $publisher ){
+                echo "<tr valign='top'><td align='right'><b>{$publisher['reportDisplayName']}</b></td><td>Year";
+                if (($publisher['startYear'] != '') && ($publisher['endYear'] == '')){
+                    echo ": {$publisher['startYear']}";
+                }else{
+                    echo "s: {$publisher['startYear']} to {$publisher['endYear']}";
+                }
+                echo '</td><td>';
+                if (isset($publisher['notes'])){
+                    echo $publisher['notes'];
+                }
+                echo '</td></tr>';
+            }
         }
         echo '</table>';
     }

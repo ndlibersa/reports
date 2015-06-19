@@ -38,25 +38,25 @@ class DateRange {
     
     public static function Encode(array $range) {
         if(!isset($range['y0'],$range['y1'],$range['m0'],$range['m1'])) {
-            throw new InvalidArgumentException("[missing one or more array fields]");
+            throw new InvalidArgumentException("missing one or more array fields");
         }
         $str = sprintf('%02u%04u%02u%04u',$range['m0'],$range['y0'],$range['m1'],$range['y1']);
         if($str==null || $str=='' || strlen($str)!==12) {
-            throw new UnexpectedValueException("[encoding failed: $str]");
+            throw new UnexpectedValueException("encoding failed: $str");
         }
         return $str;
     }
 
     public static function Decode($val) {
         if (!is_string($val)) {
-            throw new UnexpectedValueException("[passed value is wrong type, expected: string]");
+            throw new UnexpectedValueException("passed value is wrong type, expected: string");
         } else if (strlen($val)!==12) {
-            throw new UnexpectedValueException("[decoding failed: $val]");
+            throw new UnexpectedValueException("decoding failed: $val");
         }
         $parsed = sscanf($val,'%02u%04u%02u%04u');
         $range = array('m0'=>$parsed[0], 'y0'=>$parsed[1],'m1'=>$parsed[2], 'y1'=>$parsed[3]);
         if($range==null || !is_array($range)){
-            throw new UnexpectedValueException("[return value is wrong type, expected: array]");
+            throw new UnexpectedValueException("return value is wrong type, expected: array");
         }
         return $range;
     }

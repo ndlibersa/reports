@@ -29,24 +29,24 @@ class FormInputs {
         return $obj;
     }
 
-	public function getStr(){
-		if ($this->isVisible)
-			return "?" . ltrim($this->str,"&");
-		return $this->str;
-	}
-    
+    public function getStr(){
+        if ($this->isVisible)
+            return "?" . ltrim($this->str,"&");
+        return $this->str;
+    }
+
     public function addParam($name, $val){
         if (!is_string($name) || $name=='') {
-            throw new InvalidArgumentException("[param 'name': $name]");
+            throw new InvalidArgumentException("param 'name' needs to be a non-empty string.");
         } else if (is_array($val)) {
             throw new InvalidArgumentException("[param 'val' should not be an array]");
-        }   
+        }
 
         if($this->isVisible) {
-			$this->str .= "&$name=$val";
+            $this->str .= "&$name=$val";
         } else {
-			$this->str .= "<input type='hidden' name=\"$name\" value=\"$val\">";
+            $this->str .= "<input type='hidden' name=\"$name\" value=\"$val\">";
         }
-		return $this;
+        return $this;
     }
 }

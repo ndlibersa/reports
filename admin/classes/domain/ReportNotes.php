@@ -12,36 +12,40 @@
  * @author bgarcia
  */
 class ReportNotes {
-	protected $pubIDs = array();
-	protected $platIDs = array();
-	protected $dbname;
-	public function __construct($dbname){
-		$this->dbname = $dbname;
+	protected static $pubIDs;
+	protected static $platIDs;
+	protected static $dbname;
+
+    public static function init($dbname){
+		self::$dbname = $dbname;
+        self::$pubIDs = array();
+        self::$platIDs = array();
 	}
-	public function addPublisher($id){
-		$this->pubIDs[$id] = '';
+
+	public static function addPublisher($id){
+		self::$pubIDs[$id] = '';
 	}
-	public function addPlatform($id){
-		$this->platIDs[$id] = '';
+	public static function addPlatform($id){
+		self::$platIDs[$id] = '';
 	}
-	public function hasPublishers(){
-		return !empty($this->pubIDs);
+	public static function hasPublishers(){
+		return !empty(self::$pubIDs);
 	}
-	public function hasPlatforms(){
-		return !empty($this->platIDs);
+	public static function hasPlatforms(){
+		return !empty(self::$platIDs);
 	}
-	public function platformNotes(){
-		$db = new DBService(Config::$database->{$this->dbname});
+	public static function platformNotes(){
+		$db = new DBService(Config::$database->{self::$dbname});
 		return $db->query("SELECT startYear, endYear, counterCompliantInd, noteText, reportDisplayName
 				FROM PlatformNote pn, Platform p
 				WHERE p.platformID = pn.platformID
-				AND pn.platformID in (" . $db->sanitize(join(',', array_keys($this->platIDs))) . ");")->fetchRows(MYSQLI_ASSOC);
+				AND pn.platformID in (" . $db->sanitize(join(',', array_keys(self::$platIDs))) . ");")->fetchRows(MYSQLI_ASSOC);
 	}
-	public function publisherNotes(){
-		$db = new DBService(Config::$database->{$this->dbname});
+	public static function publisherNotes(){
+		$db = new DBService(Config::$database->{self::$dbname});
 		return $db->query("SELECT startYear, endYear, noteText, reportDisplayName
 				FROM PublisherPlatformNote pn, PublisherPlatform pp
 				WHERE pp.publisherPlatformID = pn.publisherPlatformID
-				AND pp.publisherPlatformID in (" . $db->sanitize(join(',', array_keys($this->pubIDs))) . ");")->fetchRows(MYSQLI_ASSOC);
+				AND pp.publisherPlatformID in (" . $db->sanitize(join(',', array_keys(self::$pubIDs))) . ");")->fetchRows(MYSQLI_ASSOC);
 	}
 }

@@ -33,7 +33,7 @@ include 'templates/header.php';
 
 <table class='noborder' cellpadding="0" cellspacing="0" style="width: 699px; text-align: left;">
 <tr>
-<td class="noborder" 
+<td class="noborder"
 style="background-image: url('images/reportstitle.gif'); background-repeat: no-repeat; text-align: right;">
 
 <span style="border: none; outline: none; -moz-outline-style: none; float: left;">
@@ -86,7 +86,7 @@ if (isset($reportID)) {
 
     foreach ( $report->getParameters() as $parm ) {
         if ($parm->typeCode === 'dddr') {
-            $parm->printHTMLdateRangePicker();
+            DateRange::PrintForm($parm);
             continue;
         } else {
             $div_parm_contents = "";
@@ -142,19 +142,19 @@ if (isset($reportID)) {
                     </select>
                 </td>
                 <td align='center' valign='middle' style='border:0px;'>
-                    <input type='button' value='--&gt;' style='width:35px' 
+                    <input type='button' value='--&gt;' style='width:35px'
                         onclick='moveOptions(this.form.prm_left_$parm->ID, this.form.prm_right_$parm->ID);
-                        placeInHidden(\",\",\"prm_right_$parm->ID\", \"prm_$parm->ID\");'\>
-                    <input type='button' value='&lt;--' style='width:35px' 
+                        placeInHidden(\",\",\"prm_right_$parm->ID\", \"prm_$parm->ID\");'/>
+                    <input type='button' value='&lt;--' style='width:35px'
                         onclick='moveOptions(this.form.prm_right_$parm->ID, this.form.prm_left_$parm->ID);
-                        placeInHidden(\",\",\"prm_right_$parm->ID\", \"prm_$parm->ID\");'\>
+                        placeInHidden(\",\",\"prm_right_$parm->ID\", \"prm_$parm->ID\");'/>
                 </td>
                 <td style='border:0px;'>
                     <select name='prm_right_$parm->ID' id='prm_right_$parm->ID' class='opt' size='10' multiple='multiple' style='width:175'>
                     </select>
                 </td>
             </tr>
-       
+
             <tr>
                 <td style='border:0px;' colspan='3' align='left'>
                     <input type='hidden' name='prm_$parm->ID' id='prm_$parm->ID' value=''/>
@@ -181,7 +181,7 @@ if (isset($reportID)) {
                       <label for='prm_$parm->ID'>$parm->displayPrompt</label>
                       $div_parm_contents
                   </div>";
-        } 
+        }
     }
 } else {
     echo "<br />";
@@ -192,7 +192,7 @@ if (isset($reportID)) {
 </div>
 <input type='hidden' name='rprt_output' value='web'/>
 <br /><br />
-<input type="submit" value="Submit" name="submitbutton" id="submitbutton"/> 
+<input type="submit" value="Submit" name="submitbutton" id="submitbutton"/>
 <input type="button" value="Reset" name="resetbutton" id="resetbutton" onclick="javascript:clearParms();"/>
 </td>
 </tr>

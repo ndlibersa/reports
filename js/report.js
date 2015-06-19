@@ -17,8 +17,8 @@
 
 
 $(document).ready(function(){
+	if($('#R0')) $('#R0').floatThead();
 	if($('#R1')) $('#R1').floatThead();
-	if($('#R2')) $('#R2').floatThead();
 });
 
 

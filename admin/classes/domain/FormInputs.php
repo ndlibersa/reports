@@ -14,23 +14,22 @@
 class FormInputs {
     protected $str;
     protected $isVisible;
-    
-    public static function GetVisible() {
-        $obj = new FormInputs;
-        $obj->str = '';
-        $obj->isVisible = true;
-        return $obj;
-    }
-    
-    public static function GetHidden() {
-        $obj = new FormInputs;
-        $obj->str = '';
-        $obj->isVisible = false;
-        return $obj;
+
+    public static $hidden;
+    public static $visible;
+
+    public static function init() {
+        self::$hidden = new self;
+        self::$hidden->str = "";
+        self::$hidden->visible = false;
+
+        self::$visible = new self;
+        self::$visible->str = "";
+        self::$visible->visible = true;
     }
 
     public function getStr(){
-        if ($this->isVisible)
+        if ($this->visible)
             return "?" . ltrim($this->str,"&");
         return $this->str;
     }
@@ -42,10 +41,10 @@ class FormInputs {
             throw new InvalidArgumentException("[param 'val' should not be an array]");
         }
 
-        if($this->isVisible) {
+        if($this->visible) {
             $this->str .= "&$name=$val";
         } else {
-            $this->str .= "<input type='hidden' name=\"$name\" value=\"$val\">";
+            $this->str .= "<input type='hidden' name=\"$name\" value=\"$val\"/>";
         }
         return $this;
     }

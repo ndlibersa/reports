@@ -30,7 +30,7 @@ if ($action === 'getReportParameters') {
 
     foreach ( $report->getParameters() as $parm ) {
         if ($parm->typeCode === 'dddr') {
-            $parm->printHTMLdateRangePicker();
+            DateRange::PrintForm($parm);
             continue;
         } else {
             $div_parm_contents = "";
@@ -66,7 +66,7 @@ if ($action === 'getReportParameters') {
                         $options .= "<option value='" . strtr($value['cde'], ",'", "\\\\") . "'>" . $value['val'] . "</option>";
                     }
                 }
-                $div_parm_contents .= 
+                $div_parm_contents .=
 "<span style='margin-left:-90px'>
     <div id='div_show_$parm->ID' style='float:left;margin-bottom: 5px'>
         <a href=\"javascript:toggleLayer('div_$parm->ID','block');
@@ -82,12 +82,12 @@ if ($action === 'getReportParameters') {
                     </select>
                 </td>
                 <td align='center' valign='middle' style='border:0px;'>
-                    <input type='button' value='--&gt;' style='width:35px' 
+                    <input type='button' value='--&gt;' style='width:35px'
                         onclick='moveOptions(this.form.prm_left_$parm->ID, this.form.prm_right_$parm->ID);
-                        placeInHidden(\",\",\"prm_right_$parm->ID\", \"prm_$parm->ID\");'\>
-                    <input type='button' value='&lt;--' style='width:35px' 
+                        placeInHidden(\",\",\"prm_right_$parm->ID\", \"prm_$parm->ID\");'/>
+                    <input type='button' value='&lt;--' style='width:35px'
                         onclick='moveOptions(this.form.prm_right_$parm->ID, this.form.prm_left_$parm->ID);
-                        placeInHidden(\",\",\"prm_right_$parm->ID\", \"prm_$parm->ID\");'\>
+                        placeInHidden(\",\",\"prm_right_$parm->ID\", \"prm_$parm->ID\");'/>
                 </td>
                 <td style='border:0px;'>
                     <select name='prm_right_$parm->ID' id='prm_right_$parm->ID' class='opt'
@@ -107,18 +107,18 @@ if ($action === 'getReportParameters') {
 </span>";
             } else if ($parm->typeCode === "chk") {
                 $div_parm_contents .= "<input type='checkbox' name='prm_$parm->ID' class='opt'
-                    style='text-align:left;width:13px;'>";
+                    style='text-align:left;width:13px;'/>";
             } else {
-                $div_parm_contents .= "<input type='text' name='prm_$parm->ID' value='' class='opt'>"
+                $div_parm_contents .= "<input type='text' name='prm_$parm->ID' value='' class='opt'/>"
                     . (($parm->formatCode === 'date') ? '<font size="-2">ex: MM/DD/YYYY</font>' : '');
             }
             echo "<div id='div_parm_$parm->ID'>
-                      <br>
+                      <br/>
                       <label for='prm_$parm->ID'>$parm->displayPrompt</label>
                       $div_parm_contents
                   </div>";
         }
-    } 
+    }
 } else if ($action === 'getChildParameters') {
     $reportParameter = new ReportParameter($_GET['parentReportParameterID']);
     $parmArray = array();
@@ -128,7 +128,7 @@ if ($action === 'getReportParameters') {
 } else if ($action === 'getChildUpdate') {
     $reportParameterVal = $_GET['reportParameterVal'];
     $parm = new ReportParameter($_GET['reportParameterID']);
-    echo "<br><label for='prm_$parm->ID'>$parm->displayPrompt</label>";
+    echo "<br/><label for='prm_$parm->ID'>$parm->displayPrompt</label>";
     if ($parm->typeCode === "dd") {
         echo "<select name='prm_$parm->ID' id='prm_$parm->ID' class='opt' ";
         // check if it's a parent
@@ -156,11 +156,11 @@ if ($action === 'getReportParameters') {
             $options .= "<option value='' selected>All</option>";
         }
         foreach ( $parm->getSelectValues($reportParameterVal) as $value ) {
-            $options .= "<option value='" 
+            $options .= "<option value='"
                 . strtr(str_replace("'", "\\'", $value['cde']), ',', "\\") . "'>" . $value['val']
                 . "</option>";
         }
-        echo 
+        echo
 "<span style='margin-left:-90px'>
     <div id='div_show_$parm->ID' style='float:left;margin-bottom: 5px'>
         <a href=\"javascript:toggleLayer('div_$parm->ID','block');
@@ -176,19 +176,19 @@ if ($action === 'getReportParameters') {
                     </select>
                 </td>
                 <td align='center' valign='middle' style='border:0px;'>
-                    <input type='button' value='--&gt;' style='width:35px' 
+                    <input type='button' value='--&gt;' style='width:35px'
                         onclick='moveOptions(this.form.prm_left_$parm->ID, this.form.prm_right_$parm->ID);
-                        placeInHidden(\",\",\"prm_right_$parm->ID\", \"prm_$parm->ID\");'\>
-                    <input type='button' value='&lt;--' style='width:35px' 
+                        placeInHidden(\",\",\"prm_right_$parm->ID\", \"prm_$parm->ID\");'/>
+                    <input type='button' value='&lt;--' style='width:35px'
                         onclick='moveOptions(this.form.prm_right_$parm->ID, this.form.prm_left_$parm->ID);
-                        placeInHidden(\",\",\"prm_right_$parm->ID\", \"prm_$parm->ID\");'\>
+                        placeInHidden(\",\",\"prm_right_$parm->ID\", \"prm_$parm->ID\");'/>
                 </td>
                 <td style='border:0px;'>
                     <select name='prm_right_$parm->ID' id='prm_right_$parm->ID' class='opt' size='10' multiple='multiple' style='width:175'>
                     </select>
                 </td>
             </tr>
-       
+
             <tr>
                 <td style='border:0px;' colspan='3' align='left'>
                     <input type='hidden' name='prm_$parm->ID' id='prm_$parm->ID' value=''/>

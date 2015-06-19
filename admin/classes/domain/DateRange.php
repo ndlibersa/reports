@@ -11,7 +11,7 @@ class DateRange {
         $parm->displayPrompt = "Date Range";
         $parm->typeCode = 'dddr';
 
-        if (stripos($parm->sql, 'mus')) {
+        if (stripos($parm->addWhereClause, 'mus')!==FALSE) {
             $field = 'mus.year';
         } else {
             $field = 'yus.year';
@@ -24,18 +24,26 @@ class DateRange {
         }
 
         if ($range['y0']===$range['y1']) {
-            $parm->addWhereClause = "($field={$range['y0']} AND month BETWEEN {$range['m0']} AND {$range['m1']})";
+            $parm->addWhereClause = "($field={$range['y0']} AND "
+            . self::monthRangeSameYearSQL($range['m0'], $range['m1']) . ")";
         } else {
-            $parm->addWhereClause = "($field={$range['y0']} AND month BETWEEN {$range['m0']} AND 12)";
-            for ($y=$range['y0']; $y<$range['y1']; ++$y) {
+            $parm->addWhereClause = "(($field={$range['y0']} AND month BETWEEN {$range['m0']} AND 12)";
+            for ($y=$range['y0']+1; $y<$range['y1']; ++$y) {
                 $parm->addWhereClause .= " OR ($field=$y AND month BETWEEN 1 AND 12)";
             }
-            $parm->addWhereClause .=  " OR ($field={$range['y1']} AND month BETWEEN 1 and {$range['m1']})";
+            $parm->addWhereClause .=  " OR ($field={$range['y1']} AND "
+            . self::monthRangeSameYearSQL(1, $range['m1']) . "))";
         }
 
         return $parm;
     }
-    
+
+    private static function monthRangeSameYearSQL($start,$end) {
+        if ($start===$end)
+            return "month=$start";
+        return "month BETWEEN $start AND $end";
+    }
+
     public static function Encode(array $range) {
         if(!isset($range['y0'],$range['y1'],$range['m0'],$range['m1'])) {
             throw new InvalidArgumentException("missing one or more array fields");
@@ -59,5 +67,48 @@ class DateRange {
             throw new UnexpectedValueException("return value is wrong type, expected: array");
         }
         return $range;
+    }
+
+	public static function PrintForm(ReportParameter $param) {
+        $vals = $param->getValue();
+        if (! $vals) {
+            $vals = array('m0'=>1,'y0'=>-1,'m1'=>12,'y1'=>-1);
+        }
+
+        $varname_parentID = "prm_$param->parentReportParameterID";
+        $parentID = null;
+        if (isset($_GET[$varname_parentID])) {
+            $parentID = $_GET[$varname_parentID];
+        }
+
+        $months = array('','January','February','March','April','May','June','July','August','September','October','November','December');
+        $years = $param->getSelectValues($parentID);
+        echo "<div id='div_parm_$param->ID' class='param'>
+            <input type='hidden' id='daterange' name='prm_$param->ID' />";
+        for ($i=0;$i<2;$i++) {
+            $mOpts = "";
+            $yOpts = "";
+            $legendtxt = ($i)?'Through date':'From date';
+            for ($mi=1;$mi<count($months);$mi++) {
+                $sel = ($vals["m$i"]==$mi)?'selected="selected"':'';
+                $mOpts .= "<option value='$mi' $sel>{$months[$mi]}</option>";
+            }
+
+            foreach ($years as $y) {
+                $sel = ($vals["y$i"]==$y['cde'])?'selected="selected"':'';
+                $yOpts .= "<option value=\"{$y['cde']}\" $sel>{$y['val']}</option>";
+            }
+            echo "<br />
+                <fieldset>
+                    <legend>$legendtxt:</legend>
+                    <select id='date{$i}m' class='opt' onchange='javascript:daterange_onchange($i);'>
+                        $mOpts
+                    </select>
+                    <select id='date{$i}y' class='opt' onchange='javascript:daterange_onchange($i);'>
+                        $yOpts
+                    </select>
+                </fieldset>";
+        }
+        echo "</div>";
     }
 }

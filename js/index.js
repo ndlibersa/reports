@@ -42,7 +42,7 @@ function clearParms() {
 
 
 function updateChildren(parmID){
-	
+
 	//first get a list of this parm's children
 	$.ajax({
 		 type:       "GET",
@@ -51,7 +51,7 @@ function updateChildren(parmID){
 		 data:       "action=getChildParameters&parentReportParameterID=" + parmID,
 		 success:    function(childParms) {
 			var childParmArray = childParms.split("|");
-			
+
 			for (var i=0; i<childParmArray.length-1; i++) {
 				$.ajax({
 				 type:       "GET",
@@ -63,7 +63,7 @@ function updateChildren(parmID){
 					$("#div_parm_" + childParmArray[i]).html(html);
 					}
 				});
-			}	
+			}
 		}
 	});
 }
@@ -73,7 +73,7 @@ function moveOptions(theSelFrom, theSelTo)
 	var selectedText = new Array();
 	var selectedValues = new Array();
 	var selectedCount = 0;
-	
+
 	var i;
 
 	// Find the selected Options in reverse order
@@ -90,7 +90,7 @@ function moveOptions(theSelFrom, theSelTo)
 			selectedCount++;
 		}
 	}
-	
+
 	// Add the selected text/values in reverse order.
 	// This will add the Options to the 'to' Select
 	// This will add the Options to the 'to' Select
@@ -99,7 +99,7 @@ function moveOptions(theSelFrom, theSelTo)
 	{
 		theSelTo.options[theSelTo.length] = new Option(selectedText[i], selectedValues[i]);
 	}
-	
+
 }
 
 function placeInHidden(delim, selStr, hidStr)
@@ -144,11 +144,15 @@ function daterange_onchange(isMax) {
 }
 
 function daterange_onsubmit() {
-    genericGetById('daterange').value = 
+	try {
+		elem = genericGetById('daterange');
+	} catch(err) {
+		return true;
+	}
+	genericGetById('daterange').value =
              ('00'+genericGetById('date0m').value).slice(-2)
            + ('0000'+genericGetById('date0y').value).slice(-4)
            + ('0000'+genericGetById('date1m').value).slice(-2)
            + ('00'+genericGetById('date1y').value).slice(-4);
-
     return true;
 }

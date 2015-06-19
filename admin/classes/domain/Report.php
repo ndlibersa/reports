@@ -25,11 +25,18 @@ class Report {
     public $hasGroupTotalInd;
     public $orderby;
     public $infoText;
+    public $dropMonths = array();
+    public $addWhere = array('','');
+    public $sort = array('order'=>'asc','column'=>1);
+    public $table;
+    public $titleID = null;
+    public $baseURL = null;
+    public $showUnadjusted = false;
 
     public function __construct($id){
-        if ($id === null) {
+        //if ($id === null) {
             //throw new BadMethodCallException("Report constructor did not receive a valid id.");
-        }
+        //}
 
         $this->db = new DBService();
         $result = $this->db
@@ -43,38 +50,103 @@ class Report {
         $this->orderby = $result['orderBySQL'];
         $this->infoText = $result['infoDisplayText'];
         $this->sql = $result['reportSQL'];
+
+        FormInputs::init();
+        ReportNotes::init($this->dbname);
+
+        if (isset($_REQUEST['titleID']) && $_REQUEST['titleID']) {
+            $this->titleID = $_REQUEST['titleID'];
+            FormInputs::$visible->addParam('titleID',$this->titleID);
+        }
+
+        if (isset($_REQUEST['sortColumn'])) {
+            $this->sort['column'] = $_REQUEST['sortColumn'];
+        }
+
+        if (isset($_REQUEST['sortOrder'])) {
+            $this->sort['order'] = $_REQUEST['sortOrder'];
+        }
+
+        FormInputs::$visible->addParam('reportID',$this->id);
+        FormInputs::$hidden->addParam('useHidden',1);
+        FormInputs::$hidden->addParam('sortColumn',$this->sort['column']);
+        FormInputs::$hidden->addParam('sortOrder',$this->sort['order']);
+
+        Config::init();
+        if (Config::$settings->baseURL) {
+            if (strpos(Config::$settings->baseURL, '?') > 0) {
+                $this->baseURL = Config::$settings->baseURL . '&';
+            } else {
+                $this->baseURL = Config::$settings->baseURL .'?';
+            }
+        }
     }
 
-    public function run(array $ignoreCols, $isArchive, array $addWhere, $sortColumn, $sortOrder, $reportTable){
+    public function run($isArchive){
         if ($isArchive) {
             $orderBy = '';
-        } else if ($sortColumn) {
-            if (isset($reportTable)) {
-                $orderBy = "ORDER BY " . $reportTable->fieldAt($sortColumn);
-            } else {
-                $orderBy = "ORDER BY $sortColumn $sortOrder";
-            }
+        } else if (isset($this->table)) {
+            $orderBy = "ORDER BY " . $this->table->fieldAt($this->sort['column']);
         } else {
-            error_log("sortColumn was not given a default value! Default fallback no longer works properly!");
-            $orderBy = $this->orderby;
+            $orderBy = "ORDER BY {$this->sort['column']} {$this->sort['order']}";
         }
         $sql = $this->sql;
-        foreach ($ignoreCols as $COL) {
-            if (stripos(" $COL",$sql)) {
+        foreach ($this->dropMonths as $COL) {
+            if (stripos(" $COL",$sql)!==FALSE) {
                 $sql = preg_replace("[ ,]?$COL", "",$sql, $limit=1);
             }
         }
 
-        if (stripos($this->sql, 'mus')) {
-            $field = 'mus.archiveInd = ' . (0+$isArchive);
+        if (stripos($this->sql, 'mus')!==FALSE) {
+            $field = 'mus.archiveInd = ' . intval($isArchive);
         } else {
-            $field = 'yus.archiveInd = ' . (0+$isArchive);
+            $field = 'yus.archiveInd = ' . intval($isArchive);
         }
-        $sql = str_replace('ADD_WHERE2', $addWhere[1], $sql);
-        $sql = str_replace('ADD_WHERE', "{$addWhere[0]} AND $field", $sql);
         $sql .= " $orderBy";
+        $sql = str_replace('ADD_WHERE2', $this->addWhere[1], $sql);
+
+        if (stripos($this->sql, 'mus')!==FALSE) {
+            $field = 'mus.archiveInd = ' . intval($isArchive);
+        } else {
+            $field = 'yus.archiveInd = ' . intval($isArchive);
+        }
+
+        $sql = str_replace('ADD_WHERE', "{$this->addWhere[0]} AND $field", $sql);
         $db = new DBService(Config::$database->{$this->dbname});
-        return $db->query("$sql");
+        $reportArray = $db->query("$sql");
+        $this->table = new ReportTable($this, $reportArray->fetchFields());
+        return $reportArray;
+    }
+
+    public function needToGroupRow($outputType,$performCheck,$print_subtotal_flag) {
+        return $outputType != 'xls'
+            && !($performCheck && in_array(false, $this->table->columnData['group'], true) !== false)
+            && $print_subtotal_flag
+            && $this->hasGroupTotalInd;
+    }
+
+    public function loopThroughParams() {
+        foreach ( $this->getParameters() as $parm ) {
+            $prm_value = $parm->getValue();
+            if ($prm_value) {
+                if ($parm->typeCode === 'chk') {
+                    $parm->procChk($prm_value);
+                } else if ($parm->addWhereClause === 'limit') {
+                    $parm->procLimit($prm_value);
+                } else if ($parm->typeCode === 'dddr') {
+                    $parm->procDddr($prm_value);
+                } else if ($parm->displayPrompt === 'Provider / Publisher'
+                    || $parm->displayPrompt === 'Provider' || $parm->displayPrompt === 'Publisher') {
+                    $parm->procProviderPublisher($prm_value);
+                } else {
+                    $parm->procDefault($prm_value);
+                }
+            }
+        }
+        // if titleID was passed in, add that to addwhere
+        if (($this->id === '1') && ($this->titleID != '')) {
+            $this->addWhere[1] .= " AND t.titleID = $this->titleID";
+        }
     }
 
     // returns outlier array for display at the bottom of reports
@@ -85,9 +157,9 @@ class Report {
                 ->selectDB(Config::$database->{$this->dbname})
                 ->query("SELECT outlierLevel, overageCount, overagePercent FROM Outlier ORDER BY 2")
                 ->fetchRows(MYSQLI_ASSOC) as $outlierArray ){
-            $outlier[$outlierArray['outlierLevel']]['overageCount'] = $outlierArray['overageCount'];
-            $outlier[$outlierArray['outlierLevel']]['overagePercent'] = $outlierArray['overagePercent'];
-            $outlier[$outlierArray['outlierLevel']]['outlierLevel'] = $outlierArray['outlierLevel'];
+            $outlier[$outlierArray['outlierLevel']]['count'] = $outlierArray['overageCount'];
+            $outlier[$outlierArray['outlierLevel']]['percent'] = $outlierArray['overagePercent'];
+            $outlier[$outlierArray['outlierLevel']]['level'] = $outlierArray['outlierLevel'];
         }
         return $outlier;
     }
@@ -111,14 +183,14 @@ class Report {
     }
 
     // removes associated parameters
-    public function getGroupingColumns(array $ignoreList){
+    public function getColumnData(){
         // set database to reporting database name
         Config::init();
         $this->db->selectDB(Config::$database->name);
         // Get the report grouping columns into groupColsArray for faster lookup later
         // returns array of objects
         $groupColsArray = array();
-        $exceptions = implode("', '",$ignoreList);
+        $exceptions = implode("', '",$this->dropMonths);
         foreach ( $this->db
                 ->query("SELECT reportGroupingColumnName
                         FROM ReportGroupingColumn
@@ -128,16 +200,7 @@ class Report {
                 ->fetchRows(MYSQLI_ASSOC) as $row ){
             $groupColsArray[$row['reportGroupingColumnName']] = false;
         }
-        return $groupColsArray;
-    }
-
-    // removes associated parameters
-    public function getReportSums($ignoreList){
-        Config::init();
-        // Get the report summing columns into sumColsArray for faster lookup later
-        // returns array of objects
         $sumColsArray = array();
-        $exceptions = implode("', '",$ignoreList);
         foreach($this->db
                 ->selectDB(Config::$database->name)
                 ->query("SELECT reportColumnName, reportAction
@@ -148,7 +211,8 @@ class Report {
                 ->fetchRows(MYSQLI_ASSOC) as $row ){
             $sumColsArray[$row['reportColumnName']] = $row['reportAction'];
         }
-        return $sumColsArray;
+
+        return array('group'=>$groupColsArray,'sum'=>$sumColsArray);
     }
 
     // return the title of the ejournal for this report
@@ -159,6 +223,18 @@ class Report {
             ->query("SELECT title FROM Title WHERE titleID = '$titleID'")
             ->fetchRow(MYSQLI_ASSOC);
         return $row['title'];
+    }
+
+    public function getLinkResolverLink(&$row) {
+        if ($row['PRINT_ISSN']) {
+            if (($row['ONLINE_ISSN'])) {
+                return "{$this->baseURL}rft.issn={$row['PRINT_ISSN']}&rft.eissn={$row['ONLINE_ISSN']}";
+            } else {
+                return "{$this->baseURL}rft.issn={$row['PRINT_ISSN']}";
+            }
+        } else {
+            return "{$this->baseURL}rft.eissn={$row['ONLINE_ISSN']}";
+        }
     }
 }
 ?>

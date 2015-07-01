@@ -38,7 +38,7 @@ class FormInputs {
         if (!is_string($name) || $name=='') {
             throw new InvalidArgumentException("param 'name' needs to be a non-empty string.");
         } else if (is_array($val)) {
-            throw new InvalidArgumentException("[param 'val' should not be an array]");
+            throw new InvalidArgumentException("param 'val' should not be an array.");
         }
 
         if($this->visible) {

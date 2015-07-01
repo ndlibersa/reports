@@ -59,7 +59,7 @@ class ReportTable {
 
     public static function formatColumn(Report $report, $outputType, array $currentRow, $field, $value) {
         $colOutput = "";
-        
+
         $value = str_replace(" & "," &amp; ",$value);
 
         if ($outputType === 'web'
@@ -115,7 +115,7 @@ class ReportTable {
                 $cspan++;
             } else {
                 if($cspan>1) {
-                    $str .= "<td class='sum' colspan='$cspan'>$spanval</td>";
+                    $str .= "<td class='sum' colspan='$cspan'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;$spanval</td>";
                     $cspan = 0;
                     $spanval = '';
                 }
@@ -129,6 +129,9 @@ class ReportTable {
     }
 
     public function sumField($field, array &$sumArray) {
+        if (!isset($sumArray[$field]))
+            return '&nbsp;';
+
         $total = '';
         $sumType = $this->columnData['sum'][$field];
         if ($sumType === 'dollarsum') {

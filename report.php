@@ -273,13 +273,15 @@ for ($irep=0; $irep<2; $irep++) {
         // loop through the group arrays, if any are N then echo flag is N otherwise it will be left to Y
         if ($report->needToGroupRow($outputType,$performCheck,$print_subtotal_flag)) {
             if ($countForGrouping > 1) {
-                $rowparms = array("Total for $hold_rprt_grpng_data");
+                $rowparms = array();
                 foreach ( $report->table->fields() as $field ) {
-                    $rowparms[] = $report->table->sumField($field, $sumArray);
+                    $total = $report->table->sumField($field, $sumArray);
+                    $rowparms[] = ($total===null||$total==='')?'&nbsp;':$total;
                 }
+                $rowparms[0] = "Total for $hold_rprt_grpng_data";
                 $rowOutput .= ReportTable::formatTotalsRow($rowparms);
             }
-            $rowOutput .="<tr class='data'><td colspan=" . $report->table->nfields() . ">&nbsp;</td></tr>";
+           // $rowOutput .="<tr class='data'><td colspan=" . $report->table->nfields() . " class='sum'>&nbsp;</td></tr>";
 
             $sumArray = array();
             $countForGrouping = 0;
@@ -306,15 +308,16 @@ for ($irep=0; $irep<2; $irep++) {
             if ($report->hasGroupTotalInd && $hold_rprt_grpng_data) {
                 // one last grouping summary
                 if ($countForGrouping > 1) {
-                    $grp[] = array("Total for $hold_rprt_grpng_data");
+                    $grp = array();
                     foreach ( $report->table->fields() as $field ) {
-                        $grp[] = $report->table->sumField($field, $sumArray);
+                        $total = $report->table->sumField($field, $sumArray);
+                        $grp[] = ($total===null||$total==='')?'&nbsp;':$total;
                     }
-
+                    $grp[0] = "Total for $hold_rprt_grpng_data";
                     echo ReportTable::formatTotalsRow($grp);
                 }
 
-                echo "<tr class='data'><td colspan=" . $report->table->nfields() . ">&nbsp;</td></tr>";
+    //            echo "<tr class='data'><td colspan=" . $report->table->nfields() . " class='sum'>&nbsp;</td></tr>";
 
             }
             $rowparms = array();
@@ -323,10 +326,7 @@ for ($irep=0; $irep<2; $irep++) {
                 if (isset($report->table->columnData['sum'][$field],$totalSumArray[$field])) {
                     $total = $report->table->sumColumn($field, $totalSumArray, $rownum);
                 }
-                if ($total)
-                    $rowparms[] = $total;
-                else
-                    $rowparms[] = '&nbsp;';
+                $rowparms[] = ($total===null||$total==='')?'&nbsp;':$total;
                 $total = null;
             }
 

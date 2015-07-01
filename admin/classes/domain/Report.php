@@ -83,13 +83,13 @@ class Report {
     }
 
     public function run($isArchive){
-        if ($isArchive) {
+        /*if ($isArchive) {
             $orderBy = '';
         } else if (isset($this->table)) {
             $orderBy = "ORDER BY " . $this->table->fieldAt($this->sort['column']);
-        } else {
+        } else {*/
             $orderBy = "ORDER BY {$this->sort['column']} {$this->sort['order']}";
-        }
+        //}
         $sql = $this->sql;
         foreach ($this->dropMonths as $COL) {
             if (stripos(" $COL",$sql)!==FALSE) {
@@ -97,11 +97,6 @@ class Report {
             }
         }
 
-        if (stripos($this->sql, 'mus')!==FALSE) {
-            $field = 'mus.archiveInd = ' . intval($isArchive);
-        } else {
-            $field = 'yus.archiveInd = ' . intval($isArchive);
-        }
         $sql .= " $orderBy";
         $sql = str_replace('ADD_WHERE2', $this->addWhere[1], $sql);
 

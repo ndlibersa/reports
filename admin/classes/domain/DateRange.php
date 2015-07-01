@@ -111,4 +111,33 @@ class DateRange {
         }
         echo "</div>";
     }
+
+    public static function getMonthsUsed($range) {
+        $used = array();
+
+        $months = array(
+            'JAN','FEB','MAR','APR','MAY','JUN',
+            'JUL','AUG','SEP','OCT','NOV','DEC'
+            );
+
+        $miny = intval($range['y0']);
+        $maxy = intval($range['y1']);
+
+        for ($y=$miny; $y<=$maxy; ++$y) {
+            if (count($used)===12) {
+                return $used;
+            }
+
+            $minm = intval(($y===$miny)? $range['m0'] : 1)-1; //-1 so JAN=0
+            $maxm = intval(($y===$maxy)? $range['m1'] : 12)-1; //-1 so JAN=0
+
+            for ($m=$minm; $m<=$maxm; ++$m) {
+                $used[$months[$m]] = true;
+                if (count($used)===12) {
+                    return $used;
+                }
+            }
+        }
+        return $used;
+    }
 }

@@ -190,8 +190,7 @@ for ($irep=0; $irep<2; $irep++) {
     $numColsToGroup = count($report->table->columnData['group']);
     $rownum = 0;
 
-    $gfatherValue = null;
-    $fatherValue = null;
+    $prevValue = null;
 
 
 
@@ -205,7 +204,7 @@ for ($irep=0; $irep<2; $irep++) {
         if (isset($currentRow['publisherPlatformID']))
             ReportNotes::addPublisher($currentRow['publisherPlatformID']);
 
-        $reset = ($rownum+1 === $startRow);
+        //$reset = ($rownum+1 === $startRow);
         $performCheck = false;
         $print_subtotal_flag = false;
 
@@ -223,11 +222,11 @@ for ($irep=0; $irep<2; $irep++) {
             if (isset($report->table->columnData['group'][$field])) {
                 if ($report->sort['column'] === $colnum) {
                     $hold_rprt_grpng_data = $value;
-                    if (isset($fatherValue) && ($value != $fatherValue)) {
+                    if (isset($prevValue) && ($value != $prevValue)) {
                         $print_subtotal_flag = true;
                     }
                 } else if ($report->sort['order'] === '') {
-                    if (isset($fatherValue) && ($value != $fatherValue) && $fatherValue!='') {
+                    if (isset($prevValue) && ($value != $prevValue) && $prevValue!='') {
                         $report->table->columnData['group'][$field] = true;
                         // default echo flag to Y, we will reset later
                         $print_subtotal_flag = true;
@@ -249,13 +248,13 @@ for ($irep=0; $irep<2; $irep++) {
                     $totalSumArray[$field] = $value;
                 }
             }
-            if ($value != $fatherValue
+            /*if ($value != $prevValue
                 || $reset
                 || $outputType === 'xls'
                 || ($perform_subtotal_flag && $report->sort['order'] === '' && $numColsToGroup > 1)
             ) {
                 $reset = true;
-            }
+            }*/
 
 
 
@@ -286,8 +285,7 @@ for ($irep=0; $irep<2; $irep++) {
             $countForGrouping = 0;
         }
         ++$rownum;
-        $gfatherValue = $fatherValue;
-        $fatherValue = $currentRow[$field];
+        $prevValue = $currentRow[$field];
 
         $tblBody .= $rowOutput;
     }

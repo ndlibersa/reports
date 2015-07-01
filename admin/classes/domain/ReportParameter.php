@@ -158,17 +158,21 @@ class ReportParameter {
     }
 
     public function procDddr($prm_value) {
+        $months = array(
+            'JAN','FEB','MAR','APR','MAY','JUN',
+            'JUL','AUG','SEP','OCT','NOV','DEC'
+            );
+        $monthsUsed = DateRange::getMonthsUsed($prm_value);
+
         $addWhereNum = intval($this->addWhereNum == 2);
         self::$report->addWhere[$addWhereNum] .= " AND $this->addWhereClause";
-        if ($prm_value['y0'] === $prm_value['y1']) {
-            $months = array(
-                'JAN','FEB','MAR','APR','MAY','JUN','JUL','AUG','SEP','OCT','NOV','DEC');
-            for ($i=0; $i<12; ++$i) {
-                if (! ($i>=$prm_value['m0']-1 && $i<=$prm_value['m1']-1)) {
-                    self::$report->dropMonths[] = $months[$i];
-                }
+
+        for ($i=0; $i<12; ++$i) {
+            if (!isset($monthsUsed[$months[$i]])) {
+                self::$report->dropMonths[] = $months[$i];
             }
         }
+
         FormInputs::$visible->addParam("prm_$this->ID",DateRange::Encode($prm_value));
         $prm_value = $prm_value['m0'] . '/' . $prm_value['y0'] . '-'
             . $prm_value['m1'] . '/' . $prm_value['y1'];

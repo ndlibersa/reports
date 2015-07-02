@@ -187,7 +187,7 @@ for ($irep=0; $irep<2; $irep++) {
 
 
 
-    $countForGrouping = 0;
+    //$countForGrouping = 0;
     $sumArray = array();
     $totalSumArray = array();
     $perform_subtotal_flag = count($report->table->columnData['group'])>0;
@@ -196,7 +196,7 @@ for ($irep=0; $irep<2; $irep++) {
     }
 
     // loop through resultset
-    $numColsToGroup = count($report->table->columnData['group']);
+    //$numColsToGroup = count($report->table->columnData['group']);
     $rownum = 0;
 
     $prevValue = null;
@@ -214,7 +214,7 @@ for ($irep=0; $irep<2; $irep++) {
             ReportNotes::addPublisher($currentRow['publisherPlatformID']);
 
         //$reset = ($rownum+1 === $startRow);
-        $performCheck = false;
+        //$performCheck = false;
         $print_subtotal_flag = false;
 
         $colnum = 1;
@@ -230,7 +230,7 @@ for ($irep=0; $irep<2; $irep++) {
             // if sort is explicitly requested we will group on this column if it is allowed according to DB
             if (isset($report->table->columnData['group'][$field])) {
                 if ($report->sort['column'] === $colnum) {
-                    $hold_rprt_grpng_data = $value;
+                    //$hold_rprt_grpng_data = $value;
                     if (isset($prevValue) && ($value != $prevValue)) {
                         $print_subtotal_flag = true;
                     }
@@ -239,12 +239,12 @@ for ($irep=0; $irep<2; $irep++) {
                         $report->table->columnData['group'][$field] = true;
                         // default echo flag to Y, we will reset later
                         $print_subtotal_flag = true;
-                        $performCheck = true;
+                        //$performCheck = true;
                     }
-                    if ($numColsToGroup === 1)
+                    /*if ($numColsToGroup === 1)
                         $hold_rprt_grpng_data = $value;
                     else
-                        $hold_rprt_grpng_data = 'Group';
+                        $hold_rprt_grpng_data = 'Group';*/
                 }
             }
             // get the numbers out for summing
@@ -275,12 +275,12 @@ for ($irep=0; $irep<2; $irep++) {
             ++$colnum;
         } // end loop through columns
         $rowOutput .= "</tr>";
-        ++$countForGrouping;
+        //++$countForGrouping;
 
 
 
         // loop through the group arrays, if any are N then echo flag is N otherwise it will be left to Y
-        if ($report->needToGroupRow($outputType,$performCheck,$print_subtotal_flag)) {
+        /*if ($report->needToGroupRow($outputType,$performCheck,$print_subtotal_flag)) {
             if ($countForGrouping > 1) {
                 $rowparms = array();
                 foreach ( $report->table->fields() as $field ) {
@@ -294,7 +294,7 @@ for ($irep=0; $irep<2; $irep++) {
 
             $sumArray = array();
             $countForGrouping = 0;
-        }
+        }*/
         ++$rownum;
         $prevValue = $currentRow[$field];
 
@@ -314,7 +314,7 @@ for ($irep=0; $irep<2; $irep++) {
         echo "<tr class='data'><td colspan=" . $report->table->nfields() . "><i>Sorry, no rows were returned.</i></td></tr>";
     } else {
         if ($outputType != 'xls' && $perform_subtotal_flag) {
-            if ($report->hasGroupTotalInd && $hold_rprt_grpng_data) {
+            /*if ($report->hasGroupTotalInd && $hold_rprt_grpng_data) {
                 // one last grouping summary
                 if ($countForGrouping > 1) {
                     $grp = array();
@@ -328,7 +328,7 @@ for ($irep=0; $irep<2; $irep++) {
 
     //            echo "<tr class='data'><td colspan=" . $report->table->nfields() . " class='sum'>&nbsp;</td></tr>";
 
-            }
+            }*/
             $rowparms = array();
             $total = null;
             foreach ($report->table->fields() as $field) {

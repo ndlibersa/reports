@@ -51,12 +51,11 @@ class Report {
         $this->infoText = $result['infoDisplayText'];
         $this->sql = $result['reportSQL'];
 
-        FormInputs::init();
         ReportNotes::init($this->dbname);
 
-        if (isset($_REQUEST['titleID']) && $_REQUEST['titleID']) {
+        if (isset($_REQUEST['titleID']) && $_REQUEST['titleID']!==null && $_REQUEST['titleID']!=='') {
             $this->titleID = $_REQUEST['titleID'];
-            FormInputs::$visible->addParam('titleID',$this->titleID);
+            FormInputs::addVisible('titleID',$this->titleID);
         }
 
         if (isset($_REQUEST['sortColumn'])) {
@@ -67,10 +66,10 @@ class Report {
             $this->sort['order'] = $_REQUEST['sortOrder'];
         }
 
-        FormInputs::$visible->addParam('reportID',$this->id);
-        FormInputs::$hidden->addParam('useHidden',1);
-        FormInputs::$hidden->addParam('sortColumn',$this->sort['column']);
-        FormInputs::$hidden->addParam('sortOrder',$this->sort['order']);
+        FormInputs::addVisible('reportID',$this->id);
+        FormInputs::addHidden('useHidden',1);
+        FormInputs::addHidden('sortColumn',$this->sort['column']);
+        FormInputs::addHidden('sortOrder',$this->sort['order']);
 
         Config::init();
         if (Config::$settings->baseURL) {
@@ -120,30 +119,6 @@ class Report {
             && $this->hasGroupTotalInd;
     }
 
-    public function loopThroughParams() {
-        foreach ( $this->getParameters() as $parm ) {
-            $prm_value = $parm->getValue();
-            if ($prm_value) {
-                if ($parm->typeCode === 'chk') {
-                    $parm->procChk($prm_value);
-                } else if ($parm->addWhereClause === 'limit') {
-                    $parm->procLimit($prm_value);
-                } else if ($parm->typeCode === 'dddr') {
-                    $parm->procDddr($prm_value);
-                } else if ($parm->displayPrompt === 'Provider / Publisher'
-                    || $parm->displayPrompt === 'Provider' || $parm->displayPrompt === 'Publisher') {
-                    $parm->procProviderPublisher($prm_value);
-                } else {
-                    $parm->procDefault($prm_value);
-                }
-            }
-        }
-        // if titleID was passed in, add that to addwhere
-        if (($this->id === '1') && ($this->titleID != '')) {
-            $this->addWhere[1] .= " AND t.titleID = $this->titleID";
-        }
-    }
-
     // returns outlier array for display at the bottom of reports
     public function getOutliers(){
         Config::init();
@@ -172,7 +147,7 @@ class Report {
                     WHERE reportID = '{$this->id}'
                     ORDER BY 1")
                 ->fetchRows(MYSQLI_ASSOC) as $row ){
-            $objects[] = new ReportParameter($row['reportParameterID']);
+            $objects[] = ParameterFactory::makeParam($row['reportParameterID']);
         }
         return $objects;
     }

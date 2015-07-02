@@ -12,40 +12,36 @@
  * @author bgarcia
  */
 class FormInputs {
-    protected $str;
-    protected $isVisible;
+    private static $hidden = array();
+    private static $visible = array();
 
-    public static $hidden;
-    public static $visible;
-
-    public static function init() {
-        self::$hidden = new self;
-        self::$hidden->str = "";
-        self::$hidden->visible = false;
-
-        self::$visible = new self;
-        self::$visible->str = "";
-        self::$visible->visible = true;
+    public static function getVisible(){
+        if (count(FormInputs::$visible))
+            return "?" . implode('&',FormInputs::$visible);
+        return "";
     }
 
-    public function getStr(){
-        if ($this->visible)
-            return "?" . ltrim($this->str,"&");
-        return $this->str;
+    public static function getHidden(){
+        if (count(FormInputs::$hidden)>0)
+            return "<input type='hidden' name=\"" . implode("\"/><input type='hidden' name=\"",FormInputs::$hidden) . "\"/>";
+        return "";
     }
 
-    public function addParam($name, $val){
+    private static function validate($name,$val) {
         if (!is_string($name) || $name=='') {
             throw new InvalidArgumentException("param 'name' needs to be a non-empty string.");
         } else if (is_array($val)) {
             throw new InvalidArgumentException("param 'val' should not be an array.");
         }
+    }
 
-        if($this->visible) {
-            $this->str .= "&$name=$val";
-        } else {
-            $this->str .= "<input type='hidden' name=\"$name\" value=\"$val\"/>";
-        }
-        return $this;
+    public static function addVisible($name, $val){
+        FormInputs::validate($name, $val);
+        FormInputs::$visible[] = "$name=$val";
+    }
+
+    public static function addHidden($name, $val){
+        FormInputs::validate($name, $val);
+        FormInputs::$hidden[] = "$name\" value=\"$val";
     }
 }

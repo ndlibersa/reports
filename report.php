@@ -30,9 +30,9 @@ if (isset($_REQUEST['outputType'])) {
     $outputType = 'web';
 }
 $report = new Report($_REQUEST['reportID']);
-ReportParameter::setReport($report);
+Parameter::setReport($report);
 //FormInputs::init() and ReportNotes::init(..) are called by Report constructor
-FormInputs::$hidden->addParam('outputType',$outputType);
+FormInputs::addHidden('outputType',$outputType);
 if (! isset($_REQUEST['reportID'])) {
     error_log("missing reportID; redirecting to index.php");
     header("location: index.php");
@@ -44,9 +44,18 @@ if ($outputType === 'web' && isset($_REQUEST['startPage'])) {
     $startRow = 1;
 }
 if ($report->titleID) {
-    ReportParameter::$display = '<b>Title:</b> ' . $report->getUsageTitle($report->titleID) . '<br/>';
+    Parameter::$display = '<b>Title:</b> ' . $report->getUsageTitle($report->titleID) . '<br/>';
 }
-$report->loopThroughParams();
+
+// loop through parameters
+foreach ( $report->getParameters() as $parm ) {
+    $parm->process();
+}
+// if titleID was passed in, add that to addwhere
+if (($report->id === '1') && ($report->titleID != '')) {
+    $report->addWhere[1] .= " AND t.titleID = $report->titleID";
+}
+
 $pageTitle = $report->name;
 
 
@@ -104,13 +113,13 @@ if ($outputType === 'web'){
             <table class='noborder'>
             <tr valign='bottom'>
             <td class='head' style='padding: 5px; vertical-align: bottom;'>
-            <form name='viewreport' method='post' action='report.php",FormInputs::$visible->getStr(),"'>",
-            FormInputs::$hidden->getStr();
+            <form name='viewreport' method='post' action='report.php",FormInputs::getVisible(),"'>",
+            FormInputs::getHidden();
     echo "<font size='+1'>",$report->name,"</font>&nbsp;<a href=\"javascript:showPopup('report','",$report->id,"');\"
         title='Click to show information about this report'
         style='border: none'><img src='images/help.gif'
-        style='border: none' alt='help'/></a><br/>", ReportParameter::$display,"<a href='index.php",
-        FormInputs::$visible->getStr(),"'>Modify Parameters</a>&nbsp; <a href='index.php'>Create New Report</a> <br/>";
+        style='border: none' alt='help'/></a><br/>", Parameter::$display,"<a href=\"index.php",
+        FormInputs::getVisible(),"\">Modify Parameters</a>&nbsp; <a href='index.php'>Create New Report</a> <br/>";
     $html = array('xls','print');
     for($i=0;$i<2;$i++){
         echo "<a href=\"javascript:viewReportOutput('{$html[$i]}');\"
@@ -122,7 +131,7 @@ if ($outputType === 'web'){
         <td class='head' align=right valign='top'>&nbsp;</td></tr>
         </table></td>";
 } else {
-    echo "<td class='head'><font size='+1'>",$report->name,"</font><br/>",ReportParameter::$display,"<br/></td>";
+    echo "<td class='head'><font size='+1'>",$report->name,"</font><br/>",Parameter::$display,"<br/></td>";
 }
 echo "</tr>";
 ////////////////////////logo/splash and param list (end)/////////////////

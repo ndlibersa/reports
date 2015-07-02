@@ -25,7 +25,7 @@ class Report {
     public $hasGroupTotalInd;
     public $orderby;
     public $infoText;
-    public $dropMonths = array();
+    public $ignoredCols = array();
     public $addWhere = array('','');
     public $sort = array('order'=>'asc','column'=>1);
     public $table;
@@ -33,6 +33,7 @@ class Report {
     public $baseURL = null;
     public $showUnadjusted = false;
     public $onlySummary = false;
+    public $flagManualSubtotal = false;
 
     public function __construct($id){
         //if ($id === null) {
@@ -91,7 +92,7 @@ class Report {
             $orderBy = "ORDER BY {$this->sort['column']} {$this->sort['order']}";
         //}
         $sql = $this->sql;
-        foreach ($this->dropMonths as $COL) {
+        foreach ($this->ignoredCols as $COL) {
             if (stripos(" $COL",$sql)!==FALSE) {
                 $sql = preg_replace("[ ,]?$COL", "",$sql, $limit=1);
             }
@@ -163,7 +164,7 @@ class Report {
         // Get the report grouping columns into groupColsArray for faster lookup later
         // returns array of objects
         $groupColsArray = array();
-        $exceptions = implode("', '",$this->dropMonths);
+        $exceptions = implode("', '",$this->ignoredCols);
         foreach ( $this->db
                 ->query("SELECT reportGroupingColumnName
                         FROM ReportGroupingColumn

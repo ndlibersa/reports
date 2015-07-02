@@ -45,8 +45,15 @@ class DateRangeParameter extends DropdownParameter implements ParameterInterface
 
             for ($i=0; $i<12; ++$i) {
                 if (!isset($monthsUsed[$months[$i]])) {
-                    Parameter::$report->dropMonths[] = $months[$i];
+                    Parameter::$report->ignoredCols[] = $months[$i];
                 }
+            }
+
+            if (count(Parameter::$report->ignoredCols)>0) {
+                Parameter::$report->flagManualSubtotal = true;
+                Parameter::$report->ignoredCols[] = 'YTD_TOTAL';
+                Parameter::$report->ignoredCols[] = 'YTD_HTML';
+                Parameter::$report->ignoredCols[] = 'YTD_PDF';
             }
 
             FormInputs::addVisible("prm_$this->id",$this->encode());

@@ -223,7 +223,7 @@ for ($irep=0; $irep<2; $irep++) {
 
 
         $rowOutput = "<tr class='data'>";
-        foreach ( ReportTable::filterRow($report->dropMonths,$currentRow)
+        foreach ( ReportTable::filterRow($report->ignoredCols,$currentRow)
             as $field => $value ) {
 
 
@@ -266,7 +266,8 @@ for ($irep=0; $irep<2; $irep++) {
                 $reset = true;
             }*/
 
-
+            if ($field==='Total') {
+            }
 
             $rowOutput .= ReportTable::formatColumn($report,$outputType,$currentRow,$field,$value);
 

@@ -8,14 +8,23 @@ class ReportTable {
         $i = 0;
         foreach ($fields as $fld) {
 			$i++;
-            if(in_array($fld,$report->dropMonths)) {
+            if(in_array($fld,$report->ignoredCols)) {
                 continue;
 			}
             $_fields[$i] = $fld;
         }
 
+        if ($report->flagManualSubtotal && $_fields[$i] === "outlier_flag") {
+            $_fields[$i] = 'Total';
+            $_fields[] = "outier_flag";
+        }
+
         $this->columnData = $report->getColumnData();
         $this->columnData['name'] = $_fields;
+
+        if ($report->flagManualSubtotal) {
+            $this->columnData['sum']['Total'] = end($this->columnData['sum']);
+        }
     }
 
     public function fields() {
@@ -39,6 +48,10 @@ class ReportTable {
             }
             if(in_array($field, $ignoredColumns)) {
                 continue;
+            }
+
+            if ($field==='outlier_flag') {
+                $row_tmp['Total'] = "&nbsp;";
             }
 
             $row_tmp[$field] = $data;

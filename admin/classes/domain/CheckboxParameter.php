@@ -7,28 +7,28 @@
  */
 
 /**
- * Description of CheckParameter
+ * Description of CheckboxParameter
  *
  * @author bgarcia
  */
-class CheckParameter extends Parameter implements ParameterInterface {
+class CheckboxParameter extends Parameter implements ParameterInterface {
+
+    public function process() {
+        if ($this->value === 'on' || $this->value === 'Y') {
+            FormInputs::addVisible("prm_$this->id", 'Y');
+            Parameter::$display .= $this->htmlDisplay();
+            if ($flag = $this->flagName())
+                Parameter::$report->{$flag} = true;
+        }
+    }
+
+    //this dummy implementation is preferrable to an abstract class
+    protected function flagName() {return null;}
 
     public function fetchValue() {
         if(!isset($_REQUEST["prm_$this->id"]))
             return null;
         return trim($_REQUEST["prm_$this->id"]);
-    }
-
-    public function process() {
-        if (($this->value === 'on') || ($this->value === 'Y')) {
-            Parameter::$report->showUnadjusted = true;
-            FormInputs::addVisible("prm_$this->id", 'Y');
-            Parameter::$display .= $this->htmlDisplay();
-        }
-    }
-
-    public function htmlDisplay() {
-        return '<b>Numbers are not adjusted for use violations</b><br/>';
     }
 
     public function htmlForm() {

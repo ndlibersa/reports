@@ -22,7 +22,11 @@ class ParameterFactory {
             ->fetchRow(MYSQLI_ASSOC);
 
         if($result['parameterTypeCode']==='chk'){
-            $parm = new CheckParameter;
+            if ($result['parameterDisplayPrompt']==="Do not adjust numbers for use violations") {
+                $parm = new CheckUnadjustedParameter;
+            } else {
+                $parm = new CheckboxParameter;
+            }
         } else if ($result['parameterTypeCode']==='dd') {
             if ($result['parameterAddWhereClause'] === 'limit') {
                 $parm = new LimitParameter;

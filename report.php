@@ -154,7 +154,8 @@ for ($irep=0; $irep<2; $irep++) {
         echo " border='1'>";
     }
 
-    $reportArray = $report->run($irep===1);
+    $allowSort = (!$report->onlySummary || $outputType!=='web');
+    $reportArray = $report->run($irep===1,$allowSort);
 
 
 
@@ -298,7 +299,8 @@ for ($irep=0; $irep<2; $irep++) {
         ++$rownum;
         $prevValue = $currentRow[$field];
 
-        $tblBody .= $rowOutput;
+        if (! $report->onlySummary || $outputType!=='web')
+            $tblBody .= $rowOutput;
     }
     $tblBody .= "</tbody>";
     ///////////////////////////table body (end)/////////////////////
@@ -313,7 +315,7 @@ for ($irep=0; $irep<2; $irep++) {
     if ($rownum === 0) {
         echo "<tr class='data'><td colspan=" . $report->table->nfields() . "><i>Sorry, no rows were returned.</i></td></tr>";
     } else {
-        if ($outputType != 'xls' && $perform_subtotal_flag) {
+        if (/*$outputType != 'xls' &&*/ $perform_subtotal_flag) {
             /*if ($report->hasGroupTotalInd && $hold_rprt_grpng_data) {
                 // one last grouping summary
                 if ($countForGrouping > 1) {
@@ -343,13 +345,15 @@ for ($irep=0; $irep<2; $irep++) {
             echo ReportTable::formatTotalsRow($rowparms);
         }
 
-        echo "<tr><td colspan=" . $report->table->nfields() . " align='right'><i>Showing rows ",$startRow," to ";
-        if ((ReportTable::$maxRows > 0) && ($rownum > ReportTable::$maxRows)) {
-            echo ReportTable::$maxRows . " of " . ReportTable::$maxRows;
-        } else {
-            echo "$rownum of $rownum";
+        if (!$report->onlySummary || $outputType!=='web') {
+            echo "<tr><td colspan=" . $report->table->nfields() . " align='right'><i>Showing rows ",$startRow," to ";
+            if ((ReportTable::$maxRows > 0) && ($rownum > ReportTable::$maxRows)) {
+                echo ReportTable::$maxRows . " of " . ReportTable::$maxRows;
+            } else {
+                echo "$rownum of $rownum";
+            }
+            echo '</i></td></tr>';
         }
-        echo '</i></td></tr>';
     }
     echo '</tfoot>';
     /////////////////////////table footer (end)////////////////////

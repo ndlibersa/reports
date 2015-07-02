@@ -32,6 +32,7 @@ class Report {
     public $titleID = null;
     public $baseURL = null;
     public $showUnadjusted = false;
+    public $onlySummary = false;
 
     public function __construct($id){
         //if ($id === null) {
@@ -81,7 +82,7 @@ class Report {
         }
     }
 
-    public function run($isArchive){
+    public function run($isArchive, $allowSort){
         /*if ($isArchive) {
             $orderBy = '';
         } else if (isset($this->table)) {
@@ -96,7 +97,8 @@ class Report {
             }
         }
 
-        $sql .= " $orderBy";
+        if ($allowSort)
+            $sql .= " $orderBy";
         $sql = str_replace('ADD_WHERE2', $this->addWhere[1], $sql);
 
         if (stripos($this->sql, 'mus')!==FALSE) {
@@ -149,6 +151,7 @@ class Report {
                 ->fetchRows(MYSQLI_ASSOC) as $row ){
             $objects[] = ParameterFactory::makeParam($row['reportParameterID']);
         }
+        $objects[] = new CheckSummaryOnlyParameter($this->id);
         return $objects;
     }
 

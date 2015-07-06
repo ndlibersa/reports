@@ -16,7 +16,7 @@ class CheckboxParameter extends Parameter implements ParameterInterface {
     public function process() {
         if ($this->value === 'on' || $this->value === 'Y') {
             FormInputs::addVisible("prm_$this->id", 'Y');
-            Parameter::$display .= $this->htmlDisplay();
+            Parameter::$display .= $this->description();
             if ($flag = $this->flagName())
                 Parameter::$report->{$flag} = true;
         }
@@ -25,19 +25,19 @@ class CheckboxParameter extends Parameter implements ParameterInterface {
     //this dummy implementation is preferrable to an abstract class
     protected function flagName() {return null;}
 
-    public function fetchValue() {
+    public function value() {
         if(!isset($_REQUEST["prm_$this->id"]))
             return null;
         return trim($_REQUEST["prm_$this->id"]);
     }
 
-    public function htmlForm() {
+    public function form() {
         if(isset($_REQUEST["prm_$this->id"])) {
                     $this->value = 'checked';
         }
         echo "<div id='div_parm_$this->id'>
                       <br />
-                      <label for='prm_$this->id'>$this->displayPrompt</label>
+                      <label for='prm_$this->id'>$this->prompt</label>
                       <input type='checkbox' name='prm_$this->id' class='opt'
             style='text-align:left;width:13px;' $this->value/>
                   </div>";

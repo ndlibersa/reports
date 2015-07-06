@@ -11,10 +11,10 @@
  * @author bgarcia
  */
 interface ParameterInterface {
-    public function fetchValue();
+    public function value();
     public function process();
-    public function htmlForm();
-    public function htmlDisplay();
+    public function form();
+    public function description();
     public function ajax_getChildUpdate();
     public function ajax_getChildParameters();
 }

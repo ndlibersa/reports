@@ -25,17 +25,16 @@ class Parameter implements ParameterInterface {
     public $db;
     public $id;
     public $reportID;
-    public $displayPrompt;
+    public $prompt;
     public $addWhereClause;
     public $typeCode;
-    public $formatCode;
     public $requiredInd;
     public $addWhereNum;
     public $sql;
     public $parentReportParameterID;
     public $sqlRestriction;
 
-    public function fetchValue() {
+    public function value() {
         if (isset($_REQUEST["prm_$this->id"])) {
             $val = trim($_REQUEST["prm_$this->id"]);
             if ($val !== '') {
@@ -48,33 +47,36 @@ class Parameter implements ParameterInterface {
 
     public function process() {
         if ($this->value !== null) {
-            $addWhereNum = intval($this->addWhereNum == 2);
-            Parameter::$report->addWhere[$addWhereNum] .= " AND $this->addWhereClause";
+            Parameter::$report->addWhere[$this->addWhereNum] .= " AND $this->addWhereClause";
             $this->value = strtoupper($this->value);
-            Parameter::$report->addWhere[$addWhereNum] = preg_replace(
-                '/PARM/', $this->value, Parameter::$report->addWhere[$addWhereNum]
+            Parameter::$report->addWhere[$this->addWhereNum] = preg_replace(
+                '/PARM/', $this->value, Parameter::$report->addWhere[$this->addWhereNum]
             );
             FormInputs::addVisible("prm_$this->id", $this->value);
-            Parameter::$display .= $this->htmlDisplay();
+            Parameter::$display .= $this->description();
         }
     }
 
-    public function htmlDisplay() {
-        return "<b>{$this->displayPrompt}:</b> '$this->value'<br/>";
+    public function description() {
+        return "<b>{$this->prompt}:</b> '$this->value'<br/>";
     }
 
-    public function htmlForm() {
+    public function form() {
         echo "<div id='div_parm_$this->id'>
         <br />
-        <label for='prm_$this->id'>$this->displayPrompt</label>
+        <label for='prm_$this->id'>$this->prompt</label>
         <input type='text' name='prm_$this->id' class='opt' value=\"$this->value\"/>";
-        if($this->formatCode === 'date') {
-            echo '<font size="-2">ex: MM/DD/YYYY</font>';
-        }
         echo "</div>";
     }
 
     public function ajax_getChildUpdate() {
+        $reportParameterVal = $_GET['reportParameterVal'];
+
+        echo "<div id='div_parm_$this->id'>
+        <br />
+        <label for='prm_$this->id'>$this->prompt</label>
+        <input type='text' name='prm_$this->id' class='opt' value=\"$this->value\"/>";
+        echo "</div>";
     }
 
     public function ajax_getChildParameters() {
@@ -124,8 +126,8 @@ class Parameter implements ParameterInterface {
         Config::init();
         $row = $this->db
             ->selectDB(Config::$database->name)
-            ->query("SELECT count(*) parent_count
-            FROM ReportParameter
+            ->query("SELECT count(parentReportParameterID) parent_count
+            FROM ReportParameterMap
             WHERE parentReportParameterID = '{$this->id}'")
             ->fetchRow(MYSQLI_ASSOC);
         return $row['parent_count'] > 0;
@@ -134,16 +136,15 @@ class Parameter implements ParameterInterface {
     // removes associated parameters
     public function getChildren() {
         Config::init();
-        $result = $this->db
+        $objects = array();
+        foreach($this->db
             ->selectDB(Config::$database->name)
             ->query("SELECT reportParameterID
-            FROM ReportParameter
+            FROM ReportParameterMap
             WHERE parentReportParameterID = '{$this->id}' ORDER BY 1")
-            ->fetchRows(MYSQLI_ASSOC);
-        $num_rows = count($result);
-        $objects = array();
-        for ($i = 0; $i < $num_rows; ++$i) {
-            $objects[] = ParameterFactory::makeParam($result[$i]['reportParameterID']);
+            ->fetchRows(MYSQLI_ASSOC) as $row) {
+
+            $objects[] = ParameterFactory::makeParam($this->reportID,$row['reportParameterID']);
         }
         return $objects;
     }

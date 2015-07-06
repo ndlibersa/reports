@@ -29,13 +29,13 @@ if ($action === 'getReportParameters') {
     Parameter::$ajax_parmValues = array();
 
     foreach ( $report->getParameters() as $parm ) {
-        $parm->htmlForm();
+        $parm->form();
     }
 } else if ($action === 'getChildParameters') {
-    $parm = ParameterFactory::makeParam($_GET['parentReportParameterID']);
+    $parm = ParameterFactory::makeParam($_GET['reportID'],$_GET['parentReportParameterID']);
     $parm->ajax_getChildParameters();
 } else if ($action === 'getChildUpdate') {
-    $parm = ParameterFactory::makeParam($_GET['reportParameterID']);
+    $parm = ParameterFactory::makeParam($_GET['reportID'],$_GET['reportParameterID']);
     $parm->ajax_getChildUpdate();
 } else {
     echo "Action $action not set up!";

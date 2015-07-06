@@ -13,7 +13,7 @@
  */
 class MultiselectParameter extends Parameter implements ParameterInterface {
 
-    public function fetchValue() {
+    public function value() {
         if(!isset($_REQUEST["prm_$this->id"]))
             return null;
 
@@ -24,9 +24,9 @@ class MultiselectParameter extends Parameter implements ParameterInterface {
         }
     }
 
-    public function htmlForm() {
+    public function form() {
         $options = "";
-        if ($this->requiredInd != '1') {
+        if (!$this->requiredInd) {
             $options .= "<option value='' selected='selected'>All</option>";
         }
         if (isset(Parameter::$ajax_parmValues[$this->parentReportParameterID])) {
@@ -36,11 +36,11 @@ class MultiselectParameter extends Parameter implements ParameterInterface {
         }
         echo "<div id='div_parm_$this->id'>
                       <br />
-                      <label for='prm_$this->id'>$this->displayPrompt</label>
+                      <label for='prm_$this->id'>$this->prompt</label>
 <span style='margin-left:-90px'>
     <div id='div_show_$this->id' style='float:left;margin-bottom: 5px'>
         <a href=\"javascript:toggleLayer('div_$this->id','block');
-           toggleLayer('div_show_$this->id','none');\">-Click to choose $this->displayPrompt-</a>
+           toggleLayer('div_show_$this->id','none');\">-Click to choose $this->prompt-</a>
     </div>
     <div id='div_$this->id' style='display:none;float:left;margin-bottom: 5px;'>
         <table class='noborder'>
@@ -69,7 +69,7 @@ class MultiselectParameter extends Parameter implements ParameterInterface {
                 <td style='border:0px;' colspan='3' align='left'>
                     <input type='hidden' name='prm_$this->id' id='prm_$this->id' value=''/>
                     <a href=\"javascript:toggleLayer('div_$this->id','none');
-                        toggleLayer('div_show_$this->id','block');\">-Hide $this->displayPrompt-</a>
+                        toggleLayer('div_show_$this->id','block');\">-Hide $this->prompt-</a>
                 </td>
             </tr>
         </table>
@@ -80,7 +80,7 @@ class MultiselectParameter extends Parameter implements ParameterInterface {
     public function ajax_getChildUpdate() {
         $reportParameterVal = $_GET['reportParameterVal'];
         $options = "";
-        if ($this->requiredInd != '1') {
+        if (!$this->requiredInd) {
             $options .= "<option value='' selected>All</option>";
         }
         foreach ( $this->getSelectValues($reportParameterVal) as $value ) {
@@ -92,7 +92,7 @@ class MultiselectParameter extends Parameter implements ParameterInterface {
 "<span style='margin-left:-90px'>
     <div id='div_show_$this->id' style='float:left;margin-bottom: 5px'>
         <a href=\"javascript:toggleLayer('div_$this->id','block');
-           toggleLayer('div_show_$this->id','none');\">-Click to choose $this->displayPrompt-</a>
+           toggleLayer('div_show_$this->id','none');\">-Click to choose $this->prompt-</a>
     </div>
     <div id='div_$this->id' style='display:none;float:left;margin-bottom: 5px;'>
         <table class='noborder'>
@@ -121,7 +121,7 @@ class MultiselectParameter extends Parameter implements ParameterInterface {
                 <td style='border:0px;' colspan='3' align='left'>
                     <input type='hidden' name='prm_$this->id' id='prm_$this->id' value=''/>
                     <a href=\"javascript:toggleLayer('div_$this->id','none');
-                        toggleLayer('div_show_$this->id','block');\">-Hide $this->displayPrompt-</a>
+                        toggleLayer('div_show_$this->id','block');\">-Hide $this->prompt-</a>
                 </td>
             </tr>
         </table>

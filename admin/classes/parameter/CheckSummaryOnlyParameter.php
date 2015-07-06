@@ -12,7 +12,7 @@
  * @author bgarcia
  */
 class CheckSummaryOnlyParameter extends CheckboxParameter implements ParameterInterface {
-    public function htmlDisplay() {
+    public function description() {
         return '<b>Not displaying report tables for Web interface</b><br/>';
     }
 
@@ -24,16 +24,15 @@ class CheckSummaryOnlyParameter extends CheckboxParameter implements ParameterIn
     public function __construct($reportID) {
         $this->id = "NoBody";
         $this->reportID = $reportID;
-        $this->displayPrompt = "Only show summaries";
+        $this->prompt = "Only show summaries";
         $this->addWhereClause = "";
         $this->typeCode = "chk";
-        $this->formatCode = "";
-        $this->requiredInd = 0;
+        $this->requiredInd = false;
         $this->addWhereNum = 0;
         $this->sql = "";
         $this->parentReportParameterID = 0;
         $this->sqlRestriction = "";
 
-        $this->value = $this->fetchValue();
+        $this->value = $this->value();
     }
 }

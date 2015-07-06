@@ -6,25 +6,26 @@ class ReportTable {
 
     public function __construct(Report $report, array $fields) {
         $i = 0;
+        $hasSubtotal = false;
         foreach ($fields as $fld) {
 			$i++;
             if(in_array($fld,$report->ignoredCols)) {
                 continue;
-			}
-            $_fields[$i] = $fld;
-        }
+			} else if (!$hasSubtotal
+                && ($fld==='outlier_flag'||$fld==='YTD_TOTAL')) {
 
-        if ($report->flagManualSubtotal && $_fields[$i] === "outlier_flag") {
-            $_fields[$i] = 'Total';
-            $_fields[] = "outier_flag";
+                $_fields[$i] = 'query_subtotal';
+                $_fields[] = $fld;
+                $hasSubtotal = true;
+                $i++;
+            } else {
+                $_fields[$i] = $fld;
+            }
         }
 
         $this->columnData = $report->getColumnData();
         $this->columnData['name'] = $_fields;
-
-        if ($report->flagManualSubtotal) {
-            $this->columnData['sum']['Total'] = end($this->columnData['sum']);
-        }
+        $this->columnData['sum']['Query Subtotal'] = end($this->columnData['sum']);
     }
 
     public function fields() {
@@ -41,6 +42,7 @@ class ReportTable {
 
     public static function filterRow(array $ignoredColumns, array $row) {
         $row_tmp = array();
+        $hasSubtotal = false;
         foreach ( $row as $field => $data ) {
             // stop displaying columns once we hit title ID or platform ID
             if (($field === 'titleID') || ($field === 'platformID')) {
@@ -50,8 +52,11 @@ class ReportTable {
                 continue;
             }
 
-            if ($field==='outlier_flag') {
-                $row_tmp['Total'] = "&nbsp;";
+            if (!$hasSubtotal
+                && ($field==='outlier_flag'||$field==='YTD_TOTAL')) {
+
+                $row_tmp['Query Total'] = "&nbsp;";
+                $hasSubtotal = true;
             }
 
             $row_tmp[$field] = $data;
@@ -139,28 +144,6 @@ class ReportTable {
             $str .= "<td class='sum' colspan='$cspan'>$spanval</td>";
         }
         return "<tr class='data'>$str</tr>";
-    }
-
-    public function sumField($field, array &$sumArray) {
-        if (!isset($sumArray[$field]))
-            return '&nbsp;';
-
-        $total = '';
-        $sumType = $this->columnData['sum'][$field];
-        if ($sumType === 'dollarsum') {
-            $total = array_sum($sumArray[$field]);
-            if ($total > 0)
-                return money_format($total);
-        } else if ($sumType === 'sum') {
-            foreach ( $sumArray[$field] as $amt ) {
-                if ($amt >= '0') {
-                    $total += $amt;
-                }
-            }
-            if ($total >= '0')
-                return number_format($total);
-        }
-        return '&nbsp;';
     }
 
     public function sumColumn($field, $totalSum, $rowcount) {

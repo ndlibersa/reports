@@ -82,7 +82,7 @@ if (isset($reportID)) {
 	$report = new Report($reportID);
     Parameter::$ajax_parmValues = array();
     foreach ( $report->getParameters() as $parm ) {
-        $parm->htmlForm();
+        $parm->form();
     }
     Parameter::$ajax_parmValues = null;
 } else {

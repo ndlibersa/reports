@@ -22,7 +22,6 @@ class Report {
     public $name;
     public $dbname;
     public $sql;
-    public $hasGroupTotalInd;
     public $orderby;
     public $infoText;
     public $ignoredCols = array();
@@ -33,7 +32,6 @@ class Report {
     public $baseURL = null;
     public $showUnadjusted = false;
     public $onlySummary = false;
-    public $flagManualSubtotal = false;
 
     public function __construct($id){
         //if ($id === null) {
@@ -48,7 +46,6 @@ class Report {
         $this->id = $id;
         $this->name = $result['reportName'];
         $this->dbname = $result['reportDatabaseName'];
-        $this->hasGroupTotalInd = ($result['groupTotalInd'] === '1') ? true : false;
         $this->orderby = $result['orderBySQL'];
         $this->infoText = $result['infoDisplayText'];
         $this->sql = $result['reportSQL'];
@@ -109,17 +106,10 @@ class Report {
         }
 
         $sql = str_replace('ADD_WHERE', "{$this->addWhere[0]} AND $field", $sql);
-        $db = new DBService(Config::$database->{$this->dbname});
-        $reportArray = $db->query("$sql");
+        $this->db->selectDB(Config::$database->{$this->dbname});
+        $reportArray = $this->db->query("$sql");
         $this->table = new ReportTable($this, $reportArray->fetchFields());
         return $reportArray;
-    }
-
-    public function needToGroupRow($outputType,$performCheck,$print_subtotal_flag) {
-        return $outputType != 'xls'
-            && !($performCheck && in_array(false, $this->table->columnData['group'], true) !== false)
-            && $print_subtotal_flag
-            && $this->hasGroupTotalInd;
     }
 
     // returns outlier array for display at the bottom of reports
@@ -141,16 +131,16 @@ class Report {
     public function getParameters(){
         // set database to reporting database name
         Config::init();
-        $this->db->selectDB(Config::$database->name);
 
         $objects = array();
         foreach ( $this->db
+                ->selectDB(Config::$database->name)
                 ->query("SELECT reportParameterID
-                    FROM ReportParameter
+                    FROM ReportParameterMap
                     WHERE reportID = '{$this->id}'
                     ORDER BY 1")
                 ->fetchRows(MYSQLI_ASSOC) as $row ){
-            $objects[] = ParameterFactory::makeParam($row['reportParameterID']);
+            $objects[] = ParameterFactory::makeParam($this->id,$row['reportParameterID']);
         }
         $objects[] = new CheckSummaryOnlyParameter($this->id);
         return $objects;
@@ -161,22 +151,10 @@ class Report {
         // set database to reporting database name
         Config::init();
         $this->db->selectDB(Config::$database->name);
-        // Get the report grouping columns into groupColsArray for faster lookup later
-        // returns array of objects
-        $groupColsArray = array();
+
         $exceptions = implode("', '",$this->ignoredCols);
-        foreach ( $this->db
-                ->query("SELECT reportGroupingColumnName
-                        FROM ReportGroupingColumn
-                        WHERE reportID = '{$this->id}'
-                        AND reportGroupingColumnName NOT IN ('$exceptions')"
-                    )
-                ->fetchRows(MYSQLI_ASSOC) as $row ){
-            $groupColsArray[$row['reportGroupingColumnName']] = false;
-        }
         $sumColsArray = array();
         foreach($this->db
-                ->selectDB(Config::$database->name)
                 ->query("SELECT reportColumnName, reportAction
                         FROM ReportSum
                         WHERE reportID = '{$this->id}'
@@ -186,7 +164,11 @@ class Report {
             $sumColsArray[$row['reportColumnName']] = $row['reportAction'];
         }
 
-        return array('group'=>$groupColsArray,'sum'=>$sumColsArray);
+        if (isset($sumColsArray['YTD_TOTAL'])) {
+            $sumColsArray['query_subtotal'] = $sumColsArray['YTD_TOTAL'];
+        }
+
+        return array('sum'=>$sumColsArray);
     }
 
     // return the title of the ejournal for this report

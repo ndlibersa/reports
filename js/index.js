@@ -41,14 +41,14 @@ function clearParms() {
 }
 
 
-function updateChildren(parmID){
+function updateChildren(reportID,parmID){
 
 	//first get a list of this parm's children
 	$.ajax({
 		 type:       "GET",
 		 url:        "ajax_htmldata.php",
 		 cache:      false,
-		 data:       "action=getChildParameters&parentReportParameterID=" + parmID,
+		 data:       "action=getChildParameters&reportID=" + reportID + "&parentReportParameterID=" + parmID,
 		 success:    function(childParms) {
 			var childParmArray = childParms.split("|");
 
@@ -58,7 +58,7 @@ function updateChildren(parmID){
 				 url:        "ajax_htmldata.php",
 				 cache:      false,
 				 async:	     false,
-				 data:       "action=getChildUpdate&reportParameterID=" + childParmArray[i] + "&reportParameterVal=" + $("#prm_" + parmID).val() ,
+				 data:       "action=getChildUpdate&reportID="+reportID+"&reportParameterID=" + childParmArray[i] + "&reportParameterVal=" + $("#prm_" + parmID).val() ,
 				 success:    function(html) {
 					$("#div_parm_" + childParmArray[i]).html(html);
 					}
@@ -120,39 +120,27 @@ function toggleLayer(whichLayer, state) {
     }
 }
 
-function daterange_onchange(isMax) {
-    var m0 = genericGetById('date0m');
-    var y0 = genericGetById('date0y');
-    var m1 = genericGetById('date1m');
-    var y1 = genericGetById('date1y');
-
-    if (isMax) {
-        if (parseInt(y0.value) >= parseInt(y1.value)) {
-            y0.value = y1.value;
-            if (parseInt(m0.value) > parseInt(m1.value)) {
-                m0.value = m1.value;
-            }
-        }
-    } else {
-        if (parseInt(y0.value) >= parseInt(y1.value)) {
-            y1.value = y0.value;
-            if (parseInt(m0.value) > parseInt(m1.value)) {
-                m1.value = m0.value;
-            }
-        }
-    }
-}
-
 function daterange_onsubmit() {
 	try {
-		elem = genericGetById('daterange');
+		var range = genericGetById('daterange');
 	} catch(err) {
-		return true;
+		return true; // daterange not on current form
 	}
-	genericGetById('daterange').value =
-             ('00'+genericGetById('date0m').value).slice(-2)
-           + ('0000'+genericGetById('date0y').value).slice(-4)
-           + ('0000'+genericGetById('date1m').value).slice(-2)
-           + ('00'+genericGetById('date1y').value).slice(-4);
+
+	var m0 = parseInt(genericGetById('date0m').value);
+	var y0 = parseInt(genericGetById('date0y').value);
+
+	var m1 = parseInt(genericGetById('date1m').value);
+	var y1 = parseInt(genericGetById('date1y').value);
+
+	if (y0>y1 || (y0===y1&&m0>m1)) {
+		alert("'from' date cannot come after 'through' date!");
+		return false;
+	}
+
+	range.value =
+             ('0' + m0).slice(-2) + y0
+           + ('0' + m1).slice(-2) + y1;
+
     return true;
 }

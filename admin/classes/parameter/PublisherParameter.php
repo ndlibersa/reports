@@ -7,13 +7,19 @@
  */
 
 /**
- * Description of ProviderPublisherParameter
+ * Description of PublisherParameter
  *
  * @author bgarcia
  */
-class ProviderPublisherDropdownParameter extends DropdownParameter implements ParameterInterface {
-    public function htmlDisplay() {
-        return "<b>{$this->displayPrompt}:</b> "
+class PublisherParameter extends MultiselectParameter implements ParameterInterface {
+
+    public function description() {
+        return "<b>" . $this->prompt . ":</b> "
             . implode(', ', $this->getPubPlatDisplayName($this->value)) . '<br/>';
     }
+
+
+
+
+
 }

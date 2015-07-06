@@ -13,15 +13,15 @@
  */
 class DropdownParameter extends Parameter implements ParameterInterface {
 
-    public function fetchValue() {
+    public function value() {
         if(!isset($_REQUEST["prm_$this->id"]))
             return null;
         return trim($_REQUEST["prm_$this->id"]);
     }
 
-    public function htmlForm() {
+    public function form() {
         $options = "";
-        if ($this->requiredInd != '1') {
+        if (!$this->requiredInd) {
             $options .= "<option value=''";
             if ($this->value===null)
                 $options .= "selected='selected'";
@@ -31,10 +31,10 @@ class DropdownParameter extends Parameter implements ParameterInterface {
         if (isset(Parameter::$ajax_parmValues[$this->parentReportParameterID]))
             $p = Parameter::$ajax_parmValues[$this->parentReportParameterID];
         else
-            $p = null;
+            $p = 0;
         foreach ( $this->getSelectValues($p) as $value ) {
-            if ($firstrow && ($this->requiredInd == '1'))
-                Parameter::$ajax_parmValues[$this->id] = $value[0];
+            if ($firstrow && $this->requiredInd)
+                Parameter::$ajax_parmValues[$this->id] = $value;
             $options .= "<option value='{$value['cde']}'";
             if ($this->value!==null && $this->value==$value['cde']) {
                 $options .= " selected='selected'";
@@ -43,36 +43,39 @@ class DropdownParameter extends Parameter implements ParameterInterface {
             $firstrow = false;
         }
         echo "<div id='div_parm_$this->id'>
-                      <br />
-                      <label for='prm_$this->id'>$this->displayPrompt</label>";
+              <br />
+              <label for='prm_$this->id'>$this->prompt</label>";
         echo "<select name='prm_$this->id' id='prm_$this->id' class='opt' ";
         if ($this->isParent()) {
-            echo "onchange='javascript:updateChildren($this->id);' ";
+            echo "onchange='javascript:updateChildren($this->reportID,$this->id);' ";
         }
         echo ">$options</select></div>";
     }
 
     public function ajax_getChildUpdate() {
         $reportParameterVal = $_GET['reportParameterVal'];
+
+        echo "<div id='div_parm_$this->id'>
+              <br />
+              <label for='prm_$this->id'>$this->prompt</label>";
         echo "<select name='prm_$this->id' id='prm_$this->id' class='opt' ";
-        // check if it's a parent
         if ($this->isParent()) {
-            echo "onchange='javascript:updateChildren($this->id);'>";
+            echo "onchange='javascript:updateChildren($this->reportID,$this->id);'>";
         } else {
             echo ">";
         }
-        if ($this->requiredInd != '1') {
+        if (!$this->requiredInd) {
             echo "<option value='' selected>All</option>";
         }
 
         $firstrow = true;
         foreach ( $this->getSelectValues($reportParameterVal) as $value ) {
-            if ($firstrow && ($this->requiredInd == '1'))
-                Parameter::$ajax_parmValues[$this->id] = $value[0];
+            if ($firstrow && $this->requiredInd)
+                Parameter::$ajax_parmValues[$this->id] = $value;
             echo "<option value='{$value['cde']}'>" . $value['val'] . "</option>";
             $firstrow = false;
         }
 
-        echo "</select>";
+        echo "</select></div>";
     }
 }

@@ -18,11 +18,11 @@ class LimitParameter extends DropdownParameter implements ParameterInterface {
             Parameter::$report->addWhere[0] = ''; // changed from $add_where. Assumed mistake.
             ReportTable::$maxRows = $this->value;
             FormInputs::addVisible("prm_$this->id",$this->value);
-            Parameter::$display .= $this->htmlDisplay();
+            Parameter::$display .= $this->description();
         }
     }
 
-    public function htmlDisplay() {
+    public function description() {
         return "<b>Limit:</b> Top $this->value<br/>";
     }
 }

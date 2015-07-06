@@ -11,10 +11,10 @@
  *
  * @author bgarcia
  */
-class ProviderPublisherMultiselectParameter extends MultiselectParameter implements ParameterInterface {
+class ProviderPublisherParameter extends DropdownParameter implements ParameterInterface {
 
-    public function htmlDisplay() {
-        return "<b>{$this->displayPrompt}:</b> "
+    public function description() {
+        return "<b>" . $this->prompt . ":</b> "
             . implode(', ', $this->getPubPlatDisplayName($this->value)) . '<br/>';
     }
 }

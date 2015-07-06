@@ -12,16 +12,22 @@
  * @author bgarcia
  */
 class ParameterFactory {
-    public static function makeParam($reportParameterID) {
+    public static function makeParam($reportID,$reportParameterID) {
         $parm = null;
         $db = new DBService();
         $result = $db
-            ->query("SELECT *
-            FROM ReportParameter
-            WHERE reportParameterID = '$reportParameterID' LIMIT 1")
+            ->query("SELECT rp.*, rpm.parentReportParameterID
+            FROM ReportParameter rp, ReportParameterMap rpm
+            WHERE rp.reportParameterID = '$reportParameterID' LIMIT 1")
             ->fetchRow(MYSQLI_ASSOC);
 
-        if($result['parameterTypeCode']==='chk'){
+        if ($result['parameterDisplayPrompt'] === 'Provider / Publisher') {
+                $parm = new ProviderPublisherParameter;
+        } else if ($result['parameterDisplayPrompt'] === 'Provider') {
+            $parm = new ProviderParameter;
+        }else if ($result['parameterDisplayPrompt'] === 'Publisher') {
+            $parm = new PublisherParameter;
+        } else if($result['parameterTypeCode']==='chk'){
             if ($result['parameterDisplayPrompt']==="Do not adjust numbers for use violations") {
                 $parm = new CheckUnadjustedParameter;
             } else {
@@ -30,13 +36,10 @@ class ParameterFactory {
         } else if ($result['parameterTypeCode']==='dd') {
             if ($result['parameterAddWhereClause'] === 'limit') {
                 $parm = new LimitParameter;
-            } else if ($result['reportID']!=5&& $result['reportID']!=6 // report#5 and report#6 don't finish when date ranges are enabled
-                && $result['parameterDisplayPrompt'] === 'Year') {
+            } else if ($result['parameterDisplayPrompt'] === 'Year') {
+                $parm = new YearParameter;
+            } else if ($result['parameterDisplayPrompt'] === 'Date Range') {
                 $parm = new DateRangeParameter;
-            } else if ($result['parameterDisplayPrompt'] === 'Provider / Publisher'
-                || $result['parameterDisplayPrompt'] === 'Provider'
-                || $result['parameterDisplayPrompt'] === 'Publisher') {
-                $parm = new ProviderPublisherDropdownParameter;
             } else {
                 $parm = new DropdownParameter;
             }
@@ -54,18 +57,17 @@ class ParameterFactory {
 
         $parm->db = $db;
         $parm->id = $reportParameterID;
-        $parm->reportID = $result['reportID'];
-        $parm->displayPrompt = $result['parameterDisplayPrompt'];
+        $parm->reportID = $reportID;
+        $parm->prompt = $result['parameterDisplayPrompt'];
         $parm->addWhereClause = $result['parameterAddWhereClause'];
         $parm->typeCode = $result['parameterTypeCode'];
-        $parm->formatCode = $result['parameterFormatCode'];
-        $parm->requiredInd = $result['requiredInd'];
+        $parm->requiredInd = boolval($result['requiredInd']);
         $parm->addWhereNum = $result['parameterAddWhereNumber'];
         $parm->sql = $result['parameterSQLStatement'];
         $parm->parentReportParameterID = $result['parentReportParameterID'];
         $parm->sqlRestriction = $result['parameterSQLRestriction'];
 
-        $parm->value = $parm->fetchValue();
+        $parm->value = $parm->value();
         if ( is_a($parm, 'DateRangeParameter')) {
             $parm->init();
         }

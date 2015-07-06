@@ -12,7 +12,7 @@
  * @author bgarcia
  */
 class CheckUnadjustedParameter extends CheckboxParameter implements ParameterInterface {
-    public function htmlDisplay() {
+    public function description() {
         return '<b>Numbers are not adjusted for use violations</b><br/>';
     }
 

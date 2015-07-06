@@ -2,10 +2,7 @@ CREATE TABLE IF NOT EXISTS  `_DATABASE_NAME_`.`Report` (
   `reportID` int(11) NOT NULL auto_increment,
   `reportName` varchar(45) NOT NULL,
   `reportSQL` text NOT NULL,
-  `reportGroupingColumnName` varchar(45) default NULL,
   `defaultRecPageNumber` int(11) default '100',
-  `groupTotalInd` tinyint(1) default NULL,
-  `specialPageURL` varchar(45) default NULL,
   `orderBySQL` text,
   `infoDisplayText` varchar(2000) default NULL,
   `excelOnlyInd` tinyint(1) default NULL,
@@ -15,28 +12,25 @@ CREATE TABLE IF NOT EXISTS  `_DATABASE_NAME_`.`Report` (
 
 
 
-CREATE TABLE IF NOT EXISTS `_DATABASE_NAME_`.`ReportGroupingColumn` (
-  `reportID` int(11) NOT NULL,
-  `reportGroupingColumnName` varchar(45) NOT NULL,
-  `reportGroupingColumnID` int(10) unsigned NOT NULL auto_increment,
-  PRIMARY KEY  USING BTREE (`reportGroupingColumnID`)
+CREATE TABLE IF NOT EXISTS `_DATABASE_NAME_`.`ReportParameter` (
+  `reportParameterID` int(11) NOT NULL auto_increment,
+  `parameterTypeCode` varchar(45) default NULL,
+  `parameterDisplayPrompt` varchar(45) default NULL,
+  `parameterAddWhereClause` varchar(500) default NULL,
+  `parameterAddWhereNumber` int(11) default NULL,
+  `requiredInd` tinyint(1) default NULL,
+  `parameterSQLStatement` text,
+  `parameterSQLRestriction` text,
+  PRIMARY KEY  (`reportParameterID`)
 ) ENGINE=MyISAM AUTO_INCREMENT=0 DEFAULT CHARSET=latin1;
 
 
 
-CREATE TABLE IF NOT EXISTS `_DATABASE_NAME_`.`ReportParameter` (
-  `reportParameterID` int(11) NOT NULL auto_increment,
+CREATE TABLE IF NOT EXISTS `_DATABASE_NAME_`.`ReportParameterMap` (
   `reportID` int(11) default NULL,
-  `parameterDisplayPrompt` varchar(45) default NULL,
-  `parameterAddWhereClause` varchar(500) default NULL,
-  `parameterTypeCode` varchar(45) default NULL,
-  `parameterFormatCode` varchar(45) default NULL,
-  `requiredInd` tinyint(1) default NULL,
-  `parameterAddWhereNumber` int(11) default NULL,
-  `parameterSQLStatement` text,
+  `reportParameterID` int(11) NOT NULL auto_increment,
   `parentReportParameterID` int(11) default NULL,
-  `parameterSQLRestriction` text,
-  PRIMARY KEY  (`reportParameterID`)
+  PRIMARY KEY  (`reportID`,`reportParameterID`)
 ) ENGINE=MyISAM AUTO_INCREMENT=0 DEFAULT CHARSET=latin1;
 
 
@@ -45,15 +39,14 @@ CREATE TABLE IF NOT EXISTS `_DATABASE_NAME_`.`ReportSum` (
   `reportID` int(11) NOT NULL,
   `reportSumID` int(10) unsigned NOT NULL auto_increment,
   `reportColumnName` varchar(45) default NULL,
-  `reportGroupingColumnName` varchar(45) default NULL,
   `reportAction` varchar(45) default NULL,
   PRIMARY KEY  (`reportSumID`)
 ) ENGINE=MyISAM AUTO_INCREMENT=0 DEFAULT CHARSET=latin1;
 
 
 DELETE FROM `_DATABASE_NAME_`.Report;
-INSERT INTO `_DATABASE_NAME_`.Report (reportID, reportName, reportSQL, reportGroupingColumnName, defaultRecPageNumber, groupTotalInd, specialPageURL, orderBySQL, infoDisplayText, excelOnlyInd, reportDatabaseName)  
-VALUES 
+INSERT INTO `_DATABASE_NAME_`.Report (reportID, reportName, reportSQL, defaultRecPageNumber, orderBySQL, infoDisplayText, excelOnlyInd, reportDatabaseName)
+VALUES
 ('1','Usage Statistics by Titles','SELECT t.Title TITLE, pp.reportDisplayName PUBLISHER, Platform.reportDisplayName PLATFORM, mus.year YEAR,
 MAX(IF(ti.identifierType=\'DOI\', ti.identifier, null)) DOI,
 MAX(IF(ti.identifierType=\'ISSN\', concat(substr(ti.identifier,1,4), \'-\', substr(ti.identifier,5,4)),null)) PRINT_ISSN,
@@ -106,18 +99,18 @@ MAX(IF(month=12,outlierID,null)) DEC_OUTLIER,
 yus.mergeInd mergeInd, pp.publisherPlatformID, pp.platformID,
 replace(replace(replace(t.Title,"A ",""),"An ",""),"The ","") TITLE_SORT
 FROM Platform, PublisherPlatform pp,
-MonthlyUsageSummary mus LEFT JOIN YearlyUsageSummary yus ON yus.publisherPlatformID = mus.publisherPlatformID AND yus.year = mus.year AND yus.titleID = mus.titleID AND yus.archiveInd = mus.archiveInd, 
+MonthlyUsageSummary mus LEFT JOIN YearlyUsageSummary yus ON yus.publisherPlatformID = mus.publisherPlatformID AND yus.year = mus.year AND yus.titleID = mus.titleID AND yus.archiveInd = mus.archiveInd,
 Title t LEFT JOIN TitleIdentifier ti ON t.titleID = ti.titleID
 WHERE Platform.platformID = pp.platformID
-AND t.titleID in (SELECT t2.titleID FROM Title t2 LEFT JOIN TitleIdentifier ti2 ON ti2.titleID = t2.titleID WHERE t2.titleID != \'\' ADD_WHERE2) 
+AND t.titleID in (SELECT t2.titleID FROM Title t2 LEFT JOIN TitleIdentifier ti2 ON ti2.titleID = t2.titleID WHERE t2.titleID != \'\' ADD_WHERE2)
 ADD_WHERE
 AND mus.publisherPlatformID = pp.publisherPlatformID
 AND mus.titleID = t.titleID
-GROUP BY t.titleID, t.Title, pp.reportDisplayName, Platform.reportDisplayName, mus.year, overrideTotalCount, totalCount, overrideHTMLCount, ytdHTMLCount, overridePDFCount, ytdPDFCount, yus.mergeInd, pp.publisherPlatformID, pp.platformID','','100','0','',' order by TITLE_SORT,2,3,4','<h3>Frequently Asked Questions</h3><b>Q. Why isn\'t the HTML number double the PDF number for interfaces that automatically download HTML?</b><br />A. Frequently these sites do NOT automatically download HTML from the Table of Contents browse interface, so even platforms such as ScienceDirect occasionally have higher PDF than HTML counts.<br /><br /><b>Q. I thought COUNTER standards prevented double-counting of article downloads.</b><br />A. COUNTER does require that duplicate clicks on HTML or PDF within a short period of time be counted once. But COUNTER specifically does not deny double count of different formats--HTML and PDF. Because some publishers automatically choose HTML for users, and because many users prefer to save and/or print the PDF version, this interface significantly inflates total article usage.<br /><br /><b>Q. Why do some Highwire Press publishers have high HTML ratios to PDFs, but some appear to have a very low ratio?</b><br />A. Some publishers have automatic HTML display on Highwire, and some do not. This is because the publisher is able to indicate a preferred linking page through the DOI registry. Because this platform includes multiple publishers, the interface impact is not consistent.','0', 'usageDatabase');
+GROUP BY t.titleID, t.Title, pp.reportDisplayName, Platform.reportDisplayName, mus.year, overrideTotalCount, totalCount, overrideHTMLCount, ytdHTMLCount, overridePDFCount, ytdPDFCount, yus.mergeInd, pp.publisherPlatformID, pp.platformID','100',' order by TITLE_SORT,2,3,4','<h3>Frequently Asked Questions</h3><b>Q. Why isn\'t the HTML number double the PDF number for interfaces that automatically download HTML?</b><br />A. Frequently these sites do NOT automatically download HTML from the Table of Contents browse interface, so even platforms such as ScienceDirect occasionally have higher PDF than HTML counts.<br /><br /><b>Q. I thought COUNTER standards prevented double-counting of article downloads.</b><br />A. COUNTER does require that duplicate clicks on HTML or PDF within a short period of time be counted once. But COUNTER specifically does not deny double count of different formats--HTML and PDF. Because some publishers automatically choose HTML for users, and because many users prefer to save and/or print the PDF version, this interface significantly inflates total article usage.<br /><br /><b>Q. Why do some Highwire Press publishers have high HTML ratios to PDFs, but some appear to have a very low ratio?</b><br />A. Some publishers have automatic HTML display on Highwire, and some do not. This is because the publisher is able to indicate a preferred linking page through the DOI registry. Because this platform includes multiple publishers, the interface impact is not consistent.','0', 'usageDatabase');
 
 
 
-INSERT INTO `_DATABASE_NAME_`.Report (reportID, reportName, reportSQL, reportGroupingColumnName, defaultRecPageNumber, groupTotalInd, specialPageURL, orderBySQL, infoDisplayText, excelOnlyInd, reportDatabaseName)  
+INSERT INTO `_DATABASE_NAME_`.Report (reportID, reportName, reportSQL, defaultRecPageNumber, orderBySQL, infoDisplayText, excelOnlyInd, reportDatabaseName)
 VALUES ('2','Usage Statistics by Provider / Publisher',
 'SELECT t.Title TITLE, pp.reportDisplayName PUBLISHER, Platform.reportDisplayName PLATFORM, mus.year YEAR,
 MAX(IF(ti.identifierType=\'DOI\', ti.identifier, null)) DOI,
@@ -171,17 +164,17 @@ MAX(IF(month=12,outlierID,null)) DEC_OUTLIER,
 yus.mergeInd mergeInd, pp.publisherPlatformID, pp.platformID,
 replace(replace(replace(t.Title,"A ",""),"An ",""),"The ","") TITLE_SORT
 FROM Platform, PublisherPlatform pp,
-MonthlyUsageSummary mus LEFT JOIN YearlyUsageSummary yus ON yus.publisherPlatformID = mus.publisherPlatformID AND yus.year = mus.year AND yus.titleID = mus.titleID AND yus.archiveInd = mus.archiveInd, 
+MonthlyUsageSummary mus LEFT JOIN YearlyUsageSummary yus ON yus.publisherPlatformID = mus.publisherPlatformID AND yus.year = mus.year AND yus.titleID = mus.titleID AND yus.archiveInd = mus.archiveInd,
 Title t LEFT JOIN TitleIdentifier ti ON t.titleID = ti.titleID
 WHERE Platform.platformID = pp.platformID
 ADD_WHERE
 AND mus.publisherPlatformID = pp.publisherPlatformID
 AND mus.titleID = t.titleID
-GROUP BY t.titleID, t.Title, pp.reportDisplayName, Platform.reportDisplayName, mus.year, overrideTotalCount, totalCount, overrideHTMLCount, ytdHTMLCount, overridePDFCount, ytdPDFCount, yus.mergeInd, pp.publisherPlatformID, pp.platformID','','100','1','',' order by TITLE_SORT,2,3,4','<h3>Frequently Asked Questions</h3><b>Q. Why isn\'t the HTML number double the PDF number for interfaces that automatically download HTML?</b><br />A. Frequently these sites do NOT automatically download HTML from the Table of Contents browse interface, so even platforms such as ScienceDirect occasionally have higher PDF than HTML counts.<br /><br /><b>Q. I thought COUNTER standards prevented double-counting of article downloads.</b><br />A. COUNTER does require that duplicate clicks on HTML or PDF within a short period of time be counted once. But COUNTER specifically does not deny double count of different formats--HTML and PDF. Because some publishers automatically choose HTML for users, and because many users prefer to save and/or print the PDF version, this interface significantly inflates total article usage.<br /><br /><b>Q. Why do some Highwire Press publishers have high HTML ratios to PDFs, but some appear to have a very low ratio?</b><br />A. Some publishers have automatic HTML display on Highwire, and some do not. This is because the publisher is able to indicate a preferred linking page through the DOI registry. Because this platform includes multiple publishers, the interface impact is not consistent.','0', 'usageDatabase');
+GROUP BY t.titleID, t.Title, pp.reportDisplayName, Platform.reportDisplayName, mus.year, overrideTotalCount, totalCount, overrideHTMLCount, ytdHTMLCount, overridePDFCount, ytdPDFCount, yus.mergeInd, pp.publisherPlatformID, pp.platformID','100',' order by TITLE_SORT,2,3,4','<h3>Frequently Asked Questions</h3><b>Q. Why isn\'t the HTML number double the PDF number for interfaces that automatically download HTML?</b><br />A. Frequently these sites do NOT automatically download HTML from the Table of Contents browse interface, so even platforms such as ScienceDirect occasionally have higher PDF than HTML counts.<br /><br /><b>Q. I thought COUNTER standards prevented double-counting of article downloads.</b><br />A. COUNTER does require that duplicate clicks on HTML or PDF within a short period of time be counted once. But COUNTER specifically does not deny double count of different formats--HTML and PDF. Because some publishers automatically choose HTML for users, and because many users prefer to save and/or print the PDF version, this interface significantly inflates total article usage.<br /><br /><b>Q. Why do some Highwire Press publishers have high HTML ratios to PDFs, but some appear to have a very low ratio?</b><br />A. Some publishers have automatic HTML display on Highwire, and some do not. This is because the publisher is able to indicate a preferred linking page through the DOI registry. Because this platform includes multiple publishers, the interface impact is not consistent.','0', 'usageDatabase');
 
 
 
-INSERT INTO `_DATABASE_NAME_`.Report (reportID, reportName, reportSQL, reportGroupingColumnName, defaultRecPageNumber, groupTotalInd, specialPageURL, orderBySQL, infoDisplayText, excelOnlyInd, reportDatabaseName)  VALUES 
+INSERT INTO `_DATABASE_NAME_`.Report (reportID, reportName, reportSQL, defaultRecPageNumber, orderBySQL, infoDisplayText, excelOnlyInd, reportDatabaseName)  VALUES
 ('3','Usage Statistics - Provider Rollup','SELECT Platform.reportDisplayName PLATFORM,
 number_of_titles,
 mus.year,
@@ -213,10 +206,10 @@ AND pp.publisherPlatformID = mus.publisherPlatformID
 AND pp.platformID = Platform.platformID
 AND pp.publisherID = Publisher.publisherID
 ADD_WHERE
-GROUP BY Platform.reportDisplayName, mus.year, number_of_titles, total_count, html_count, pdf_count, Platform.platformID','','100','1','','order by 1, 3','<h3>Frequently Asked Questions</h3><b>Q. Why isn\'t the HTML number double the PDF number for interfaces that automatically download HTML?</b><br />A. Frequently these sites do NOT automatically download HTML from the Table of Contents browse interface, so even platforms such as ScienceDirect occasionally have higher PDF than HTML counts.<br /><br /><b>Q. I thought COUNTER standards prevented double-counting of article downloads.</b><br />A. COUNTER does require that duplicate clicks on HTML or PDF within a short period of time be counted once. But COUNTER specifically does not deny double count of different formats--HTML and PDF. Because some publishers automatically choose HTML for users, and because many users prefer to save and/or print the PDF version, this interface significantly inflates total article usage.<br /><br /><b>Q. Why do some Highwire Press publishers have high HTML ratios to PDFs, but some appear to have a very low ratio?</b><br />A. Some publishers have automatic HTML display on Highwire, and some do not. This is because the publisher is able to indicate a preferred linking page through the DOI registry. Because this platform includes multiple publishers, the interface impact is not consistent.','0', 'usageDatabase');
+GROUP BY Platform.reportDisplayName, mus.year, number_of_titles, total_count, html_count, pdf_count, Platform.platformID','100','order by 1, 3','<h3>Frequently Asked Questions</h3><b>Q. Why isn\'t the HTML number double the PDF number for interfaces that automatically download HTML?</b><br />A. Frequently these sites do NOT automatically download HTML from the Table of Contents browse interface, so even platforms such as ScienceDirect occasionally have higher PDF than HTML counts.<br /><br /><b>Q. I thought COUNTER standards prevented double-counting of article downloads.</b><br />A. COUNTER does require that duplicate clicks on HTML or PDF within a short period of time be counted once. But COUNTER specifically does not deny double count of different formats--HTML and PDF. Because some publishers automatically choose HTML for users, and because many users prefer to save and/or print the PDF version, this interface significantly inflates total article usage.<br /><br /><b>Q. Why do some Highwire Press publishers have high HTML ratios to PDFs, but some appear to have a very low ratio?</b><br />A. Some publishers have automatic HTML display on Highwire, and some do not. This is because the publisher is able to indicate a preferred linking page through the DOI registry. Because this platform includes multiple publishers, the interface impact is not consistent.','0', 'usageDatabase');
 
 
-INSERT INTO `_DATABASE_NAME_`.Report (reportID, reportName, reportSQL, reportGroupingColumnName, defaultRecPageNumber, groupTotalInd, specialPageURL, orderBySQL, infoDisplayText, excelOnlyInd, reportDatabaseName)  VALUES ('4','Usage Statistics - Publisher Rollup','SELECT pp.reportDisplayName Publisher,
+INSERT INTO `_DATABASE_NAME_`.Report (reportID, reportName, reportSQL, defaultRecPageNumber, orderBySQL, infoDisplayText, excelOnlyInd, reportDatabaseName)  VALUES ('4','Usage Statistics - Publisher Rollup','SELECT pp.reportDisplayName Publisher,
 Platform.reportDisplayName Platform,
 number_of_titles,
 mus.year,
@@ -249,11 +242,11 @@ AND pp.publisherPlatformID = mus.publisherPlatformID
 AND pp.platformID = Platform.platformID
 AND pp.publisherID = Publisher.publisherID
 ADD_WHERE
-GROUP BY pp.reportDisplayName, Platform.reportDisplayName, mus.year, number_of_titles, total_count, html_count, pdf_count, pp.publisherPlatformID, Platform.platformID','','100','1','','order by 1','<h3>Frequently Asked Questions</h3><b>Q. Why isn\'t the HTML number double the PDF number for interfaces that automatically download HTML?</b><br />A. Frequently these sites do NOT automatically download HTML from the Table of Contents browse interface, so even platforms such as ScienceDirect occasionally have higher PDF than HTML counts.<br /><br /><b>Q. I thought COUNTER standards prevented double-counting of article downloads.</b><br />A. COUNTER does require that duplicate clicks on HTML or PDF within a short period of time be counted once. But COUNTER specifically does not deny double count of different formats--HTML and PDF. Because some publishers automatically choose HTML for users, and because many users prefer to save and/or print the PDF version, this interface significantly inflates total article usage.<br /><br /><b>Q. Why do some Highwire Press publishers have high HTML ratios to PDFs, but some appear to have a very low ratio?</b><br />A. Some publishers have automatic HTML display on Highwire, and some do not. This is because the publisher is able to indicate a preferred linking page through the DOI registry. Because this platform includes multiple publishers, the interface impact is not consistent.','0', 'usageDatabase');
+GROUP BY pp.reportDisplayName, Platform.reportDisplayName, mus.year, number_of_titles, total_count, html_count, pdf_count, pp.publisherPlatformID, Platform.platformID','100','order by 1','<h3>Frequently Asked Questions</h3><b>Q. Why isn\'t the HTML number double the PDF number for interfaces that automatically download HTML?</b><br />A. Frequently these sites do NOT automatically download HTML from the Table of Contents browse interface, so even platforms such as ScienceDirect occasionally have higher PDF than HTML counts.<br /><br /><b>Q. I thought COUNTER standards prevented double-counting of article downloads.</b><br />A. COUNTER does require that duplicate clicks on HTML or PDF within a short period of time be counted once. But COUNTER specifically does not deny double count of different formats--HTML and PDF. Because some publishers automatically choose HTML for users, and because many users prefer to save and/or print the PDF version, this interface significantly inflates total article usage.<br /><br /><b>Q. Why do some Highwire Press publishers have high HTML ratios to PDFs, but some appear to have a very low ratio?</b><br />A. Some publishers have automatic HTML display on Highwire, and some do not. This is because the publisher is able to indicate a preferred linking page through the DOI registry. Because this platform includes multiple publishers, the interface impact is not consistent.','0', 'usageDatabase');
 
 
 
-INSERT INTO `_DATABASE_NAME_`.Report (reportID, reportName, reportSQL, reportGroupingColumnName, defaultRecPageNumber, groupTotalInd, specialPageURL, orderBySQL, infoDisplayText, excelOnlyInd, reportDatabaseName)  VALUES ('5','Usage Statistics - Top Journal Requests','SELECT t.Title TITLE,
+INSERT INTO `_DATABASE_NAME_`.Report (reportID, reportName, reportSQL, defaultRecPageNumber, orderBySQL, infoDisplayText, excelOnlyInd, reportDatabaseName)  VALUES ('5','Usage Statistics - Top Journal Requests','SELECT t.Title TITLE,
 max(pp.reportDisplayName) PUBLISHER,
 GROUP_CONCAT(distinct Platform.reportDisplayName ORDER BY Platform.reportDisplayName DESC SEPARATOR \', \') PLATFORM,
 yus.year YEAR,
@@ -276,10 +269,10 @@ AND pp.platformID = Platform.platformID
 AND pp.publisherID = Publisher.publisherID
 AND ti.titleID=t.titleID
 ADD_WHERE
-GROUP BY t.Title, yus.year, t.titleID','','100','1','','order by sum(distinct totalCount) desc, TITLE_SORT','<h3>Frequently Asked Questions</h3><b>Q. Why isn\'t the HTML number double the PDF number for interfaces that automatically download HTML?</b><br />A. Frequently these sites do NOT automatically download HTML from the Table of Contents browse interface, so even platforms such as ScienceDirect occasionally have higher PDF than HTML counts.<br /><br /><b>Q. I thought COUNTER standards prevented double-counting of article downloads.</b><br />A. COUNTER does require that duplicate clicks on HTML or PDF within a short period of time be counted once. But COUNTER specifically does not deny double count of different formats--HTML and PDF. Because some publishers automatically choose HTML for users, and because many users prefer to save and/or print the PDF version, this interface significantly inflates total article usage.<br /><br /><b>Q. Why do some Highwire Press publishers have high HTML ratios to PDFs, but some appear to have a very low ratio?</b><br />A. Some publishers have automatic HTML display on Highwire, and some do not. This is because the publisher is able to indicate a preferred linking page through the DOI registry. Because this platform includes multiple publishers, the interface impact is not consistent.','0', 'usageDatabase');
+GROUP BY t.Title, yus.year, t.titleID','100','order by sum(distinct totalCount) desc, TITLE_SORT','<h3>Frequently Asked Questions</h3><b>Q. Why isn\'t the HTML number double the PDF number for interfaces that automatically download HTML?</b><br />A. Frequently these sites do NOT automatically download HTML from the Table of Contents browse interface, so even platforms such as ScienceDirect occasionally have higher PDF than HTML counts.<br /><br /><b>Q. I thought COUNTER standards prevented double-counting of article downloads.</b><br />A. COUNTER does require that duplicate clicks on HTML or PDF within a short period of time be counted once. But COUNTER specifically does not deny double count of different formats--HTML and PDF. Because some publishers automatically choose HTML for users, and because many users prefer to save and/or print the PDF version, this interface significantly inflates total article usage.<br /><br /><b>Q. Why do some Highwire Press publishers have high HTML ratios to PDFs, but some appear to have a very low ratio?</b><br />A. Some publishers have automatic HTML display on Highwire, and some do not. This is because the publisher is able to indicate a preferred linking page through the DOI registry. Because this platform includes multiple publishers, the interface impact is not consistent.','0', 'usageDatabase');
 
 
-INSERT INTO `_DATABASE_NAME_`.Report (reportID, reportName, reportSQL, reportGroupingColumnName, defaultRecPageNumber, groupTotalInd, specialPageURL, orderBySQL, infoDisplayText, excelOnlyInd, reportDatabaseName)  VALUES ('6','Usage Statistics - Yearly Usage Statistics','SELECT t.Title TITLE,
+INSERT INTO `_DATABASE_NAME_`.Report (reportID, reportName, reportSQL, defaultRecPageNumber, orderBySQL, infoDisplayText, excelOnlyInd, reportDatabaseName)  VALUES ('6','Usage Statistics - Yearly Usage Statistics','SELECT t.Title TITLE,
 PRINT_ISSN,
 ONLINE_ISSN,
 pp.reportDisplayName PUBLISHER,
@@ -293,10 +286,10 @@ max(IF(year=2008, totalCount, null)) "2008_ytd",
 sum(totalCount) "all_years",
 t.titleID, pp.platformID,
 replace(replace(replace(t.Title,"A ",""),"An ",""),"The ","") TITLE_SORT
-FROM Title t, (SELECT titleID, 
-  MAX(IF(identifierType=\'ISSN\', concat(substr(identifier,1,4), \'-\', substr(identifier,5,4)),null)) PRINT_ISSN, 
-  MAX(IF(identifierType=\'online\', concat(substr(identifier,1,4), \'-\', substr(identifier,5,4)),null)) ONLINE_ISSN 
-  FROM TitleIdentifier GROUP BY titleID) ti, 
+FROM Title t, (SELECT titleID,
+  MAX(IF(identifierType=\'ISSN\', concat(substr(identifier,1,4), \'-\', substr(identifier,5,4)),null)) PRINT_ISSN,
+  MAX(IF(identifierType=\'online\', concat(substr(identifier,1,4), \'-\', substr(identifier,5,4)),null)) ONLINE_ISSN
+  FROM TitleIdentifier GROUP BY titleID) ti,
 Platform, Publisher, PublisherPlatform pp, YearlyUsageSummary yus
 WHERE t.titleID = yus.titleID
 AND pp.publisherPlatformID = yus.publisherPlatformID
@@ -304,65 +297,78 @@ AND pp.platformID = Platform.platformID
 AND pp.publisherID = Publisher.publisherID
 AND ti.titleID=t.titleID
 ADD_WHERE
-GROUP BY t.Title, print_issn, online_issn, pp.reportDisplayName, Platform.reportDisplayName, t.titleID, pp.platformID','','100','1','','order by TITLE_SORT','<h3>Frequently Asked Questions</h3><b>Q. Why isn\'t the HTML number double the PDF number for interfaces that automatically download HTML?</b><br />A. Frequently these sites do NOT automatically download HTML from the Table of Contents browse interface, so even platforms such as ScienceDirect occasionally have higher PDF than HTML counts.<br /><br /><b>Q. I thought COUNTER standards prevented double-counting of article downloads.</b><br />A. COUNTER does require that duplicate clicks on HTML or PDF within a short period of time be counted once. But COUNTER specifically does not deny double count of different formats--HTML and PDF. Because some publishers automatically choose HTML for users, and because many users prefer to save and/or print the PDF version, this interface significantly inflates total article usage.<br /><br /><b>Q. Why do some Highwire Press publishers have high HTML ratios to PDFs, but some appear to have a very low ratio?</b><br />A. Some publishers have automatic HTML display on Highwire, and some do not. This is because the publisher is able to indicate a preferred linking page through the DOI registry. Because this platform includes multiple publishers, the interface impact is not consistent.','0', 'usageDatabase');
+GROUP BY t.Title, print_issn, online_issn, pp.reportDisplayName, Platform.reportDisplayName, t.titleID, pp.platformID','100','order by TITLE_SORT','<h3>Frequently Asked Questions</h3><b>Q. Why isn\'t the HTML number double the PDF number for interfaces that automatically download HTML?</b><br />A. Frequently these sites do NOT automatically download HTML from the Table of Contents browse interface, so even platforms such as ScienceDirect occasionally have higher PDF than HTML counts.<br /><br /><b>Q. I thought COUNTER standards prevented double-counting of article downloads.</b><br />A. COUNTER does require that duplicate clicks on HTML or PDF within a short period of time be counted once. But COUNTER specifically does not deny double count of different formats--HTML and PDF. Because some publishers automatically choose HTML for users, and because many users prefer to save and/or print the PDF version, this interface significantly inflates total article usage.<br /><br /><b>Q. Why do some Highwire Press publishers have high HTML ratios to PDFs, but some appear to have a very low ratio?</b><br />A. Some publishers have automatic HTML display on Highwire, and some do not. This is because the publisher is able to indicate a preferred linking page through the DOI registry. Because this platform includes multiple publishers, the interface impact is not consistent.','0', 'usageDatabase');
 
 
 
 DELETE FROM `_DATABASE_NAME_`.ReportSum;
-INSERT INTO `_DATABASE_NAME_`.ReportSum (reportID, reportColumnName, reportGroupingColumnName, reportAction)  VALUES ('1','APR','', 'sum');
-INSERT INTO `_DATABASE_NAME_`.ReportSum (reportID, reportColumnName, reportGroupingColumnName, reportAction)  VALUES ('1','AUG','', 'sum');
-INSERT INTO `_DATABASE_NAME_`.ReportSum (reportID, reportColumnName, reportGroupingColumnName, reportAction)  VALUES ('1','DEC','', 'sum');
-INSERT INTO `_DATABASE_NAME_`.ReportSum (reportID, reportColumnName, reportGroupingColumnName, reportAction)  VALUES ('1','FEB','', 'sum');
-INSERT INTO `_DATABASE_NAME_`.ReportSum (reportID, reportColumnName, reportGroupingColumnName, reportAction)  VALUES ('1','JAN','', 'sum');
-INSERT INTO `_DATABASE_NAME_`.ReportSum (reportID, reportColumnName, reportGroupingColumnName, reportAction)  VALUES ('1','JUL','', 'sum');
-INSERT INTO `_DATABASE_NAME_`.ReportSum (reportID, reportColumnName, reportGroupingColumnName, reportAction)  VALUES ('1','JUN','', 'sum');
-INSERT INTO `_DATABASE_NAME_`.ReportSum (reportID, reportColumnName, reportGroupingColumnName, reportAction)  VALUES ('1','MAR','', 'sum');
-INSERT INTO `_DATABASE_NAME_`.ReportSum (reportID, reportColumnName, reportGroupingColumnName, reportAction)  VALUES ('1','MAY','', 'sum');
-INSERT INTO `_DATABASE_NAME_`.ReportSum (reportID, reportColumnName, reportGroupingColumnName, reportAction)  VALUES ('1','NOV','', 'sum');
-INSERT INTO `_DATABASE_NAME_`.ReportSum (reportID, reportColumnName, reportGroupingColumnName, reportAction)  VALUES ('1','OCT','', 'sum');
-INSERT INTO `_DATABASE_NAME_`.ReportSum (reportID, reportColumnName, reportGroupingColumnName, reportAction)  VALUES ('1','SEP','', 'sum');
-INSERT INTO `_DATABASE_NAME_`.ReportSum (reportID, reportColumnName, reportGroupingColumnName, reportAction)  VALUES ('1','YTD_HTML','', 'sum');
-INSERT INTO `_DATABASE_NAME_`.ReportSum (reportID, reportColumnName, reportGroupingColumnName, reportAction)  VALUES ('1','YTD_PDF','', 'sum');
-INSERT INTO `_DATABASE_NAME_`.ReportSum (reportID, reportColumnName, reportGroupingColumnName, reportAction)  VALUES ('1','YTD_TOTAL','', 'sum');
-INSERT INTO `_DATABASE_NAME_`.ReportSum (reportID, reportColumnName, reportGroupingColumnName, reportAction)  VALUES ('2','APR','', 'sum');
-INSERT INTO `_DATABASE_NAME_`.ReportSum (reportID, reportColumnName, reportGroupingColumnName, reportAction)  VALUES ('2','AUG','', 'sum');
-INSERT INTO `_DATABASE_NAME_`.ReportSum (reportID, reportColumnName, reportGroupingColumnName, reportAction)  VALUES ('2','DEC','', 'sum');
-INSERT INTO `_DATABASE_NAME_`.ReportSum (reportID, reportColumnName, reportGroupingColumnName, reportAction)  VALUES ('2','FEB','', 'sum');
-INSERT INTO `_DATABASE_NAME_`.ReportSum (reportID, reportColumnName, reportGroupingColumnName, reportAction)  VALUES ('2','JAN','', 'sum');
-INSERT INTO `_DATABASE_NAME_`.ReportSum (reportID, reportColumnName, reportGroupingColumnName, reportAction)  VALUES ('2','JUL','', 'sum');
-INSERT INTO `_DATABASE_NAME_`.ReportSum (reportID, reportColumnName, reportGroupingColumnName, reportAction)  VALUES ('2','JUN','', 'sum');
-INSERT INTO `_DATABASE_NAME_`.ReportSum (reportID, reportColumnName, reportGroupingColumnName, reportAction)  VALUES ('2','MAR','', 'sum');
-INSERT INTO `_DATABASE_NAME_`.ReportSum (reportID, reportColumnName, reportGroupingColumnName, reportAction)  VALUES ('2','MAY','', 'sum');
-INSERT INTO `_DATABASE_NAME_`.ReportSum (reportID, reportColumnName, reportGroupingColumnName, reportAction)  VALUES ('2','NOV','', 'sum');
-INSERT INTO `_DATABASE_NAME_`.ReportSum (reportID, reportColumnName, reportGroupingColumnName, reportAction)  VALUES ('2','OCT','', 'sum');
-INSERT INTO `_DATABASE_NAME_`.ReportSum (reportID, reportColumnName, reportGroupingColumnName, reportAction)  VALUES ('2','SEP','', 'sum');
-INSERT INTO `_DATABASE_NAME_`.ReportSum (reportID, reportColumnName, reportGroupingColumnName, reportAction)  VALUES ('2','YTD_HTML','', 'sum');
-INSERT INTO `_DATABASE_NAME_`.ReportSum (reportID, reportColumnName, reportGroupingColumnName, reportAction)  VALUES ('2','YTD_PDF','', 'sum');
-INSERT INTO `_DATABASE_NAME_`.ReportSum (reportID, reportColumnName, reportGroupingColumnName, reportAction)  VALUES ('2','YTD_TOTAL','', 'sum');
+INSERT INTO `_DATABASE_NAME_`.ReportSum (reportID, reportColumnName, reportAction)  VALUES ('1','APR','sum');
+INSERT INTO `_DATABASE_NAME_`.ReportSum (reportID, reportColumnName, reportAction)  VALUES ('1','AUG','sum');
+INSERT INTO `_DATABASE_NAME_`.ReportSum (reportID, reportColumnName, reportAction)  VALUES ('1','DEC','sum');
+INSERT INTO `_DATABASE_NAME_`.ReportSum (reportID, reportColumnName, reportAction)  VALUES ('1','FEB','sum');
+INSERT INTO `_DATABASE_NAME_`.ReportSum (reportID, reportColumnName, reportAction)  VALUES ('1','JAN','sum');
+INSERT INTO `_DATABASE_NAME_`.ReportSum (reportID, reportColumnName, reportAction)  VALUES ('1','JUL','sum');
+INSERT INTO `_DATABASE_NAME_`.ReportSum (reportID, reportColumnName, reportAction)  VALUES ('1','JUN','sum');
+INSERT INTO `_DATABASE_NAME_`.ReportSum (reportID, reportColumnName, reportAction)  VALUES ('1','MAR','sum');
+INSERT INTO `_DATABASE_NAME_`.ReportSum (reportID, reportColumnName, reportAction)  VALUES ('1','MAY','sum');
+INSERT INTO `_DATABASE_NAME_`.ReportSum (reportID, reportColumnName, reportAction)  VALUES ('1','NOV','sum');
+INSERT INTO `_DATABASE_NAME_`.ReportSum (reportID, reportColumnName, reportAction)  VALUES ('1','OCT','sum');
+INSERT INTO `_DATABASE_NAME_`.ReportSum (reportID, reportColumnName, reportAction)  VALUES ('1','SEP','sum');
+INSERT INTO `_DATABASE_NAME_`.ReportSum (reportID, reportColumnName, reportAction)  VALUES ('1','YTD_HTML','sum');
+INSERT INTO `_DATABASE_NAME_`.ReportSum (reportID, reportColumnName, reportAction)  VALUES ('1','YTD_PDF','sum');
+INSERT INTO `_DATABASE_NAME_`.ReportSum (reportID, reportColumnName, reportAction)  VALUES ('1','YTD_TOTAL','sum');
+INSERT INTO `_DATABASE_NAME_`.ReportSum (reportID, reportColumnName, reportAction)  VALUES ('2','APR','sum');
+INSERT INTO `_DATABASE_NAME_`.ReportSum (reportID, reportColumnName, reportAction)  VALUES ('2','AUG','sum');
+INSERT INTO `_DATABASE_NAME_`.ReportSum (reportID, reportColumnName, reportAction)  VALUES ('2','DEC','sum');
+INSERT INTO `_DATABASE_NAME_`.ReportSum (reportID, reportColumnName, reportAction)  VALUES ('2','FEB','sum');
+INSERT INTO `_DATABASE_NAME_`.ReportSum (reportID, reportColumnName, reportAction)  VALUES ('2','JAN','sum');
+INSERT INTO `_DATABASE_NAME_`.ReportSum (reportID, reportColumnName, reportAction)  VALUES ('2','JUL','sum');
+INSERT INTO `_DATABASE_NAME_`.ReportSum (reportID, reportColumnName, reportAction)  VALUES ('2','JUN','sum');
+INSERT INTO `_DATABASE_NAME_`.ReportSum (reportID, reportColumnName, reportAction)  VALUES ('2','MAR','sum');
+INSERT INTO `_DATABASE_NAME_`.ReportSum (reportID, reportColumnName, reportAction)  VALUES ('2','MAY','sum');
+INSERT INTO `_DATABASE_NAME_`.ReportSum (reportID, reportColumnName, reportAction)  VALUES ('2','NOV','sum');
+INSERT INTO `_DATABASE_NAME_`.ReportSum (reportID, reportColumnName, reportAction)  VALUES ('2','OCT','sum');
+INSERT INTO `_DATABASE_NAME_`.ReportSum (reportID, reportColumnName, reportAction)  VALUES ('2','SEP','sum');
+INSERT INTO `_DATABASE_NAME_`.ReportSum (reportID, reportColumnName, reportAction)  VALUES ('2','YTD_HTML','sum');
+INSERT INTO `_DATABASE_NAME_`.ReportSum (reportID, reportColumnName, reportAction)  VALUES ('2','YTD_PDF','sum');
+INSERT INTO `_DATABASE_NAME_`.ReportSum (reportID, reportColumnName, reportAction)  VALUES ('2','YTD_TOTAL','sum');
 
 
 
 DELETE FROM `_DATABASE_NAME_`.ReportParameter;
-INSERT INTO `_DATABASE_NAME_`.ReportParameter (reportID, parameterDisplayPrompt, parameterAddWhereClause, parameterTypeCode, parameterFormatCode, requiredInd, parameterAddWhereNumber, parameterSQLStatement, parentReportParameterID, parameterSQLRestriction)  VALUES ('1','Do not adjust numbers for use violations','Overriden','chk','','0','0','','0','');
-INSERT INTO `_DATABASE_NAME_`.ReportParameter (reportID, parameterDisplayPrompt, parameterAddWhereClause, parameterTypeCode, parameterFormatCode, requiredInd, parameterAddWhereNumber, parameterSQLStatement, parentReportParameterID, parameterSQLRestriction)  VALUES ('1','ISSN/ISBN/DOI','(ti2.identifier = \'PARM\' OR ti2.identifier = REPLACE(\'PARM\',"-",""))','txt','','0','2','','0','');
-INSERT INTO `_DATABASE_NAME_`.ReportParameter (reportID, parameterDisplayPrompt, parameterAddWhereClause, parameterTypeCode, parameterFormatCode, requiredInd, parameterAddWhereNumber, parameterSQLStatement, parentReportParameterID, parameterSQLRestriction)  VALUES ('1','Title Search','upper(t2.title) like upper(\'%PARM%\')','txt','','0','2','','0','');
-INSERT INTO `_DATABASE_NAME_`.ReportParameter (reportID, parameterDisplayPrompt, parameterAddWhereClause, parameterTypeCode, parameterFormatCode, requiredInd, parameterAddWhereNumber, parameterSQLStatement, parentReportParameterID, parameterSQLRestriction)  VALUES ('1','Year','mus.year = \'PARM\'','dd','','0','0','SELECT distinct year, year from YearlyUsageSummary ORDER BY 1 desc','0','');
-INSERT INTO `_DATABASE_NAME_`.ReportParameter (reportID, parameterDisplayPrompt, parameterAddWhereClause, parameterTypeCode, parameterFormatCode, requiredInd, parameterAddWhereNumber, parameterSQLStatement, parentReportParameterID, parameterSQLRestriction)  VALUES ('2','Do not adjust numbers for use violations','Overriden','chk','','0','0','','0','');
-INSERT INTO `_DATABASE_NAME_`.ReportParameter (reportID, parameterDisplayPrompt, parameterAddWhereClause, parameterTypeCode, parameterFormatCode, requiredInd, parameterAddWhereNumber, parameterSQLStatement, parentReportParameterID, parameterSQLRestriction)  VALUES ('2','Provider / Publisher','(concat(\'PL_\', CAST(Platform.platformID AS CHAR)) = \'PARM\' OR concat(\'PB_\', CAST(pp.publisherPlatformID AS CHAR)) = \'PARM\')','dd','','0','0','SELECT concat(\'PL_\', CAST(Platform.platformID AS CHAR)), reportDisplayName, upper(reportDisplayName) FROM Platform WHERE reportDropDownInd = 1 UNION SELECT concat(\'PB_\', CAST(publisherPlatformID AS CHAR)), reportDisplayName, upper(reportDisplayName) FROM PublisherPlatform WHERE reportDropDownInd = 1 ORDER BY 3','0','');
-INSERT INTO `_DATABASE_NAME_`.ReportParameter (reportID, parameterDisplayPrompt, parameterAddWhereClause, parameterTypeCode, parameterFormatCode, requiredInd, parameterAddWhereNumber, parameterSQLStatement, parentReportParameterID, parameterSQLRestriction)  VALUES ('2','Year','mus.year = \'PARM\'','dd','','0','0','SELECT distinct year, year FROM YearlyUsageSummary yus, PublisherPlatform pp WHERE pp.publisherPlatformID=yus.publisherPlatformID ADD_WHERE ORDER BY 1 desc','5','and (concat(\'PB_\', CAST(yus.publisherPlatformID AS CHAR)) = \'PARM\' or concat(\'PL_\', CAST(pp.platformID AS CHAR)) = \'PARM\')');
-INSERT INTO `_DATABASE_NAME_`.ReportParameter (reportID, parameterDisplayPrompt, parameterAddWhereClause, parameterTypeCode, parameterFormatCode, requiredInd, parameterAddWhereNumber, parameterSQLStatement, parentReportParameterID, parameterSQLRestriction)  VALUES ('3','Provider','concat(\'PL_\', CAST(Platform.platformID AS CHAR)) in (\'PARM\')','ms','','0','0','SELECT concat(\'PL_\', CAST(platformID AS CHAR)), reportDisplayName, upper(reportDisplayName) FROM Platform WHERE reportDropDownInd = 1 ORDER BY 3','0','');
-INSERT INTO `_DATABASE_NAME_`.ReportParameter (reportID, parameterDisplayPrompt, parameterAddWhereClause, parameterTypeCode, parameterFormatCode, requiredInd, parameterAddWhereNumber, parameterSQLStatement, parentReportParameterID, parameterSQLRestriction)  VALUES ('3','Year','mus.year = \'PARM\'','dd','','0','0','SELECT distinct year, year FROM YearlyUsageSummary yus, PublisherPlatform pp WHERE pp.publisherPlatformID=yus.publisherPlatformID ADD_WHERE ORDER BY 1 desc','0','');
-INSERT INTO `_DATABASE_NAME_`.ReportParameter (reportID, parameterDisplayPrompt, parameterAddWhereClause, parameterTypeCode, parameterFormatCode, requiredInd, parameterAddWhereNumber, parameterSQLStatement, parentReportParameterID, parameterSQLRestriction)  VALUES ('4','Publisher','concat(\'PB_\', CAST(pp.publisherPlatformID AS CHAR)) in (\'PARM\')','ms','','0','0','SELECT GROUP_CONCAT(DISTINCT concat(\'PB_\', CAST(publisherPlatformID AS CHAR)) ORDER BY publisherPlatformID DESC SEPARATOR \', \'), reportDisplayName, upper(reportDisplayName) FROM PublisherPlatform WHERE reportDropDownInd = 1 GROUP BY reportDisplayName ORDER BY 3','0','');
-INSERT INTO `_DATABASE_NAME_`.ReportParameter (reportID, parameterDisplayPrompt, parameterAddWhereClause, parameterTypeCode, parameterFormatCode, requiredInd, parameterAddWhereNumber, parameterSQLStatement, parentReportParameterID, parameterSQLRestriction)  VALUES ('4','Year','mus.year = \'PARM\'','dd','','0','0','SELECT distinct year, year FROM YearlyUsageSummary yus, PublisherPlatform pp WHERE pp.publisherPlatformID=yus.publisherPlatformID ADD_WHERE ORDER BY 1 desc','0','');
-INSERT INTO `_DATABASE_NAME_`.ReportParameter (reportID, parameterDisplayPrompt, parameterAddWhereClause, parameterTypeCode, parameterFormatCode, requiredInd, parameterAddWhereNumber, parameterSQLStatement, parentReportParameterID, parameterSQLRestriction)  VALUES ('5','Do not adjust numbers for use violations','Overriden','chk','','0','0','','0','');
-INSERT INTO `_DATABASE_NAME_`.ReportParameter (reportID, parameterDisplayPrompt, parameterAddWhereClause, parameterTypeCode, parameterFormatCode, requiredInd, parameterAddWhereNumber, parameterSQLStatement, parentReportParameterID, parameterSQLRestriction)  VALUES ('5','Limit','limit','dd','','1','0','SELECT 25,25 union SELECT 50,50 union SELECT 100,100 order by 1','0','');
-INSERT INTO `_DATABASE_NAME_`.ReportParameter (reportID, parameterDisplayPrompt, parameterAddWhereClause, parameterTypeCode, parameterFormatCode, requiredInd, parameterAddWhereNumber, parameterSQLStatement, parentReportParameterID, parameterSQLRestriction)  VALUES ('5','Provider / Publisher','(concat(\'PL_\', CAST(Platform.platformID AS CHAR)) = \'PARM\' OR concat(\'PB_\', CAST(pp.publisherPlatformID AS CHAR)) = \'PARM\')','dd','','0','0','SELECT concat(\'PL_\', CAST(Platform.platformID AS CHAR)), reportDisplayName, upper(reportDisplayName) FROM Platform WHERE reportDropDownInd = 1 UNION SELECT concat(\'PB_\', CAST(publisherPlatformID AS CHAR)), reportDisplayName, upper(reportDisplayName) FROM PublisherPlatform WHERE reportDropDownInd = 1 ORDER BY 3','0','');
-INSERT INTO `_DATABASE_NAME_`.ReportParameter (reportID, parameterDisplayPrompt, parameterAddWhereClause, parameterTypeCode, parameterFormatCode, requiredInd, parameterAddWhereNumber, parameterSQLStatement, parentReportParameterID, parameterSQLRestriction)  VALUES ('5','Year','yus.year = \'PARM\'','dd','','0','0','SELECT distinct year, year FROM YearlyUsageSummary yus, PublisherPlatform pp WHERE pp.publisherPlatformID=yus.publisherPlatformID ADD_WHERE ORDER BY 1 desc','13','and (concat(\'PB_\', CAST(yus.publisherPlatformID AS CHAR)) = \'PARM\' or concat(\'PL_\', CAST(pp.platformID AS CHAR)) = \'PARM\')');
-INSERT INTO `_DATABASE_NAME_`.ReportParameter (reportID, parameterDisplayPrompt, parameterAddWhereClause, parameterTypeCode, parameterFormatCode, requiredInd, parameterAddWhereNumber, parameterSQLStatement, parentReportParameterID, parameterSQLRestriction)  VALUES ('6','Do not adjust numbers for use violations','Overriden','chk','','0','0','','0','');
-INSERT INTO `_DATABASE_NAME_`.ReportParameter (reportID, parameterDisplayPrompt, parameterAddWhereClause, parameterTypeCode, parameterFormatCode, requiredInd, parameterAddWhereNumber, parameterSQLStatement, parentReportParameterID, parameterSQLRestriction)  VALUES ('6','Provider / Publisher','(concat(\'PL_\', CAST(Platform.platformID AS CHAR)) = \'PARM\' OR concat(\'PB_\', CAST(pp.publisherPlatformID AS CHAR)) = \'PARM\')','dd','','0','0','SELECT concat(\'PL_\', CAST(Platform.platformID AS CHAR)), reportDisplayName, upper(reportDisplayName) FROM Platform WHERE reportDropDownInd = 1 UNION SELECT concat(\'PB_\', CAST(publisherPlatformID AS CHAR)), reportDisplayName, upper(reportDisplayName) FROM PublisherPlatform WHERE reportDropDownInd = 1 ORDER BY 3','0','');
-INSERT INTO `_DATABASE_NAME_`.ReportParameter (reportID, parameterDisplayPrompt, parameterAddWhereClause, parameterTypeCode, parameterFormatCode, requiredInd, parameterAddWhereNumber, parameterSQLStatement, parentReportParameterID, parameterSQLRestriction)  VALUES ('6','Year','yus.year = \'PARM\'','dd','','0','0','SELECT distinct year, year FROM YearlyUsageSummary yus, PublisherPlatform pp WHERE pp.publisherPlatformID=yus.publisherPlatformID ADD_WHERE ORDER BY 1 desc','17','and (concat(\'PB_\', CAST(yus.publisherPlatformID AS CHAR)) = \'PARM\' or concat(\'PL_\', CAST(pp.platformID AS CHAR)) = \'PARM\')');
+INSERT INTO `_DATABASE_NAME_`.ReportParameter (reportParameterID, parameterTypeCode, parameterDisplayPrompt, parameterAddWhereClause, parameterAddWhereNumber, requiredInd, parameterSQLStatement, parameterSQLRestriction)  VALUES ('1','chk','Do not adjust numbers for use violations','Overriden','0','0','','');
+INSERT INTO `_DATABASE_NAME_`.ReportParameter (reportParameterID, parameterTypeCode, parameterDisplayPrompt, parameterAddWhereClause, parameterAddWhereNumber, requiredInd, parameterSQLStatement, parameterSQLRestriction)  VALUES ('2','txt','ISSN/ISBN/DOI','(ti2.identifier = \'PARM\' OR ti2.identifier = REPLACE(\'PARM\',"-",""))','1','0','','');
+INSERT INTO `_DATABASE_NAME_`.ReportParameter (reportParameterID, parameterTypeCode, parameterDisplayPrompt, parameterAddWhereClause, parameterAddWhereNumber, requiredInd, parameterSQLStatement, parameterSQLRestriction)  VALUES ('3','txt','Title Search','upper(t2.title) like upper(\'%PARM%\')','1','0','','');
+INSERT INTO `_DATABASE_NAME_`.ReportParameter (reportParameterID, parameterTypeCode, parameterDisplayPrompt, parameterAddWhereClause, parameterAddWhereNumber, requiredInd, parameterSQLStatement, parameterSQLRestriction)  VALUES ('4','dd','Provider / Publisher','(concat(\'PL_\', CAST(Platform.platformID AS CHAR)) = \'PARM\' OR concat(\'PB_\', CAST(pp.publisherPlatformID AS CHAR)) = \'PARM\')','0','0','SELECT concat(\'PL_\', CAST(Platform.platformID AS CHAR)), reportDisplayName, upper(reportDisplayName) FROM Platform WHERE reportDropDownInd = 1 UNION SELECT concat(\'PB_\', CAST(publisherPlatformID AS CHAR)), reportDisplayName, upper(reportDisplayName) FROM PublisherPlatform WHERE reportDropDownInd = 1 ORDER BY 3','');
+INSERT INTO `_DATABASE_NAME_`.ReportParameter (reportParameterID, parameterTypeCode, parameterDisplayPrompt, parameterAddWhereClause, parameterAddWhereNumber, requiredInd, parameterSQLStatement, parameterSQLRestriction)  VALUES ('5','ms','Provider','concat(\'PL_\', CAST(Platform.platformID AS CHAR)) in (\'PARM\')','0','0','SELECT concat(\'PL_\', CAST(platformID AS CHAR)), reportDisplayName, upper(reportDisplayName) FROM Platform WHERE reportDropDownInd = 1 ORDER BY 3','');
+INSERT INTO `_DATABASE_NAME_`.ReportParameter (reportParameterID, parameterTypeCode, parameterDisplayPrompt, parameterAddWhereClause, parameterAddWhereNumber, requiredInd, parameterSQLStatement, parameterSQLRestriction)  VALUES ('6','ms','Publisher','concat(\'PB_\', CAST(pp.publisherPlatformID AS CHAR)) in (\'PARM\')','0','0','SELECT GROUP_CONCAT(DISTINCT concat(\'PB_\', CAST(publisherPlatformID AS CHAR)) ORDER BY publisherPlatformID DESC SEPARATOR \', \'), reportDisplayName, upper(reportDisplayName) FROM PublisherPlatform WHERE reportDropDownInd = 1 GROUP BY reportDisplayName ORDER BY 3','');
+INSERT INTO `_DATABASE_NAME_`.ReportParameter (reportParameterID, parameterTypeCode, parameterDisplayPrompt, parameterAddWhereClause, parameterAddWhereNumber, requiredInd, parameterSQLStatement, parameterSQLRestriction)  VALUES ('7','dd','Limit','limit','0','1','SELECT 25,25 union SELECT 50,50 union SELECT 100,100 order by 1','');
+INSERT INTO `_DATABASE_NAME_`.ReportParameter (reportParameterID, parameterTypeCode, parameterDisplayPrompt, parameterAddWhereClause, parameterAddWhereNumber, requiredInd, parameterSQLStatement, parameterSQLRestriction)  VALUES ('8','dd','Year','mus.year = \'PARM\'','0','0','SELECT distinct year, year FROM YearlyUsageSummary ORDER BY 1 asc','');
+INSERT INTO `_DATABASE_NAME_`.ReportParameter (reportParameterID, parameterTypeCode, parameterDisplayPrompt, parameterAddWhereClause, parameterAddWhereNumber, requiredInd, parameterSQLStatement, parameterSQLRestriction)  VALUES ('9','dd','Year','mus.year = \'PARM\'','0','0','SELECT distinct year, year FROM YearlyUsageSummary yus, PublisherPlatform pp WHERE pp.publisherPlatformID=yus.publisherPlatformID ADD_WHERE ORDER BY 1 asc','and (concat(\'PB_\', CAST(yus.publisherPlatformID AS CHAR)) = \'PARM\' or concat(\'PL_\', CAST(pp.platformID AS CHAR)) = \'PARM\')');
+INSERT INTO `_DATABASE_NAME_`.ReportParameter (reportParameterID, parameterTypeCode, parameterDisplayPrompt, parameterAddWhereClause, parameterAddWhereNumber, requiredInd, parameterSQLStatement, parameterSQLRestriction)  VALUES ('10','dd','Year','mus.year = \'PARM\'','0','0','SELECT distinct year, year FROM YearlyUsageSummary yus, PublisherPlatform pp WHERE pp.publisherPlatformID=yus.publisherPlatformID ADD_WHERE ORDER BY 1 asc','');
+INSERT INTO `_DATABASE_NAME_`.ReportParameter (reportParameterID, parameterTypeCode, parameterDisplayPrompt, parameterAddWhereClause, parameterAddWhereNumber, requiredInd, parameterSQLStatement, parameterSQLRestriction)  VALUES ('11','dd','Year','yus.year = \'PARM\'','0','0','SELECT distinct year, year FROM YearlyUsageSummary yus, PublisherPlatform pp WHERE pp.publisherPlatformID=yus.publisherPlatformID ADD_WHERE ORDER BY 1 asc','and (concat(\'PB_\', CAST(yus.publisherPlatformID AS CHAR)) = \'PARM\' or concat(\'PL_\', CAST(pp.platformID AS CHAR)) = \'PARM\')');
+INSERT INTO `_DATABASE_NAME_`.ReportParameter (reportParameterID, parameterTypeCode, parameterDisplayPrompt, parameterAddWhereClause, parameterAddWhereNumber, requiredInd, parameterSQLStatement, parameterSQLRestriction)  VALUES ('12','dd','Date Range','','0','1','SELECT distinct year, year FROM YearlyUsageSummary ORDER BY 1 asc','');
+INSERT INTO `_DATABASE_NAME_`.ReportParameter (reportParameterID, parameterTypeCode, parameterDisplayPrompt, parameterAddWhereClause, parameterAddWhereNumber, requiredInd, parameterSQLStatement, parameterSQLRestriction)  VALUES ('13','dd','Date Range','','0','1','SELECT distinct year, year FROM YearlyUsageSummary yus, PublisherPlatform pp WHERE pp.publisherPlatformID=yus.publisherPlatformID ADD_WHERE ORDER BY 1 asc','and (concat(\'PB_\', CAST(yus.publisherPlatformID AS CHAR)) = \'PARM\' or concat(\'PL_\', CAST(pp.platformID AS CHAR)) = \'PARM\')');
+INSERT INTO `_DATABASE_NAME_`.ReportParameter (reportParameterID, parameterTypeCode, parameterDisplayPrompt, parameterAddWhereClause, parameterAddWhereNumber, requiredInd, parameterSQLStatement, parameterSQLRestriction)  VALUES ('14','dd','Date Range','','0','1','SELECT distinct year, year FROM YearlyUsageSummary yus, PublisherPlatform pp WHERE pp.publisherPlatformID=yus.publisherPlatformID ADD_WHERE ORDER BY 1 asc','');
 
 
-DELETE FROM `_DATABASE_NAME_`.ReportGroupingColumn;
-INSERT INTO `_DATABASE_NAME_`.ReportGroupingColumn (reportID, reportGroupingColumnID, reportGroupingColumnName) VALUES ('1', '1', 'TITLE');
-INSERT INTO `_DATABASE_NAME_`.ReportGroupingColumn (reportID, reportGroupingColumnID, reportGroupingColumnName) VALUES ('2', '2', 'TITLE');
+
+DELETE FROM `_DATABASE_NAME_`.ReportParameterMap;
+INSERT INTO `_DATABASE_NAME_`.ReportParameterMap (reportID, reportParameterID, parentReportParameterID)  VALUES ('1','1','0');
+INSERT INTO `_DATABASE_NAME_`.ReportParameterMap (reportID, reportParameterID, parentReportParameterID)  VALUES ('1','2','0');
+INSERT INTO `_DATABASE_NAME_`.ReportParameterMap (reportID, reportParameterID, parentReportParameterID)  VALUES ('1','3','0');
+INSERT INTO `_DATABASE_NAME_`.ReportParameterMap (reportID, reportParameterID, parentReportParameterID)  VALUES ('1','12','0');
+INSERT INTO `_DATABASE_NAME_`.ReportParameterMap (reportID, reportParameterID, parentReportParameterID)  VALUES ('2','1','0');
+INSERT INTO `_DATABASE_NAME_`.ReportParameterMap (reportID, reportParameterID, parentReportParameterID)  VALUES ('2','4','0');
+INSERT INTO `_DATABASE_NAME_`.ReportParameterMap (reportID, reportParameterID, parentReportParameterID)  VALUES ('2','13','4');
+INSERT INTO `_DATABASE_NAME_`.ReportParameterMap (reportID, reportParameterID, parentReportParameterID)  VALUES ('3','5','0');
+INSERT INTO `_DATABASE_NAME_`.ReportParameterMap (reportID, reportParameterID, parentReportParameterID)  VALUES ('3','14','0');
+INSERT INTO `_DATABASE_NAME_`.ReportParameterMap (reportID, reportParameterID, parentReportParameterID)  VALUES ('4','6','0');
+INSERT INTO `_DATABASE_NAME_`.ReportParameterMap (reportID, reportParameterID, parentReportParameterID)  VALUES ('4','14','0');
+INSERT INTO `_DATABASE_NAME_`.ReportParameterMap (reportID, reportParameterID, parentReportParameterID)  VALUES ('5','1','0');
+INSERT INTO `_DATABASE_NAME_`.ReportParameterMap (reportID, reportParameterID, parentReportParameterID)  VALUES ('5','7','0');
+INSERT INTO `_DATABASE_NAME_`.ReportParameterMap (reportID, reportParameterID, parentReportParameterID)  VALUES ('5','4','0');
+INSERT INTO `_DATABASE_NAME_`.ReportParameterMap (reportID, reportParameterID, parentReportParameterID)  VALUES ('5','11','4');
+INSERT INTO `_DATABASE_NAME_`.ReportParameterMap (reportID, reportParameterID, parentReportParameterID)  VALUES ('6','1','0');
+INSERT INTO `_DATABASE_NAME_`.ReportParameterMap (reportID, reportParameterID, parentReportParameterID)  VALUES ('6','4','0');
+INSERT INTO `_DATABASE_NAME_`.ReportParameterMap (reportID, reportParameterID, parentReportParameterID)  VALUES ('6','11','4');

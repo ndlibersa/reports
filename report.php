@@ -188,21 +188,15 @@ for ($irep=0; $irep<2; $irep++) {
 
 
 
-    $totalSumArray = array();
-    foreach ($report->table->fields() as $f) {
-        $totalSumArray[$f] = 0;
-    }
-
-
-    $perform_subtotal_flag = count($report->table->columnData['sum'])>0;
-    if (! $report->table->nfields()) {
-        return;
+    if ($perform_subtotal_flag = count($report->table->columnData['sum'])>0) {
+        $totalSumArray = array();
+        foreach ($report->table->fields() as $f) {
+            $totalSumArray[$f] = 0;
+        }
     }
 
     // loop through resultset
     $rownum = 0;
-
-    $prevValue = null;
 
 
 
@@ -216,27 +210,22 @@ for ($irep=0; $irep<2; $irep++) {
         if (isset($currentRow['publisherPlatformID']))
             ReportNotes::addPublisher($currentRow['publisherPlatformID']);
 
-        $print_subtotal_flag = false;
-
         $colnum = 1;
-
-
         $subtotal = 0;
         $rowOutput = "<tr class='data'>";
         foreach ( ReportTable::filterRow($report->ignoredCols,$currentRow)
             as $field => $value ) {
 
-            // get the numbers out for summing
-            if (isset($report->table->columnData['sum'][$field])) {
-                $subtotal += $value;
+
+            if ($perform_subtotal_flag && isset($report->table->columnData['sum'][$field])) {
+                // get the numbers out for summing
+                if ($field==='QUERY_TOTAL') {
+                    $value = $subtotal;
+                } else {
+                    $subtotal += $value;
+                }
                 $totalSumArray[$field] += $value;
             }
-
-            if ($field==='Query Subtotal') {
-                $value = $subtotal;
-                $subtotal = 0;
-            }
-
 
             $rowOutput .= ReportTable::formatColumn($report,$outputType,$currentRow,$field,$value);
 
@@ -244,9 +233,7 @@ for ($irep=0; $irep<2; $irep++) {
             ++$colnum;
         } // end loop through columns
         $rowOutput .= "</tr>";
-
         ++$rownum;
-        $prevValue = $currentRow[$field];
 
         if (! $report->onlySummary || $outputType!=='web')
             $tblBody .= $rowOutput;

@@ -34,10 +34,6 @@ class Report {
     public $onlySummary = false;
 
     public function __construct($id){
-        //if ($id === null) {
-            //throw new BadMethodCallException("Report constructor did not receive a valid id.");
-        //}
-
         $this->db = new DBService();
         $result = $this->db
             ->query("SELECT * FROM Report WHERE reportID = '$id' LIMIT 1")
@@ -81,13 +77,7 @@ class Report {
     }
 
     public function run($isArchive, $allowSort){
-        /*if ($isArchive) {
-            $orderBy = '';
-        } else if (isset($this->table)) {
-            $orderBy = "ORDER BY " . $this->table->fieldAt($this->sort['column']);
-        } else {*/
-            $orderBy = "ORDER BY {$this->sort['column']} {$this->sort['order']}";
-        //}
+        $orderBy = "ORDER BY {$this->sort['column']} {$this->sort['order']}";
         $sql = $this->sql;
         foreach ($this->ignoredCols as $COL) {
             if (stripos(" $COL",$sql)!==FALSE) {
@@ -99,15 +89,12 @@ class Report {
             $sql .= " $orderBy";
         $sql = str_replace('ADD_WHERE2', $this->addWhere[1], $sql);
 
-        if (stripos($this->sql, 'mus')!==FALSE) {
-            $field = 'mus.archiveInd = ' . intval($isArchive);
-        } else {
-            $field = 'yus.archiveInd = ' . intval($isArchive);
-        }
+        $ch = (stripos($this->sql, 'mus')!==FALSE)?'m':'y';
+        $sql = str_replace('ADD_WHERE',
+            "{$this->addWhere[0]} AND {$ch}us.archiveInd = " . intval($isArchive), $sql);
 
-        $sql = str_replace('ADD_WHERE', "{$this->addWhere[0]} AND $field", $sql);
         $this->db->selectDB(Config::$database->{$this->dbname});
-        $reportArray = $this->db->query("$sql");
+        $reportArray = $this->db->query($sql);
         $this->table = new ReportTable($this, $reportArray->fetchFields());
         return $reportArray;
     }
@@ -162,10 +149,6 @@ class Report {
                     )
                 ->fetchRows(MYSQLI_ASSOC) as $row ){
             $sumColsArray[$row['reportColumnName']] = $row['reportAction'];
-        }
-
-        if (isset($sumColsArray['YTD_TOTAL'])) {
-            $sumColsArray['query_subtotal'] = $sumColsArray['YTD_TOTAL'];
         }
 
         return array('sum'=>$sumColsArray);

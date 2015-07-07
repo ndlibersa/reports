@@ -37,10 +37,9 @@ CREATE TABLE IF NOT EXISTS `_DATABASE_NAME_`.`ReportParameterMap` (
 
 CREATE TABLE IF NOT EXISTS `_DATABASE_NAME_`.`ReportSum` (
   `reportID` int(11) NOT NULL,
-  `reportSumID` int(10) unsigned NOT NULL auto_increment,
   `reportColumnName` varchar(45) default NULL,
   `reportAction` varchar(45) default NULL,
-  PRIMARY KEY  (`reportSumID`)
+  PRIMARY KEY  (`reportID`,`reportColumnName`)
 ) ENGINE=MyISAM AUTO_INCREMENT=0 DEFAULT CHARSET=latin1;
 
 
@@ -302,33 +301,35 @@ GROUP BY t.Title, print_issn, online_issn, pp.reportDisplayName, Platform.report
 
 
 DELETE FROM `_DATABASE_NAME_`.ReportSum;
-INSERT INTO `_DATABASE_NAME_`.ReportSum (reportID, reportColumnName, reportAction)  VALUES ('1','APR','sum');
-INSERT INTO `_DATABASE_NAME_`.ReportSum (reportID, reportColumnName, reportAction)  VALUES ('1','AUG','sum');
-INSERT INTO `_DATABASE_NAME_`.ReportSum (reportID, reportColumnName, reportAction)  VALUES ('1','DEC','sum');
-INSERT INTO `_DATABASE_NAME_`.ReportSum (reportID, reportColumnName, reportAction)  VALUES ('1','FEB','sum');
 INSERT INTO `_DATABASE_NAME_`.ReportSum (reportID, reportColumnName, reportAction)  VALUES ('1','JAN','sum');
-INSERT INTO `_DATABASE_NAME_`.ReportSum (reportID, reportColumnName, reportAction)  VALUES ('1','JUL','sum');
-INSERT INTO `_DATABASE_NAME_`.ReportSum (reportID, reportColumnName, reportAction)  VALUES ('1','JUN','sum');
+INSERT INTO `_DATABASE_NAME_`.ReportSum (reportID, reportColumnName, reportAction)  VALUES ('1','FEB','sum');
 INSERT INTO `_DATABASE_NAME_`.ReportSum (reportID, reportColumnName, reportAction)  VALUES ('1','MAR','sum');
+INSERT INTO `_DATABASE_NAME_`.ReportSum (reportID, reportColumnName, reportAction)  VALUES ('1','APR','sum');
 INSERT INTO `_DATABASE_NAME_`.ReportSum (reportID, reportColumnName, reportAction)  VALUES ('1','MAY','sum');
-INSERT INTO `_DATABASE_NAME_`.ReportSum (reportID, reportColumnName, reportAction)  VALUES ('1','NOV','sum');
-INSERT INTO `_DATABASE_NAME_`.ReportSum (reportID, reportColumnName, reportAction)  VALUES ('1','OCT','sum');
+INSERT INTO `_DATABASE_NAME_`.ReportSum (reportID, reportColumnName, reportAction)  VALUES ('1','JUN','sum');
+INSERT INTO `_DATABASE_NAME_`.ReportSum (reportID, reportColumnName, reportAction)  VALUES ('1','JUL','sum');
+INSERT INTO `_DATABASE_NAME_`.ReportSum (reportID, reportColumnName, reportAction)  VALUES ('1','AUG','sum');
 INSERT INTO `_DATABASE_NAME_`.ReportSum (reportID, reportColumnName, reportAction)  VALUES ('1','SEP','sum');
+INSERT INTO `_DATABASE_NAME_`.ReportSum (reportID, reportColumnName, reportAction)  VALUES ('1','OCT','sum');
+INSERT INTO `_DATABASE_NAME_`.ReportSum (reportID, reportColumnName, reportAction)  VALUES ('1','NOV','sum');
+INSERT INTO `_DATABASE_NAME_`.ReportSum (reportID, reportColumnName, reportAction)  VALUES ('1','DEC','sum');
+INSERT INTO `_DATABASE_NAME_`.ReportSum (reportID, reportColumnName, reportAction)  VALUES ('1','QUERY_TOTAL','sum');
 INSERT INTO `_DATABASE_NAME_`.ReportSum (reportID, reportColumnName, reportAction)  VALUES ('1','YTD_HTML','sum');
 INSERT INTO `_DATABASE_NAME_`.ReportSum (reportID, reportColumnName, reportAction)  VALUES ('1','YTD_PDF','sum');
 INSERT INTO `_DATABASE_NAME_`.ReportSum (reportID, reportColumnName, reportAction)  VALUES ('1','YTD_TOTAL','sum');
-INSERT INTO `_DATABASE_NAME_`.ReportSum (reportID, reportColumnName, reportAction)  VALUES ('2','APR','sum');
-INSERT INTO `_DATABASE_NAME_`.ReportSum (reportID, reportColumnName, reportAction)  VALUES ('2','AUG','sum');
-INSERT INTO `_DATABASE_NAME_`.ReportSum (reportID, reportColumnName, reportAction)  VALUES ('2','DEC','sum');
-INSERT INTO `_DATABASE_NAME_`.ReportSum (reportID, reportColumnName, reportAction)  VALUES ('2','FEB','sum');
 INSERT INTO `_DATABASE_NAME_`.ReportSum (reportID, reportColumnName, reportAction)  VALUES ('2','JAN','sum');
-INSERT INTO `_DATABASE_NAME_`.ReportSum (reportID, reportColumnName, reportAction)  VALUES ('2','JUL','sum');
-INSERT INTO `_DATABASE_NAME_`.ReportSum (reportID, reportColumnName, reportAction)  VALUES ('2','JUN','sum');
+INSERT INTO `_DATABASE_NAME_`.ReportSum (reportID, reportColumnName, reportAction)  VALUES ('2','FEB','sum');
 INSERT INTO `_DATABASE_NAME_`.ReportSum (reportID, reportColumnName, reportAction)  VALUES ('2','MAR','sum');
+INSERT INTO `_DATABASE_NAME_`.ReportSum (reportID, reportColumnName, reportAction)  VALUES ('2','APR','sum');
 INSERT INTO `_DATABASE_NAME_`.ReportSum (reportID, reportColumnName, reportAction)  VALUES ('2','MAY','sum');
-INSERT INTO `_DATABASE_NAME_`.ReportSum (reportID, reportColumnName, reportAction)  VALUES ('2','NOV','sum');
-INSERT INTO `_DATABASE_NAME_`.ReportSum (reportID, reportColumnName, reportAction)  VALUES ('2','OCT','sum');
+INSERT INTO `_DATABASE_NAME_`.ReportSum (reportID, reportColumnName, reportAction)  VALUES ('2','JUN','sum');
+INSERT INTO `_DATABASE_NAME_`.ReportSum (reportID, reportColumnName, reportAction)  VALUES ('2','JUL','sum');
+INSERT INTO `_DATABASE_NAME_`.ReportSum (reportID, reportColumnName, reportAction)  VALUES ('2','AUG','sum');
 INSERT INTO `_DATABASE_NAME_`.ReportSum (reportID, reportColumnName, reportAction)  VALUES ('2','SEP','sum');
+INSERT INTO `_DATABASE_NAME_`.ReportSum (reportID, reportColumnName, reportAction)  VALUES ('2','OCT','sum');
+INSERT INTO `_DATABASE_NAME_`.ReportSum (reportID, reportColumnName, reportAction)  VALUES ('2','NOV','sum');
+INSERT INTO `_DATABASE_NAME_`.ReportSum (reportID, reportColumnName, reportAction)  VALUES ('2','DEC','sum');
+INSERT INTO `_DATABASE_NAME_`.ReportSum (reportID, reportColumnName, reportAction)  VALUES ('2','QUERY_TOTAL','sum');
 INSERT INTO `_DATABASE_NAME_`.ReportSum (reportID, reportColumnName, reportAction)  VALUES ('2','YTD_HTML','sum');
 INSERT INTO `_DATABASE_NAME_`.ReportSum (reportID, reportColumnName, reportAction)  VALUES ('2','YTD_PDF','sum');
 INSERT INTO `_DATABASE_NAME_`.ReportSum (reportID, reportColumnName, reportAction)  VALUES ('2','YTD_TOTAL','sum');

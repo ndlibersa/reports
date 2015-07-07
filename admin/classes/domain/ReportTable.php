@@ -14,7 +14,7 @@ class ReportTable {
 			} else if (!$hasSubtotal
                 && ($fld==='outlier_flag'||$fld==='YTD_TOTAL')) {
 
-                $_fields[$i] = 'query_subtotal';
+                $_fields[$i] = 'QUERY_TOTAL';
                 $_fields[] = $fld;
                 $hasSubtotal = true;
                 $i++;
@@ -25,7 +25,6 @@ class ReportTable {
 
         $this->columnData = $report->getColumnData();
         $this->columnData['name'] = $_fields;
-        $this->columnData['sum']['Query Subtotal'] = end($this->columnData['sum']);
     }
 
     public function fields() {
@@ -55,7 +54,7 @@ class ReportTable {
             if (!$hasSubtotal
                 && ($field==='outlier_flag'||$field==='YTD_TOTAL')) {
 
-                $row_tmp['Query Total'] = "&nbsp;";
+                $row_tmp['QUERY_TOTAL'] = "&nbsp;";
                 $hasSubtotal = true;
             }
 

@@ -45,8 +45,9 @@ CREATE TABLE IF NOT EXISTS `_DATABASE_NAME_`.`ReportSum` (
 
 DELETE FROM `_DATABASE_NAME_`.Report;
 INSERT INTO `_DATABASE_NAME_`.Report (reportID, reportName, reportSQL, defaultRecPageNumber, orderBySQL, infoDisplayText, excelOnlyInd, reportDatabaseName)
-VALUES
-('1','Usage Statistics by Titles','SELECT t.Title TITLE, pp.reportDisplayName PUBLISHER, Platform.reportDisplayName PLATFORM, mus.year YEAR,
+VALUES ('1','Usage Statistics by Titles',
+'SELECT t.Title TITLE, pp.reportDisplayName PUBLISHER,
+Platform.reportDisplayName PLATFORM, t.resourceType RESOURCE_TYPE, mus.year YEAR,
 MAX(IF(ti.identifierType=\'DOI\', ti.identifier, null)) DOI,
 MAX(IF(ti.identifierType=\'ISSN\', concat(substr(ti.identifier,1,4), \'-\', substr(ti.identifier,5,4)),null)) PRINT_ISSN,
 MAX(IF(ti.identifierType=\'eISSN\', concat(substr(ti.identifier,1,4), \'-\', substr(ti.identifier,5,4)),null)) ONLINE_ISSN,
@@ -111,7 +112,7 @@ GROUP BY t.titleID, t.Title, pp.reportDisplayName, Platform.reportDisplayName, m
 
 INSERT INTO `_DATABASE_NAME_`.Report (reportID, reportName, reportSQL, defaultRecPageNumber, orderBySQL, infoDisplayText, excelOnlyInd, reportDatabaseName)
 VALUES ('2','Usage Statistics by Provider / Publisher',
-'SELECT t.Title TITLE, pp.reportDisplayName PUBLISHER, Platform.reportDisplayName PLATFORM, mus.year YEAR,
+'SELECT t.Title TITLE, pp.reportDisplayName PUBLISHER, Platform.reportDisplayName PLATFORM, t.resourceType, mus.year YEAR,
 MAX(IF(ti.identifierType=\'DOI\', ti.identifier, null)) DOI,
 MAX(IF(ti.identifierType=\'ISSN\', concat(substr(ti.identifier,1,4), \'-\', substr(ti.identifier,5,4)),null)) PRINT_ISSN,
 MAX(IF(ti.identifierType=\'eISSN\', concat(substr(ti.identifier,1,4), \'-\', substr(ti.identifier,5,4)),null)) ONLINE_ISSN,
@@ -173,8 +174,9 @@ GROUP BY t.titleID, t.Title, pp.reportDisplayName, Platform.reportDisplayName, m
 
 
 
-INSERT INTO `_DATABASE_NAME_`.Report (reportID, reportName, reportSQL, defaultRecPageNumber, orderBySQL, infoDisplayText, excelOnlyInd, reportDatabaseName)  VALUES
-('3','Usage Statistics - Provider Rollup','SELECT Platform.reportDisplayName PLATFORM,
+INSERT INTO `_DATABASE_NAME_`.Report (reportID, reportName, reportSQL, defaultRecPageNumber, orderBySQL, infoDisplayText, excelOnlyInd, reportDatabaseName)
+VALUES ('3','Usage Statistics - Provider Rollup',
+'SELECT Platform.reportDisplayName PLATFORM,
 number_of_titles,
 mus.year,
 sum(IF(month=1,IFNULL(overrideUsageCount,usageCount),null)) JAN,
@@ -208,7 +210,9 @@ ADD_WHERE
 GROUP BY Platform.reportDisplayName, mus.year, number_of_titles, total_count, html_count, pdf_count, Platform.platformID','100','order by 1, 3','<h3>Frequently Asked Questions</h3><b>Q. Why isn\'t the HTML number double the PDF number for interfaces that automatically download HTML?</b><br />A. Frequently these sites do NOT automatically download HTML from the Table of Contents browse interface, so even platforms such as ScienceDirect occasionally have higher PDF than HTML counts.<br /><br /><b>Q. I thought COUNTER standards prevented double-counting of article downloads.</b><br />A. COUNTER does require that duplicate clicks on HTML or PDF within a short period of time be counted once. But COUNTER specifically does not deny double count of different formats--HTML and PDF. Because some publishers automatically choose HTML for users, and because many users prefer to save and/or print the PDF version, this interface significantly inflates total article usage.<br /><br /><b>Q. Why do some Highwire Press publishers have high HTML ratios to PDFs, but some appear to have a very low ratio?</b><br />A. Some publishers have automatic HTML display on Highwire, and some do not. This is because the publisher is able to indicate a preferred linking page through the DOI registry. Because this platform includes multiple publishers, the interface impact is not consistent.','0', 'usageDatabase');
 
 
-INSERT INTO `_DATABASE_NAME_`.Report (reportID, reportName, reportSQL, defaultRecPageNumber, orderBySQL, infoDisplayText, excelOnlyInd, reportDatabaseName)  VALUES ('4','Usage Statistics - Publisher Rollup','SELECT pp.reportDisplayName Publisher,
+INSERT INTO `_DATABASE_NAME_`.Report (reportID, reportName, reportSQL, defaultRecPageNumber, orderBySQL, infoDisplayText, excelOnlyInd, reportDatabaseName)
+VALUES ('4','Usage Statistics - Publisher Rollup',
+'SELECT pp.reportDisplayName Publisher,
 Platform.reportDisplayName Platform,
 number_of_titles,
 mus.year,
@@ -245,9 +249,12 @@ GROUP BY pp.reportDisplayName, Platform.reportDisplayName, mus.year, number_of_t
 
 
 
-INSERT INTO `_DATABASE_NAME_`.Report (reportID, reportName, reportSQL, defaultRecPageNumber, orderBySQL, infoDisplayText, excelOnlyInd, reportDatabaseName)  VALUES ('5','Usage Statistics - Top Journal Requests','SELECT t.Title TITLE,
+INSERT INTO `_DATABASE_NAME_`.Report (reportID, reportName, reportSQL, defaultRecPageNumber, orderBySQL, infoDisplayText, excelOnlyInd, reportDatabaseName)
+VALUES ('5','Usage Statistics - Top Journal Requests',
+'SELECT t.Title TITLE,
 max(pp.reportDisplayName) PUBLISHER,
 GROUP_CONCAT(distinct Platform.reportDisplayName ORDER BY Platform.reportDisplayName DESC SEPARATOR \', \') PLATFORM,
+t.resourceType RESOURCE_TYPE,
 yus.year YEAR,
 MAX(IF(ti.identifierType=\'DOI\', ti.identifier, null)) DOI,
 MAX(IF(ti.identifierType=\'ISSN\', concat(substr(ti.identifier,1,4), \'-\', substr(ti.identifier,5,4)),null)) PRINT_ISSN,
@@ -271,11 +278,14 @@ ADD_WHERE
 GROUP BY t.Title, yus.year, t.titleID','100','order by sum(distinct totalCount) desc, TITLE_SORT','<h3>Frequently Asked Questions</h3><b>Q. Why isn\'t the HTML number double the PDF number for interfaces that automatically download HTML?</b><br />A. Frequently these sites do NOT automatically download HTML from the Table of Contents browse interface, so even platforms such as ScienceDirect occasionally have higher PDF than HTML counts.<br /><br /><b>Q. I thought COUNTER standards prevented double-counting of article downloads.</b><br />A. COUNTER does require that duplicate clicks on HTML or PDF within a short period of time be counted once. But COUNTER specifically does not deny double count of different formats--HTML and PDF. Because some publishers automatically choose HTML for users, and because many users prefer to save and/or print the PDF version, this interface significantly inflates total article usage.<br /><br /><b>Q. Why do some Highwire Press publishers have high HTML ratios to PDFs, but some appear to have a very low ratio?</b><br />A. Some publishers have automatic HTML display on Highwire, and some do not. This is because the publisher is able to indicate a preferred linking page through the DOI registry. Because this platform includes multiple publishers, the interface impact is not consistent.','0', 'usageDatabase');
 
 
-INSERT INTO `_DATABASE_NAME_`.Report (reportID, reportName, reportSQL, defaultRecPageNumber, orderBySQL, infoDisplayText, excelOnlyInd, reportDatabaseName)  VALUES ('6','Usage Statistics - Yearly Usage Statistics','SELECT t.Title TITLE,
+INSERT INTO `_DATABASE_NAME_`.Report (reportID, reportName, reportSQL, defaultRecPageNumber, orderBySQL, infoDisplayText, excelOnlyInd, reportDatabaseName)
+VALUES ('6','Usage Statistics - Yearly Usage Statistics',
+'SELECT t.Title TITLE,
 PRINT_ISSN,
 ONLINE_ISSN,
 pp.reportDisplayName PUBLISHER,
 Platform.reportDisplayName PLATFORM,
+t.resourceType RESOURCE_TYPE,
 max(IF(year=2013, totalCount, null)) "2013_ytd",
 max(IF(year=2012, totalCount, null)) "2012_ytd",
 max(IF(year=2011, totalCount, null)) "2011_ytd",

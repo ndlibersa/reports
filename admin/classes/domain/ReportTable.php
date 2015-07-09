@@ -31,10 +31,6 @@ class ReportTable {
         return $this->columnData['name'];
     }
 
-    public function fieldAt($index) {
-        return $this->columnData['name'][$index];
-    }
-
     public function nfields() {
         return count($this->columnData['name']);
     }
@@ -64,14 +60,6 @@ class ReportTable {
             }
         }
         return $row_tmp;
-    }
-
-    public function getEmptyRow() {
-        $row = array();
-        foreach ($this->columnData['name'] as $v) {
-            $row[$v] = null;
-        }
-        return $row;
     }
 
     public static function formatColumn(Report $report, $outputType, array $currentRow, $field, $value) {

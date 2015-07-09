@@ -51,6 +51,8 @@ class ParameterFactory {
             } else {
                 $parm = new MultiselectParameter;
             }
+        } else if ($result['parameterTypeCode']==='txt') {
+            $parm = new TextParameter();
         } else {
             $parm = new Parameter();
         }

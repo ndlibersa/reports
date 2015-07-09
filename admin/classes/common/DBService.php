@@ -40,10 +40,10 @@ class DBService {
 		}
 		return $this;
 	}
-	public function getSQLdb(){
+	public static function getSQLdb(){
 		return self::$db;
 	}
-	public function query($sql){
+	public static function query($sql){
 		if (!($result = self::$db->query($sql))) {
 			throw new RuntimeException("There was a problem with the database: " . self::$db->error);
         } else if ($result instanceof mysqli_result){
@@ -53,7 +53,7 @@ class DBService {
 		}
 		return array();
 	}
-	public function sanitize($str){
+	public static function sanitize($str){
 		return self::$db->real_escape_string($str);
 	}
 }

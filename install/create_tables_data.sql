@@ -351,7 +351,7 @@ INSERT INTO `_DATABASE_NAME_`.ReportParameter (reportParameterID, parameterTypeC
 INSERT INTO `_DATABASE_NAME_`.ReportParameter (reportParameterID, parameterTypeCode, parameterDisplayPrompt, parameterAddWhereClause, parameterAddWhereNumber, requiredInd, parameterSQLStatement, parameterSQLRestriction)  VALUES ('12','dd','Date Range','','0','1','SELECT distinct year, year FROM YearlyUsageSummary ORDER BY 1 asc','');
 INSERT INTO `_DATABASE_NAME_`.ReportParameter (reportParameterID, parameterTypeCode, parameterDisplayPrompt, parameterAddWhereClause, parameterAddWhereNumber, requiredInd, parameterSQLStatement, parameterSQLRestriction)  VALUES ('13','dd','Date Range','','0','1','SELECT distinct year, year FROM YearlyUsageSummary yus, PublisherPlatform pp WHERE pp.publisherPlatformID=yus.publisherPlatformID ADD_WHERE ORDER BY 1 asc','and (concat(\'PB_\', CAST(yus.publisherPlatformID AS CHAR)) = \'PARM\' or concat(\'PL_\', CAST(pp.platformID AS CHAR)) = \'PARM\')');
 INSERT INTO `_DATABASE_NAME_`.ReportParameter (reportParameterID, parameterTypeCode, parameterDisplayPrompt, parameterAddWhereClause, parameterAddWhereNumber, requiredInd, parameterSQLStatement, parameterSQLRestriction)  VALUES ('14','dd','Date Range','','0','1','SELECT distinct year, year FROM YearlyUsageSummary yus, PublisherPlatform pp WHERE pp.publisherPlatformID=yus.publisherPlatformID ADD_WHERE ORDER BY 1 asc','');
-
+INSERT INTO `_DATABASE_NAME_`.ReportParameter (reportParameterID, parameterTypeCode, parameterDisplayPrompt, parameterAddWhereClause, parameterAddWhereNumber, requiredInd, parameterSQLStatement, parameterSQLRestriction)  VALUES ('15','dd','Resource Type','t.resourceType= \'PARM\'','0','0','SELECT distinct resourceType, resourceType FROM Title ORDER BY 1 asc','');
 
 
 DELETE FROM `_DATABASE_NAME_`.ReportParameterMap;
@@ -359,9 +359,11 @@ INSERT INTO `_DATABASE_NAME_`.ReportParameterMap (reportID, reportParameterID, p
 INSERT INTO `_DATABASE_NAME_`.ReportParameterMap (reportID, reportParameterID, parentReportParameterID)  VALUES ('1','2','0');
 INSERT INTO `_DATABASE_NAME_`.ReportParameterMap (reportID, reportParameterID, parentReportParameterID)  VALUES ('1','3','0');
 INSERT INTO `_DATABASE_NAME_`.ReportParameterMap (reportID, reportParameterID, parentReportParameterID)  VALUES ('1','12','0');
+INSERT INTO `_DATABASE_NAME_`.ReportParameterMap (reportID, reportParameterID, parentReportParameterID)  VALUES ('1','15','0');
 INSERT INTO `_DATABASE_NAME_`.ReportParameterMap (reportID, reportParameterID, parentReportParameterID)  VALUES ('2','1','0');
 INSERT INTO `_DATABASE_NAME_`.ReportParameterMap (reportID, reportParameterID, parentReportParameterID)  VALUES ('2','4','0');
 INSERT INTO `_DATABASE_NAME_`.ReportParameterMap (reportID, reportParameterID, parentReportParameterID)  VALUES ('2','13','4');
+INSERT INTO `_DATABASE_NAME_`.ReportParameterMap (reportID, reportParameterID, parentReportParameterID)  VALUES ('2','15','0');
 INSERT INTO `_DATABASE_NAME_`.ReportParameterMap (reportID, reportParameterID, parentReportParameterID)  VALUES ('3','5','0');
 INSERT INTO `_DATABASE_NAME_`.ReportParameterMap (reportID, reportParameterID, parentReportParameterID)  VALUES ('3','14','0');
 INSERT INTO `_DATABASE_NAME_`.ReportParameterMap (reportID, reportParameterID, parentReportParameterID)  VALUES ('4','6','0');
@@ -370,6 +372,8 @@ INSERT INTO `_DATABASE_NAME_`.ReportParameterMap (reportID, reportParameterID, p
 INSERT INTO `_DATABASE_NAME_`.ReportParameterMap (reportID, reportParameterID, parentReportParameterID)  VALUES ('5','7','0');
 INSERT INTO `_DATABASE_NAME_`.ReportParameterMap (reportID, reportParameterID, parentReportParameterID)  VALUES ('5','4','0');
 INSERT INTO `_DATABASE_NAME_`.ReportParameterMap (reportID, reportParameterID, parentReportParameterID)  VALUES ('5','11','4');
+INSERT INTO `_DATABASE_NAME_`.ReportParameterMap (reportID, reportParameterID, parentReportParameterID)  VALUES ('5','15','0');
 INSERT INTO `_DATABASE_NAME_`.ReportParameterMap (reportID, reportParameterID, parentReportParameterID)  VALUES ('6','1','0');
 INSERT INTO `_DATABASE_NAME_`.ReportParameterMap (reportID, reportParameterID, parentReportParameterID)  VALUES ('6','4','0');
 INSERT INTO `_DATABASE_NAME_`.ReportParameterMap (reportID, reportParameterID, parentReportParameterID)  VALUES ('6','11','4');
+INSERT INTO `_DATABASE_NAME_`.ReportParameterMap (reportID, reportParameterID, parentReportParameterID)  VALUES ('6','15','4');

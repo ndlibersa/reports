@@ -16,14 +16,29 @@ class DropdownParameter extends Parameter implements ParameterInterface {
     public function value() {
         if(!isset($_REQUEST["prm_$this->id"]))
             return null;
-        return trim($_REQUEST["prm_$this->id"]);
+
+        $val = trim($_REQUEST["prm_$this->id"]);
+        if ($val==='')
+            return null;
+
+        return $val;
+    }
+
+    public function process() {
+        if ($this->value !== null) {
+            Parameter::$report->addWhere[$this->addWhereNum] .= " AND " . preg_replace('/PARM/',$this->value,$this->addWhereClause);
+            FormInputs::addVisible("prm_$this->id", $this->value);
+            Parameter::$display .= $this->description();
+        } else if (!$this->requiredInd) {
+            Parameter::$display .= "<b>{$this->prompt}:</b> all<br/>";
+        }
     }
 
     public function form() {
         $options = "";
         if (!$this->requiredInd) {
             $options .= "<option value=''";
-            if ($this->value===null)
+            if ($this->value===null || $this->value==='')
                 $options .= "selected='selected'";
             $options .= ">all</option>";
         }

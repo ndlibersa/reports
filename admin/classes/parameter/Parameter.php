@@ -47,11 +47,8 @@ class Parameter implements ParameterInterface {
 
     public function process() {
         if ($this->value !== null) {
-            Parameter::$report->addWhere[$this->addWhereNum] .= " AND $this->addWhereClause";
             $this->value = strtoupper($this->value);
-            Parameter::$report->addWhere[$this->addWhereNum] = preg_replace(
-                '/PARM/', $this->value, Parameter::$report->addWhere[$this->addWhereNum]
-            );
+            Parameter::$report->addWhere[$this->addWhereNum] .= " AND " . preg_replace('/PARM/',$this->value,$this->addWhereClause);
             FormInputs::addVisible("prm_$this->id", $this->value);
             Parameter::$display .= $this->description();
         }
@@ -70,8 +67,6 @@ class Parameter implements ParameterInterface {
     }
 
     public function ajax_getChildUpdate() {
-        $reportParameterVal = $_GET['reportParameterVal'];
-
         echo "<div id='div_parm_$this->id'>
         <br />
         <label for='prm_$this->id'>$this->prompt</label>

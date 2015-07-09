@@ -45,7 +45,6 @@ class DBService {
 	}
 	public function query($sql){
 		if (!($result = self::$db->query($sql))) {
-            error_log($sql);
 			throw new RuntimeException("There was a problem with the database: " . self::$db->error);
         } else if ($result instanceof mysqli_result){
 			return new DBResult($result);

@@ -87,7 +87,7 @@ class Parameter implements ParameterInterface {
     // used only for allowing access to admin page
     public function getSelectValues($parentValue) {
         // get report info so we can determine which database to use
-        $parmReport = new Report($this->reportID);
+        $parmReport = ReportFactory::makeReport($this->reportID);
         Config::init();
 
         // if this is a restricted sql dependent on previous value
@@ -147,7 +147,7 @@ class Parameter implements ParameterInterface {
     // get the display name of the publisher or platform that was sent in
     public function getPubPlatDisplayName($id){
         // get report info so we can determine which database to use
-        $parmReport = new Report($this->reportID);
+        $parmReport = ReportFactory::makeReport($this->reportID);
         Config::init();
         $sql = "select distinct reportDisplayName from ";
         if (substr($id, 0, 2) === 'PB') {

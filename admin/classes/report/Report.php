@@ -16,15 +16,13 @@
  * *
  * *************************************************************************************************************************
  */
-class Report {
+abstract class Report implements ReportInterface {
     public $db;
+    public $dbname;
+
     public $id;
     public $name;
-    public $dbname;
-    public $sql;
-    public $orderby;
     public $infoText;
-    public $ignoredCols = array();
     public $addWhere = array('','');
     public $sort = array('order'=>'asc','column'=>1);
     public $table;
@@ -32,6 +30,13 @@ class Report {
     public $baseURL = null;
     public $showUnadjusted = false;
     public $onlySummary = false;
+
+    public abstract function orderBy();
+    public abstract function sql($isArchive);
+
+    public function applyDateRange(array $dateRange) {
+        // defaults to no action if not overriden
+    }
 
     public function __construct($id){
         $this->db = new DBService();
@@ -42,9 +47,7 @@ class Report {
         $this->id = $id;
         $this->name = $result['reportName'];
         $this->dbname = $result['reportDatabaseName'];
-        $this->orderby = $result['orderBySQL'];
         $this->infoText = $result['infoDisplayText'];
-        $this->sql = $result['reportSQL'];
 
         ReportNotes::init($this->dbname);
 
@@ -77,21 +80,9 @@ class Report {
     }
 
     public function run($isArchive, $allowSort){
-        $orderBy = "ORDER BY {$this->sort['column']} {$this->sort['order']}";
-        $sql = $this->sql;
-        foreach ($this->ignoredCols as $COL) {
-            if (stripos(" $COL",$sql)!==FALSE) {
-                $sql = preg_replace("[ ,]?$COL", "",$sql, $limit=1);
-            }
-        }
-
+        $sql = $this->sql($isArchive);
         if ($allowSort)
-            $sql .= " $orderBy";
-        $sql = str_replace('ADD_WHERE2', $this->addWhere[1], $sql);
-
-        $ch = (stripos($this->sql, 'mus')!==FALSE)?'m':'y';
-        $sql = str_replace('ADD_WHERE',
-            "{$this->addWhere[0]} AND {$ch}us.archiveInd = " . intval($isArchive), $sql);
+            $sql .= " ORDER BY {$this->sort['column']} {$this->sort['order']}";
 
         $this->db->selectDB(Config::$database->{$this->dbname});
         $reportArray = $this->db->query($sql);
@@ -139,13 +130,11 @@ class Report {
         Config::init();
         $this->db->selectDB(Config::$database->name);
 
-        $exceptions = implode("', '",$this->ignoredCols);
         $sumColsArray = array();
         foreach($this->db
                 ->query("SELECT reportColumnName, reportAction
                         FROM ReportSum
-                        WHERE reportID = '{$this->id}'
-                        AND reportColumnName NOT IN ('$exceptions')"
+                        WHERE reportID = '{$this->id}'"
                     )
                 ->fetchRows(MYSQLI_ASSOC) as $row ){
             $sumColsArray[$row['reportColumnName']] = $row['reportAction'];
@@ -175,5 +164,7 @@ class Report {
             return "{$this->baseURL}rft.eissn={$row['ONLINE_ISSN']}";
         }
     }
+
+
 }
 ?>

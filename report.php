@@ -29,7 +29,7 @@ if (isset($_REQUEST['outputType'])) {
 } else {
     $outputType = 'web';
 }
-$report = new Report($_REQUEST['reportID']);
+$report = ReportFactory::makeReport($_REQUEST['reportID']);
 Parameter::setReport($report);
 //FormInputs::init() and ReportNotes::init(..) are called by Report constructor
 FormInputs::addHidden('outputType',$outputType);
@@ -213,7 +213,7 @@ for ($irep=0; $irep<2; $irep++) {
         $colnum = 1;
         $subtotal = 0;
         $rowOutput = "<tr class='data'>";
-        foreach ( ReportTable::filterRow($report->ignoredCols,$currentRow)
+        foreach ( ReportTable::filterRow($currentRow)
             as $field => $value ) {
 
 

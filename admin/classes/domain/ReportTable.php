@@ -9,9 +9,7 @@ class ReportTable {
         $hasSubtotal = false;
         foreach ($fields as $fld) {
 			$i++;
-            if(in_array($fld,$report->ignoredCols)) {
-                continue;
-			} else if (!$hasSubtotal
+            if (!$hasSubtotal
                 && ($fld==='outlier_flag'||$fld==='YTD_TOTAL')) {
 
                 $_fields[$i] = 'QUERY_TOTAL';
@@ -35,7 +33,7 @@ class ReportTable {
         return count($this->columnData['name']);
     }
 
-    public static function filterRow(array $ignoredColumns, array $row) {
+    public static function filterRow(array $row) {
         $row_tmp = array();
         $hasSubtotal = false;
         foreach ( $row as $field => $data ) {
@@ -43,10 +41,7 @@ class ReportTable {
             if (($field === 'titleID') || ($field === 'platformID')) {
                 break;
             }
-            if(in_array($field, $ignoredColumns)) {
-                continue;
-            }
-
+            
             if (!$hasSubtotal
                 && ($field==='outlier_flag'||$field==='YTD_TOTAL')) {
 

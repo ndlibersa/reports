@@ -25,20 +25,8 @@ class DateRangeParameter extends DropdownParameter implements ParameterInterface
 
     public function process() {
         if ($this->value !== null) {
-            $months = array(
-                'JAN','FEB','MAR','APR','MAY','JUN',
-                'JUL','AUG','SEP','OCT','NOV','DEC'
-                );
-            $monthsUsed = DateRangeParameter::getMonthsUsed($this->value);
-
             Parameter::$report->addWhere[$this->addWhereNum] .= " AND $this->addWhereClause";
-
-            for ($i=0; $i<12; ++$i) {
-                if (!isset($monthsUsed[$months[$i]])) {
-                    Parameter::$report->ignoredCols[] = $months[$i];
-                }
-            }
-
+            Parameter::$report->applyDateRange($this->value);
             FormInputs::addVisible("prm_$this->id",$this->encode());
             $this->value = $this->value['m0'] . '/' . $this->value['y0'] . '-'
                 . $this->value['m1'] . '/' . $this->value['y1'];
@@ -173,14 +161,9 @@ class DateRangeParameter extends DropdownParameter implements ParameterInterface
         echo "</div>";
     }
 
-    public static function getMonthsUsed($range) {
+    public static function getMonthsUsed(array $range) {
         $used = array();
-
-        $months = array(
-            'JAN','FEB','MAR','APR','MAY','JUN',
-            'JUL','AUG','SEP','OCT','NOV','DEC'
-            );
-
+        
         $miny = intval($range['y0']);
         $maxy = intval($range['y1']);
 
@@ -189,11 +172,11 @@ class DateRangeParameter extends DropdownParameter implements ParameterInterface
                 return $used;
             }
 
-            $minm = intval(($y===$miny)? $range['m0'] : 1)-1; //-1 so JAN=0
-            $maxm = intval(($y===$maxy)? $range['m1'] : 12)-1; //-1 so JAN=0
+            $minm = intval(($y===$miny)? $range['m0'] : 1); //-1 means JAN=0
+            $maxm = intval(($y===$maxy)? $range['m1'] : 12); //-1 means JAN=0
 
             for ($m=$minm; $m<=$maxm; ++$m) {
-                $used[$months[$m]] = true;
+                $used[$m] = true;
                 if (count($used)===12) {
                     return $used;
                 }

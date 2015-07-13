@@ -23,7 +23,7 @@ include_once 'directory.php';
 $action = $_GET['action'];
 
 if ($action === 'getReportParameters') {
-    $report = new Report($_GET['reportID']);
+    $report = ReportFactory::makeReport($_GET['reportID']);
 
     // get parameters
     Parameter::$ajax_parmValues = array();

@@ -79,7 +79,7 @@ if (isset($_GET['reportID'])) {
 }
 
 if (isset($reportID)) {
-	$report = new Report($reportID);
+	$report = ReportFactory::makeReport($reportID);
     Parameter::$ajax_parmValues = array();
     foreach ( $report->getParameters() as $parm ) {
         $parm->form();

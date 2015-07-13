@@ -47,15 +47,15 @@ include_once 'directory.php';
 
 </head>
 <body>
-	
-	
+
+
 <?php
 $type = $_GET['type'];
 
 if ($type === 'report'){
-	
-	$report = new Report($_GET['value']);
-	
+
+	$report = ReportFactory::makeReport($_GET['value']);
+
 	?>
 <br />
 	<center>

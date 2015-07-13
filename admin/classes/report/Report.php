@@ -41,13 +41,12 @@ abstract class Report implements ReportInterface {
     public function __construct($id){
         $this->db = new DBService();
         $result = $this->db
-            ->query("SELECT * FROM Report WHERE reportID = '$id' LIMIT 1")
+            ->query("SELECT reportName, reportDatabaseName FROM Report WHERE reportID = '$id' LIMIT 1")
             ->fetchRow(MYSQLI_ASSOC);
 
         $this->id = $id;
         $this->name = $result['reportName'];
         $this->dbname = $result['reportDatabaseName'];
-        $this->infoText = $result['infoDisplayText'];
 
         ReportNotes::init($this->dbname);
 

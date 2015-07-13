@@ -16,10 +16,6 @@ class UsageStatisticsByTitles extends Report {
         parent::__construct($id);
     }
 
-    public function orderBy() {
-        return "order by TITLE_SORT, PUBLISHER, PLATFORM, YEAR";
-    }
-
     public function applyDateRange(array $dateRange) {
         $used = DateRangeParameter::getMonthsUsed($dateRange);
         $months = array('',

@@ -12,12 +12,9 @@
  * @author bgarcia
  */
 class UsageStatisticsByProviderPublisher extends Report {
+
     public function __construct($id) {
         parent::__construct($id);
-    }
-
-    public function orderBy() {
-        return "order by TITLE_SORT, PUBLISHER, PLATFORM, YEAR";
     }
 
     public function applyDateRange(array $dateRange) {

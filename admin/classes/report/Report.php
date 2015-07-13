@@ -22,7 +22,6 @@ abstract class Report implements ReportInterface {
 
     public $id;
     public $name;
-    public $infoText;
     public $addWhere = array('','');
     public $sort = array('order'=>'asc','column'=>1);
     public $table;
@@ -31,7 +30,6 @@ abstract class Report implements ReportInterface {
     public $showUnadjusted = false;
     public $onlySummary = false;
 
-    public abstract function orderBy();
     public abstract function sql($isArchive);
 
     public function applyDateRange(array $dateRange) {

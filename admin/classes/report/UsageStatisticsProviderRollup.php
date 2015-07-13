@@ -16,10 +16,6 @@ class UsageStatisticsProviderRollup extends Report {
         parent::__construct($id);
     }
 
-    public function orderBy() {
-        return "order by PLATFORM, 3";
-    }
-
     public function applyDateRange(array $dateRange) {
         $used = DateRangeParameter::getMonthsUsed($dateRange);
         $months = array('',

@@ -13,8 +13,6 @@
  */
 interface ReportInterface {
 
-    public function orderBy();
-
     public function sql($isArchive);
 
     public function applyDateRange(array $dateRange);

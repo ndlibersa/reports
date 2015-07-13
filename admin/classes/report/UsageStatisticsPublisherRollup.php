@@ -16,10 +16,6 @@ class UsageStatisticsPublisherRollup extends Report {
         parent::__construct($id);
     }
 
-    public function orderBy() {
-        return "order by Publisher";
-    }
-
     public function applyDateRange(array $dateRange) {
         $used = DateRangeParameter::getMonthsUsed($dateRange);
         $months = array('',

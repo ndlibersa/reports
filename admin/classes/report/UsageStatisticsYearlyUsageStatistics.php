@@ -16,10 +16,6 @@ class UsageStatisticsYearlyUsageStatistics extends Report {
         parent::__construct($id);
     }
 
-    public function orderBy() {
-        return "order by TITLE_SORT";
-    }
-
     public function sql($isArchive) {
         $yearFields = '';
         for ($y = 2015; $y >= 2008; $y--) {

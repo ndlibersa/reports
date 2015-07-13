@@ -16,10 +16,6 @@ class UsageStatisticsTopJournalRequests extends Report {
         parent::__construct($id);
     }
 
-    public function orderBy() {
-        return "order by sum(distinct totalCount) desc, TITLE_SORT";
-    }
-
     public function sql($isArchive) {
         return "
 SELECT t.Title TITLE,

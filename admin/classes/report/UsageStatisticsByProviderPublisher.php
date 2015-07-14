@@ -38,7 +38,8 @@ class UsageStatisticsByProviderPublisher extends Report {
 
     public function sql($isArchive) {
         return "
-SELECT t.Title TITLE, pp.reportDisplayName PUBLISHER, Platform.reportDisplayName PLATFORM, t.resourceType, mus.year YEAR,
+SELECT t.Title TITLE, pp.reportDisplayName PUBLISHER,
+Platform.reportDisplayName PLATFORM, t.resourceType RESOURCE_TYPE, mus.year YEAR,
 MAX(IF(ti.identifierType='DOI', ti.identifier, null)) DOI,
 MAX(IF(ti.identifierType='ISSN', concat(substr(ti.identifier,1,4), '-', substr(ti.identifier,5,4)),null)) PRINT_ISSN,
 MAX(IF(ti.identifierType='eISSN', concat(substr(ti.identifier,1,4), '-', substr(ti.identifier,5,4)),null)) ONLINE_ISSN,
@@ -60,6 +61,7 @@ FROM Platform, PublisherPlatform pp,
 MonthlyUsageSummary mus LEFT JOIN YearlyUsageSummary yus ON yus.publisherPlatformID = mus.publisherPlatformID AND yus.year = mus.year AND yus.titleID = mus.titleID AND yus.archiveInd = mus.archiveInd,
 Title t LEFT JOIN TitleIdentifier ti ON t.titleID = ti.titleID
 WHERE Platform.platformID = pp.platformID
+
 {$this->addWhere[0]} AND mus.archiveInd=". intval($isArchive)
 . " AND mus.publisherPlatformID = pp.publisherPlatformID
 AND mus.titleID = t.titleID

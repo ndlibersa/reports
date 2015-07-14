@@ -47,7 +47,7 @@ $this->month_fields
 totalCount YTD_TOTAL,
 ytdHTMLCount YTD_HTML,
 ytdPDFCount YTD_PDF,
-IF(MAX(outlierID)=0,'N','Y') outlier_flag,
+IF(MAX(outlierID)=0,'N','Y') OUTLIER_FLAG,
 t.titleID titleID,
 $this->month_fields_override
 overrideTotalCount YTD_OVERRIDE,

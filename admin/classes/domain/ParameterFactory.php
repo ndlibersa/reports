@@ -63,7 +63,7 @@ class ParameterFactory {
         $parm->prompt = $result['parameterDisplayPrompt'];
         $parm->addWhereClause = $result['parameterAddWhereClause'];
         $parm->typeCode = $result['parameterTypeCode'];
-        $parm->requiredInd = boolval($result['requiredInd']);
+        $parm->requiredInd = $result['requiredInd']===1;
         $parm->addWhereNum = $result['parameterAddWhereNumber'];
         $parm->sql = $result['parameterSQLStatement'];
         $parm->parentReportParameterID = $result['parentReportParameterID'];

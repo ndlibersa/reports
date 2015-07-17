@@ -11,7 +11,7 @@
  *
  * @author bgarcia
  */
-class UsageStatisticsTopJournalRequests extends Report {
+class UsageStatisticsTopResourceRequests extends Report {
     public function __construct($id) {
         parent::__construct($id);
     }

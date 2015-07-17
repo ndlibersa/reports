@@ -18,7 +18,7 @@ class ReportFactory {
             case 2: return new UsageStatisticsByProviderPublisher(2);
             case 3: return new UsageStatisticsProviderRollup(3);
             case 4: return new UsageStatisticsPublisherRollup(4);
-            case 5: return new UsageStatisticsTopJournalRequests(5);
+            case 5: return new UsageStatisticsTopResourceRequests(5);
             case 6: return new UsageStatisticsYearlyUsageStatistics(6);
             default: throw new \BadFunctionCallException("Did not recognize reportID");
         }

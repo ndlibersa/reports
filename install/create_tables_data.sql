@@ -58,7 +58,7 @@ VALUES ('4','Usage Statistics - Publisher Rollup','100','0', 'usageDatabase');
 
 
 INSERT INTO `_DATABASE_NAME_`.Report (reportID, reportName, defaultRecPageNumber, excelOnlyInd, reportDatabaseName)
-VALUES ('5','Usage Statistics - Top Journal Requests','100', '0', 'usageDatabase');
+VALUES ('5','Usage Statistics - Top Resource Requests','100', '0', 'usageDatabase');
 
 
 INSERT INTO `_DATABASE_NAME_`.Report (reportID, reportName, defaultRecPageNumber, excelOnlyInd, reportDatabaseName)

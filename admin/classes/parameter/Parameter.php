@@ -160,7 +160,7 @@ class Parameter implements ParameterInterface {
             ->selectDB(Config::$database->{$parmReport->dbname})
             ->query($sql)
             ->fetchRows(MYSQLI_ASSOC);
-        return array_column($result, 'reportDisplayName');
+        return $result;
     }
 
 }

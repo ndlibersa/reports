@@ -46,7 +46,7 @@ class Parameter implements ParameterInterface {
     }
 
     public function process() {
-        if ($this->value !== null) {
+        if ($this->value !== null && trim("$this->value")!=='') {
             $this->value = strtoupper($this->value);
             Parameter::$report->addWhere[$this->addWhereNum] .= " AND " . preg_replace('/PARM/',$this->value,$this->addWhereClause);
             FormInputs::addVisible("prm_$this->id", $this->value);

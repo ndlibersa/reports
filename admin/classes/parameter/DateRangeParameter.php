@@ -45,7 +45,7 @@ class DateRangeParameter extends DropdownParameter implements ParameterInterface
         } else {
             $this->addWhereClause = "((mus.year={$this->value['y0']} AND month BETWEEN {$this->value['m0']} AND 12)";
             for ($y=$this->value['y0']+1; $y<$this->value['y1']; ++$y) {
-                $this->addWhereClause .= " OR (mus.year=$y AND month BETWEEN 1 AND 12)";
+                $this->addWhereClause .= " OR mus.year=$y";
             }
             $this->addWhereClause .=  " OR (mus.year={$this->value['y1']} AND "
             . DateRangeParameter::monthRangeSameYearSQL(1, $this->value['m1']) . "))";
@@ -163,7 +163,7 @@ class DateRangeParameter extends DropdownParameter implements ParameterInterface
 
     public static function getMonthsUsed(array $range) {
         $used = array();
-        
+
         $miny = intval($range['y0']);
         $maxy = intval($range['y1']);
 

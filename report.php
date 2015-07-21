@@ -29,6 +29,11 @@ if (isset($_REQUEST['outputType'])) {
 } else {
     $outputType = 'web';
 }
+
+//test
+ReportTest::run();
+die();
+
 $report = ReportFactory::makeReport($_REQUEST['reportID']);
 Parameter::setReport($report);
 //FormInputs::init() and ReportNotes::init(..) are called by Report constructor

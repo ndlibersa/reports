@@ -40,7 +40,7 @@ class DBService {
 		}
 		return $this;
 	}
-	public static function getSQLdb(){
+	public static function getDatabase(){
 		return self::$db;
 	}
 	public static function query($sql){
@@ -53,7 +53,7 @@ class DBService {
 		}
 		return array();
 	}
-	public static function sanitize($str){
+	public static function escapeString($str){
 		return self::$db->real_escape_string($str);
 	}
 }

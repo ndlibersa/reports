@@ -101,13 +101,8 @@ if (isset($reportID)) {
 </table>
 
 </form>
-
-
-<br /> <a href="mailto:Benjamin.J.Heet.2@ND.EDU">Contact / Help</a>
-<br /> <br />
-
-
 </center>
+<br />
 <br />
 <br />
 

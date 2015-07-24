@@ -27,7 +27,7 @@ class DateRangeParameter extends DropdownParameter implements ParameterInterface
         if ($this->value !== null) {
             Parameter::$report->addWhere[$this->addWhereNum] .= " AND $this->addWhereClause";
             Parameter::$report->applyDateRange($this->value);
-            FormInputs::addVisible("prm_$this->id",$this->encode());
+            FormInputs::addVisible("prm_$this->id",$this->encode($this->value));
             $this->value = $this->value['m0'] . '/' . $this->value['y0'] . '-'
                 . $this->value['m1'] . '/' . $this->value['y1'];
             Parameter::$display .= $this->description();
@@ -58,29 +58,48 @@ class DateRangeParameter extends DropdownParameter implements ParameterInterface
         return "month BETWEEN $start AND $end";
     }
 
-    public function encode() { // for HTTP GET
-        if(!isset($this->value['y0'],$this->value['y1'],$this->value['m0'],$this->value['m1'])) {
-            throw new InvalidArgumentException("missing one or more array fields");
-        }
-        $str = sprintf('%02u%04u%02u%04u',$this->value['m0'],$this->value['y0'],$this->value['m1'],$this->value['y1']);
-        if($str==null || $str=='' || strlen($str)!==12) {
-            throw new UnexpectedValueException("encoding failed: $str");
-        }
-        return $str;
+    protected function validateRange($range) {
+        return ( isset($range['y0'],$range['y1'],$range['m0'],$range['m1']) // not missing params
+            && ($range['m0']>=1 && $range['m0']<=12) // m0 is valid
+            && ($range['m1']>=1 && $range['m1']<=12) // m1 is valid
+            && (strlen("{$range['y0']}")==4)  // y0 is valid
+            && (strlen("{$range['y1']}")==4)  // y1 is valid
+            && ($range['y0']<=$range['y1']) // y0<=y1
+            && ($range['y0']!=$range['y1'] || $range['m0']<=$range['m1']) // m0<=m1 when y0=y1
+            );
     }
 
-    public function decode($val) { // for HTTP GET
-        if (!is_string($val)) {
-            throw new UnexpectedValueException("passed value is wrong type, expected: string");
-        } else if (strlen($val)!==12) {
-            throw new UnexpectedValueException("decoding failed: $val");
+    public function encode($range) { // for HTTP GET
+        if ($this->validateRange($range)) {
+            return sprintf('%02u%04u%02u%04u',$range['m0'],$range['y0'],$range['m1'],$range['y1']);
+        } else {
+            $fields = array('m0','y0','m1','y1');
+            foreach ($fields as $f) {
+                if (!isset($range[$f]))
+                    $range[$f] = 'NULL';
+            }
+            throw new InvalidArgumentException("invalid date range: {$range['m0']}/{$range['y0']} -> {$range['m1']}/{$range['y1']}");
         }
-        $parsed = sscanf($val,'%02u%04u%02u%04u');
+    }
+
+    public function decode($data) { // for HTTP GET
+        if (!is_string($data) || strlen($data)!==12) {
+            throw new InvalidArgumentException("unable to decode: \"$data\"");
+        }
+
+        $parsed = sscanf($data,'%02u%04u%02u%04u');
         $range = array('m0'=>$parsed[0], 'y0'=>$parsed[1],'m1'=>$parsed[2], 'y1'=>$parsed[3]);
-        if($range==null || !is_array($range)){
-            throw new UnexpectedValueException("return value is wrong type, expected: array");
+
+        if ($this->validateRange($range)) {
+            return $range;
+        } else {
+            $fields = array('m0','y0','m1','y1');
+            foreach ($fields as $f) {
+                if (!isset($range[$f]))
+                    $range[$f] = 'NULL';
+            }
+            throw new InvalidArgumentException("invalid date range: {$range['m0']}/{$range['y0']} -> {$range['m1']}/{$range['y1']}");
         }
-        return $range;
     }
 
 	public function form() {
@@ -172,8 +191,8 @@ class DateRangeParameter extends DropdownParameter implements ParameterInterface
                 return $used;
             }
 
-            $minm = intval(($y===$miny)? $range['m0'] : 1); //-1 means JAN=0
-            $maxm = intval(($y===$maxy)? $range['m1'] : 12); //-1 means JAN=0
+            $minm = intval(($y===$miny)? $range['m0'] : 1);
+            $maxm = intval(($y===$maxy)? $range['m1'] : 12);
 
             for ($m=$minm; $m<=$maxm; ++$m) {
                 $used[$m] = true;

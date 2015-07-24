@@ -39,13 +39,13 @@ class ReportNotes {
 		return $db->query("SELECT startYear, endYear, counterCompliantInd, noteText, reportDisplayName
 				FROM PlatformNote pn, Platform p
 				WHERE p.platformID = pn.platformID
-				AND pn.platformID in (" . $db->sanitize(join(',', array_keys(self::$platIDs))) . ");")->fetchRows(MYSQLI_ASSOC);
+				AND pn.platformID in (" . $db->escapeString(join(',', array_keys(self::$platIDs))) . ");")->fetchRows(MYSQLI_ASSOC);
 	}
 	public static function publisherNotes(){
 		$db = new DBService(Config::$database->{self::$dbname});
 		return $db->query("SELECT startYear, endYear, noteText, reportDisplayName
 				FROM PublisherPlatformNote pn, PublisherPlatform pp
 				WHERE pp.publisherPlatformID = pn.publisherPlatformID
-				AND pp.publisherPlatformID in (" . $db->sanitize(join(',', array_keys(self::$pubIDs))) . ");")->fetchRows(MYSQLI_ASSOC);
+				AND pp.publisherPlatformID in (" . $db->escapeString(join(',', array_keys(self::$pubIDs))) . ");")->fetchRows(MYSQLI_ASSOC);
 	}
 }

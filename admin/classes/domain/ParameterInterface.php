@@ -15,6 +15,6 @@ interface ParameterInterface {
     public function process();
     public function form();
     public function description();
-    public function ajax_getChildUpdate();
-    public function ajax_getChildParameters();
+    public function ajaxGetChildUpdate();
+    public function ajaxGetChildParameters();
 }

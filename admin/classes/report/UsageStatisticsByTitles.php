@@ -14,6 +14,10 @@
 class UsageStatisticsByTitles extends Report {
     public function __construct($id) {
         parent::__construct($id);
+
+        $this->month_fields = "";
+        $this->month_fields_override = "";
+        $this->month_fields_outlier = "";
     }
 
     public function applyDateRange(array $dateRange) {

@@ -33,10 +33,10 @@ if ($action === 'getReportParameters') {
     }
 } else if ($action === 'getChildParameters') {
     $parm = ParameterFactory::makeParam($_GET['reportID'],$_GET['parentReportParameterID']);
-    $parm->ajax_getChildParameters();
+    $parm->ajaxGetChildParameters();
 } else if ($action === 'getChildUpdate') {
     $parm = ParameterFactory::makeParam($_GET['reportID'],$_GET['reportParameterID']);
-    $parm->ajax_getChildUpdate();
+    $parm->ajaxGetChildUpdate();
 } else {
     echo "Action $action not set up!";
 }

@@ -30,7 +30,7 @@ class CheckSummaryOnlyParameter extends CheckboxParameter implements ParameterIn
         $this->requiredInd = false;
         $this->addWhereNum = 0;
         $this->sql = "";
-        $this->parentReportParameterID = 0;
+        $this->parentID = 0;
         $this->sqlRestriction = "";
 
         $this->value = $this->value();

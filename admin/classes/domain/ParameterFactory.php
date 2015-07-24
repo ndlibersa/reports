@@ -66,7 +66,7 @@ class ParameterFactory {
         $parm->requiredInd = $result['requiredInd']===1;
         $parm->addWhereNum = $result['parameterAddWhereNumber'];
         $parm->sql = $result['parameterSQLStatement'];
-        $parm->parentReportParameterID = $result['parentReportParameterID'];
+        $parm->parentID = $result['parentReportParameterID'];
         $parm->sqlRestriction = $result['parameterSQLRestriction'];
 
         $parm->value = $parm->value();

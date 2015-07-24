@@ -31,7 +31,7 @@ class Parameter implements ParameterInterface {
     public $requiredInd;
     public $addWhereNum;
     public $sql;
-    public $parentReportParameterID;
+    public $parentID;
     public $sqlRestriction;
 
     public function value() {
@@ -58,23 +58,23 @@ class Parameter implements ParameterInterface {
         return "<b>{$this->prompt}:</b> '$this->value'<br/>";
     }
 
+    private function formCommon() {
+        echo "<div id='div_parm_$this->id'>
+        <br />
+        <label for='prm_$this->id'>$this->prompt</label>
+        <input type='text' name='prm_$this->id' class='opt' value=\"$this->value\"/>";
+        echo "</div>";
+    }
+
     public function form() {
-        echo "<div id='div_parm_$this->id'>
-        <br />
-        <label for='prm_$this->id'>$this->prompt</label>
-        <input type='text' name='prm_$this->id' class='opt' value=\"$this->value\"/>";
-        echo "</div>";
+        $this->formCommon();
     }
 
-    public function ajax_getChildUpdate() {
-        echo "<div id='div_parm_$this->id'>
-        <br />
-        <label for='prm_$this->id'>$this->prompt</label>
-        <input type='text' name='prm_$this->id' class='opt' value=\"$this->value\"/>";
-        echo "</div>";
+    public function ajaxGetChildUpdate() {
+        $this->formCommon();
     }
 
-    public function ajax_getChildParameters() {
+    public function ajaxGetChildParameters() {
         foreach ( $this->getChildren() as $parm ) {
             echo $parm->id . "|";
         }

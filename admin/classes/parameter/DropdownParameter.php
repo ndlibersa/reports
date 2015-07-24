@@ -34,42 +34,7 @@ class DropdownParameter extends Parameter implements ParameterInterface {
         }
     }
 
-    public function form() {
-        $options = "";
-        if (!$this->requiredInd) {
-            $options .= "<option value=''";
-            if ($this->value===null || $this->value==='')
-                $options .= "selected='selected'";
-            $options .= ">all</option>";
-        }
-        $firstrow = true;
-        if (isset(Parameter::$ajax_parmValues[$this->parentReportParameterID]))
-            $p = Parameter::$ajax_parmValues[$this->parentReportParameterID];
-        else
-            $p = 0;
-        foreach ( $this->getSelectValues($p) as $value ) {
-            if ($firstrow && $this->requiredInd)
-                Parameter::$ajax_parmValues[$this->id] = $value;
-            $options .= "<option value='{$value['cde']}'";
-            if ($this->value!==null && $this->value==$value['cde']) {
-                $options .= " selected='selected'";
-            }
-            $options .= ">" . $value['val'] . "</option>";
-            $firstrow = false;
-        }
-        echo "<div id='div_parm_$this->id'>
-              <br />
-              <label for='prm_$this->id'>$this->prompt</label>";
-        echo "<select name='prm_$this->id' id='prm_$this->id' class='opt' ";
-        if ($this->isParent()) {
-            echo "onchange='javascript:updateChildren($this->reportID,$this->id);' ";
-        }
-        echo ">$options</select></div>";
-    }
-
-    public function ajax_getChildUpdate() {
-        $reportParameterVal = $_GET['reportParameterVal'];
-
+    private function formCommon($parentID) {
         echo "<div id='div_parm_$this->id'>
               <br />
               <label for='prm_$this->id'>$this->prompt</label>";
@@ -79,18 +44,42 @@ class DropdownParameter extends Parameter implements ParameterInterface {
         } else {
             echo ">";
         }
+
         if (!$this->requiredInd) {
-            echo "<option value='' selected>All</option>";
+            echo "<option value=''";
+            if ($this->value===null || $this->value==='')
+                echo "selected='selected'";
+            echo ">All</option>";
         }
 
         $firstrow = true;
-        foreach ( $this->getSelectValues($reportParameterVal) as $value ) {
+        foreach ( $this->getSelectValues($parentID) as $value ) {
             if ($firstrow && $this->requiredInd)
                 Parameter::$ajax_parmValues[$this->id] = $value;
-            echo "<option value='{$value['cde']}'>" . $value['val'] . "</option>";
+            echo "<option value='{$value['cde']}'";
+            if ($this->value!==null && $this->value==$value['cde']) {
+                echo " selected='selected'";
+            }
+            echo ">" . $value['val'] . "</option>";
             $firstrow = false;
         }
 
         echo "</select></div>";
+    }
+
+    public function form() {
+        if (isset(Parameter::$ajax_parmValues[$this->parentID])) {
+            $this->formCommon(Parameter::$ajax_parmValues[$this->parentID]);
+        } else {
+            $this->formCommon(0);
+        }
+    }
+
+    public function ajaxGetChildUpdate() {
+        if (isset($_GET['reportParameterVal'])) {
+            $this->formCommon($_GET['reportParameterVal']);
+        } else {
+            $this->formCommon(0);
+        }
     }
 }

@@ -15,7 +15,7 @@ class DateRangeParameter extends DropdownParameter implements ParameterInterface
 
     public function value() {
         if(! isset($_REQUEST["prm_$this->id"])) {
-            $years = $this->getSelectValues($this->parentReportParameterID);
+            $years = $this->getSelectValues($this->parentID);
             $y0 = min($years);
             $y1 = max($years);
             return array('m0'=>1,'y0'=>$y0['val'],'m1'=>12,'y1'=>$y1['val']);
@@ -58,20 +58,16 @@ class DateRangeParameter extends DropdownParameter implements ParameterInterface
         return "month BETWEEN $start AND $end";
     }
 
-    protected function validateRange($range) {
-        return ( isset($range['y0'],$range['y1'],$range['m0'],$range['m1']) // not missing params
+    private function validateRange($range) {
+        if ( isset($range['y0'],$range['y1'],$range['m0'],$range['m1']) // not missing params
             && ($range['m0']>=1 && $range['m0']<=12) // m0 is valid
             && ($range['m1']>=1 && $range['m1']<=12) // m1 is valid
             && (strlen("{$range['y0']}")==4)  // y0 is valid
             && (strlen("{$range['y1']}")==4)  // y1 is valid
             && ($range['y0']<=$range['y1']) // y0<=y1
             && ($range['y0']!=$range['y1'] || $range['m0']<=$range['m1']) // m0<=m1 when y0=y1
-            );
-    }
-
-    public function encode($range) { // for HTTP GET
-        if ($this->validateRange($range)) {
-            return sprintf('%02u%04u%02u%04u',$range['m0'],$range['y0'],$range['m1'],$range['y1']);
+            ) {
+                return true;
         } else {
             $fields = array('m0','y0','m1','y1');
             foreach ($fields as $f) {
@@ -79,6 +75,12 @@ class DateRangeParameter extends DropdownParameter implements ParameterInterface
                     $range[$f] = 'NULL';
             }
             throw new InvalidArgumentException("invalid date range: {$range['m0']}/{$range['y0']} -> {$range['m1']}/{$range['y1']}");
+        }
+    }
+
+    public function encode($range) { // for HTTP GET
+        if ($this->validateRange($range)) { // throws InvalidArgumentException
+            return sprintf('%02u%04u%02u%04u',$range['m0'],$range['y0'],$range['m1'],$range['y1']);
         }
     }
 
@@ -90,60 +92,13 @@ class DateRangeParameter extends DropdownParameter implements ParameterInterface
         $parsed = sscanf($data,'%02u%04u%02u%04u');
         $range = array('m0'=>$parsed[0], 'y0'=>$parsed[1],'m1'=>$parsed[2], 'y1'=>$parsed[3]);
 
-        if ($this->validateRange($range)) {
+        if ($this->validateRange($range)) { // throws InvalidArgumentException
             return $range;
-        } else {
-            $fields = array('m0','y0','m1','y1');
-            foreach ($fields as $f) {
-                if (!isset($range[$f]))
-                    $range[$f] = 'NULL';
-            }
-            throw new InvalidArgumentException("invalid date range: {$range['m0']}/{$range['y0']} -> {$range['m1']}/{$range['y1']}");
         }
     }
 
-	public function form() {
-
-        $varname_parentID = "prm_$this->parentReportParameterID";
-        $parentID = null;
-        if (isset($_GET[$varname_parentID])) {
-            $parentID = $_GET[$varname_parentID];
-        }
-
-        $months = array('','January','February','March','April','May','June','July','August','September','October','November','December');
-        $years = $this->getSelectValues($parentID);
-        echo "<div id='div_parm_$this->id' class='param'>
-            <input type='hidden' id='daterange' name='prm_$this->id' />";
-        for ($i=0;$i<2;$i++) {
-            $mOpts = "";
-            $yOpts = "";
-            $legendtxt = ($i)?'Through date':'From date';
-            for ($mi=1;$mi<count($months);$mi++) {
-                $sel = ($this->value["m$i"]==$mi)?'selected="selected"':'';
-                $mOpts .= "<option value='$mi' $sel>{$months[$mi]}</option>";
-            }
-
-            foreach ($years as $y) {
-                $sel = ($this->value["y$i"]==$y['cde'])?'selected="selected"':'';
-                $yOpts .= "<option value=\"{$y['cde']}\" $sel>{$y['val']}</option>";
-            }
-            echo "<br />
-                <fieldset>
-                    <legend>$legendtxt:</legend>
-                    <select id='date{$i}m' class='opt'>
-                        $mOpts
-                    </select>
-                    <select id='date{$i}y' class='opt'>
-                        $yOpts
-                    </select>
-                </fieldset>";
-        }
-        echo "</div>";
-    }
-
-    public function ajax_getChildUpdate() {
-
-        $varname_parentID = "prm_$this->parentReportParameterID";
+    private function formCommon() {
+        $varname_parentID = "prm_$this->parentID";
         $parentID = 0;
         if (isset($_GET[$varname_parentID])) {
             $parentID = $_GET[$varname_parentID];
@@ -178,6 +133,14 @@ class DateRangeParameter extends DropdownParameter implements ParameterInterface
                 </fieldset>";
         }
         echo "</div>";
+    }
+
+	public function form() {
+        $this->formCommon();
+    }
+
+    public function ajaxGetChildUpdate() {
+        $this->formCommon();
     }
 
     public static function getMonthsUsed(array $range) {

@@ -17,7 +17,7 @@ class FormInputs {
 
     public static function getVisible(){
         if (count(FormInputs::$visible))
-            return "?" . implode('&',FormInputs::$visible);
+            return "?" . http_build_query(self::$visible);
         return "";
     }
 
@@ -37,7 +37,7 @@ class FormInputs {
 
     public static function addVisible($name, $val){
         FormInputs::validate($name, $val);
-        FormInputs::$visible[] = "$name=$val";
+        FormInputs::$visible[$name] = $val;
     }
 
     public static function addHidden($name, $val){

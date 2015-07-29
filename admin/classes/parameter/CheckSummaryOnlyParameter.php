@@ -21,8 +21,8 @@ class CheckSummaryOnlyParameter extends CheckboxParameter implements ParameterIn
     }
 
     //this parameter type does not come from the database
-    public function __construct($reportID) {
-        $this->id = "NoBody";
+    public function __construct($reportID,$value=null) {
+        $this->id = 'INVALID';
         $this->reportID = $reportID;
         $this->prompt = "Only show summaries";
         $this->addWhereClause = "";
@@ -33,6 +33,10 @@ class CheckSummaryOnlyParameter extends CheckboxParameter implements ParameterIn
         $this->parentID = 0;
         $this->sqlRestriction = "";
 
-        $this->value = $this->value();
+        if ($value) {
+            $this->value = $value;
+        } else {
+            $this->value = $this->value();
+        }
     }
 }

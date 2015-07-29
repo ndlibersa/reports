@@ -48,4 +48,50 @@ class ReportNotes {
 				WHERE pp.publisherPlatformID = pn.publisherPlatformID
 				AND pp.publisherPlatformID in (" . $db->escapeString(join(',', array_keys(self::$pubIDs))) . ");")->fetchRows(MYSQLI_ASSOC);
 	}
+
+    public static function displayNotes() {
+        $header = array("Platform Interface Notes (if available)",
+            "Publisher Notes (if available)");
+        $dataList = array(
+            ReportNotes::hasPlatforms()?ReportNotes::platformNotes():array(),
+            ReportNotes::hasPublishers()?ReportNotes::publisherNotes():array()
+        );
+
+        $n = 2;
+        for ($i=0; $i<$n; ++$i) {
+           echo "<br/> <br/>";
+
+           echo "<table style='border-width: 1px'>
+                <tr><td colspan='3'>
+                <b>$header[$i]</b>
+                </td></tr>";
+            foreach ( $dataList[$i] as $data ){
+                echo "<tr valign='top'>
+                    <td align='right'><b>{$data['reportDisplayName']}</b></td>";
+                if ($data['startYear'] != '' && ($data['endYear'] == '' || $data['endYear'] == '0')){
+                    echo "<td>Year: {$data['startYear']} to present</td>";
+                }else{
+                    echo "<td>Years: {$data['startYear']} to {$data['endYear']}</td>";
+                }
+
+                if ($i) {
+                    ReportNotes::printPublisherNote($data);
+                } else {
+                    ReportNotes::printPlatformNote($data);
+                }
+                echo "</tr>";
+            }
+            echo "</table>";
+        }
+    }
+
+    private static function printPlatformNote($data) {
+         echo "<td>This Interface ".(($data['counterCompliantInd']=='1')?"provides":"does not provide")." COUNTER compliant stats.<br/>"
+                . (($data['noteText'])?"<br/><i>Interface Notes</i>: {$data['noteText']}<br/>":'')
+                . "</td>";
+    }
+
+    private static function printPublisherNote($data) {
+        echo isset($data['notes'])?"<td>{$data['notes']}</td>":"";
+    }
 }

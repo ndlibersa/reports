@@ -13,6 +13,22 @@
  */
 class DateRangeParameter extends DropdownParameter implements ParameterInterface {
 
+    public function __construct($reportID,$db,$dbData,$value=null) {
+        parent::__construct($reportID, $db, $dbData,$value);
+        
+        if ($this->value['y0']===$this->value['y1']) {
+            $this->addWhereClause = "(mus.year={$this->value['y0']} AND "
+            . DateRangeParameter::monthRangeSameYearSQL($this->value['m0'], $this->value['m1']) . ")";
+        } else {
+            $this->addWhereClause = "((mus.year={$this->value['y0']} AND month BETWEEN {$this->value['m0']} AND 12)";
+            for ($y=$this->value['y0']+1; $y<$this->value['y1']; ++$y) {
+                $this->addWhereClause .= " OR mus.year=$y";
+            }
+            $this->addWhereClause .=  " OR (mus.year={$this->value['y1']} AND "
+            . DateRangeParameter::monthRangeSameYearSQL(1, $this->value['m1']) . "))";
+        }
+    }
+
     public function value() {
         if(! isset($_REQUEST["prm_$this->id"])) {
             $years = $this->getSelectValues($this->parentID);
@@ -36,20 +52,6 @@ class DateRangeParameter extends DropdownParameter implements ParameterInterface
 
     public function description() {
         return "<b>{$this->prompt}:</b> '$this->value'<br/>";
-    }
-
-    public function init() {
-        if ($this->value['y0']===$this->value['y1']) {
-            $this->addWhereClause = "(mus.year={$this->value['y0']} AND "
-            . DateRangeParameter::monthRangeSameYearSQL($this->value['m0'], $this->value['m1']) . ")";
-        } else {
-            $this->addWhereClause = "((mus.year={$this->value['y0']} AND month BETWEEN {$this->value['m0']} AND 12)";
-            for ($y=$this->value['y0']+1; $y<$this->value['y1']; ++$y) {
-                $this->addWhereClause .= " OR mus.year=$y";
-            }
-            $this->addWhereClause .=  " OR (mus.year={$this->value['y1']} AND "
-            . DateRangeParameter::monthRangeSameYearSQL(1, $this->value['m1']) . "))";
-        }
     }
 
     private static function monthRangeSameYearSQL($start,$end) {

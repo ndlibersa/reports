@@ -22,57 +22,41 @@ class ParameterFactory {
             ->fetchRow(MYSQLI_ASSOC);
 
         if ($result['parameterDisplayPrompt'] === 'Provider / Publisher') {
-                $parm = new ProviderPublisherParameter;
+                $parm = new ProviderPublisherParameter($reportID,$db,$result);
         } else if ($result['parameterDisplayPrompt'] === 'Provider') {
-            $parm = new ProviderParameter;
+            $parm = new ProviderParameter($reportID,$db,$result);
         }else if ($result['parameterDisplayPrompt'] === 'Publisher') {
-            $parm = new PublisherParameter;
+            $parm = new PublisherParameter($reportID,$db,$result);
         } else if($result['parameterTypeCode']==='chk'){
             if ($result['parameterDisplayPrompt']==="Do not adjust numbers for use violations") {
-                $parm = new CheckUnadjustedParameter;
+                $parm = new CheckUnadjustedParameter($reportID,$db,$result);
             } else {
-                $parm = new CheckboxParameter;
+                $parm = new CheckboxParameter($reportID,$db,$result);
             }
         } else if ($result['parameterTypeCode']==='dd') {
             if ($result['parameterAddWhereClause'] === 'limit') {
-                $parm = new LimitParameter;
+                $parm = new LimitParameter($reportID,$db,$result);
             } else if ($result['parameterDisplayPrompt'] === 'Year') {
-                $parm = new YearParameter;
+                $parm = new YearParameter($reportID,$db,$result);
             } else if ($result['parameterDisplayPrompt'] === 'Date Range') {
-                $parm = new DateRangeParameter;
+                $parm = new DateRangeParameter($reportID,$db,$result);
             } else {
-                $parm = new DropdownParameter;
+                $parm = new DropdownParameter($reportID,$db,$result);
             }
         } else if ($result['parameterTypeCode']==='ms') {
             if ($result['parameterDisplayPrompt'] === 'Provider / Publisher'
                 || $result['parameterDisplayPrompt'] === 'Provider'
                 || $result['parameterDisplayPrompt'] === 'Publisher') {
-                $parm = new ProviderPublisherDropdownParameter;
+                $parm = new ProviderPublisherDropdownParameter($reportID,$db,$result);
             } else {
-                $parm = new MultiselectParameter;
+                $parm = new MultiselectParameter($reportID,$db,$result);
             }
         } else if ($result['parameterTypeCode']==='txt') {
-            $parm = new TextParameter();
+            $parm = new TextParameter($reportID,$db,$result);
         } else {
-            $parm = new Parameter();
+            $parm = new Parameter($reportID,$db,$result);
         }
-
-        $parm->db = $db;
-        $parm->id = $reportParameterID;
-        $parm->reportID = $reportID;
-        $parm->prompt = $result['parameterDisplayPrompt'];
-        $parm->addWhereClause = $result['parameterAddWhereClause'];
-        $parm->typeCode = $result['parameterTypeCode'];
-        $parm->requiredInd = $result['requiredInd']===1;
-        $parm->addWhereNum = $result['parameterAddWhereNumber'];
-        $parm->sql = $result['parameterSQLStatement'];
-        $parm->parentID = $result['parentReportParameterID'];
-        $parm->sqlRestriction = $result['parameterSQLRestriction'];
-
-        $parm->value = $parm->value();
-        if ( is_a($parm, 'DateRangeParameter')) {
-            $parm->init();
-        }
+        
         return $parm;
     }
 }

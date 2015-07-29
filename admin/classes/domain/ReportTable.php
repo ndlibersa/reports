@@ -25,6 +25,30 @@ class ReportTable {
         $this->columnData['name'] = $_fields;
     }
 
+    public function displayHeader($outputType,array $sortData) {
+        echo "<thead><tr>";
+        foreach ( $this->fields() as $i=>$field ) {
+            echo "<th>" . ucwords(strtolower(strtr($field, '_', ' ')));
+            if ($outputType === 'web') {
+                echo "<div><a
+                    href=\"javascript:sortRecords('$i', 'asc');\"> <img
+                    align='center' src='images/arrowdown";
+                if ($sortData['column'] == $i && $sortData['order'] === 'asc') {
+                    echo '_sel';
+                }
+                echo ".gif' border=0 alt='ascending' /></a>&nbsp; <a
+                    href=\"javascript:sortRecords('$i', 'desc');\"> <img
+                    align='center' src='images/arrowup";
+                if ($sortData['column'] == $i && $sortData['order'] === 'desc') {
+                    echo '_sel';
+                }
+                echo ".gif' border=0 alt='descending'/></a></div>";
+            }
+            echo "</th>";
+        }
+        echo "</tr></thead>";
+    }
+
     public function fields() {
         return $this->columnData['name'];
     }
@@ -41,7 +65,7 @@ class ReportTable {
             if (($field === 'titleID') || ($field === 'platformID')) {
                 break;
             }
-            
+
             if (!$hasSubtotal
                 && ($field==='outlier_flag'||$field==='YTD_TOTAL')) {
 

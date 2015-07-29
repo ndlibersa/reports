@@ -34,6 +34,26 @@ class Parameter implements ParameterInterface {
     public $parentID;
     public $sqlRestriction;
 
+    public function __construct($reportID, $db, array $dbData, $defaultValue=null) {
+        $this->db = $db;
+        $this->id = $dbData['reportParameterID'];
+        $this->reportID = $reportID;
+        $this->prompt = $dbData['parameterDisplayPrompt'];
+        $this->addWhereClause = $dbData['parameterAddWhereClause'];
+        $this->typeCode = $dbData['parameterTypeCode'];
+        $this->requiredInd = $dbData['requiredInd']===1;
+        $this->addWhereNum = $dbData['parameterAddWhereNumber'];
+        $this->sql = $dbData['parameterSQLStatement'];
+        $this->parentID = $dbData['parentReportParameterID'];
+        $this->sqlRestriction = $dbData['parameterSQLRestriction'];
+
+        if ($defaultValue) {
+            $this->value = $defaultValue;
+        } else {
+            $this->value = $this->value();
+        }
+    }
+
     public function value() {
         if (isset($_REQUEST["prm_$this->id"])) {
             $val = trim($_REQUEST["prm_$this->id"]);

@@ -164,25 +164,7 @@ for ($irep=0; $irep<2; $irep++) {
 
 
     ////////////////////table header (start)//////////////
-    echo "<thead><tr>";
-    foreach ( $report->table->fields() as $i=>$field ) {
-        echo "<th>" . ucwords(strtolower(strtr($field, '_', ' ')));
-        if ($outputType === 'web') {
-            echo "<div><a
-                href=\"javascript:sortRecords('$i', 'asc');\"> <img
-                align='center' src='images/arrowdown";
-            if ($report->sort['column'] == $i && $report->sort['order'] === 'asc')
-                echo '_sel';
-            echo ".gif' border=0 alt='ascending' /></a>&nbsp; <a
-                href=\"javascript:sortRecords('$i', 'desc');\"> <img
-                align='center' src='images/arrowup";
-            if ($report->sort['column'] == $i && $report->sort['order'] === 'desc')
-                echo '_sel';
-            echo ".gif' border=0 alt='descending'/></a></div>";
-        }
-        echo "</th>";
-    }
-    echo "</tr></thead>";
+    $report->table->displayHeader($outputType,$report->sort);
     //////////////////table header (end)/////////////////
 
 
@@ -248,7 +230,6 @@ for ($irep=0; $irep<2; $irep++) {
 
     ///////////////////////////table footer (start)/////////////////
     echo "<tfoot>";
-
     if ($rownum === 0) {
         echo "<tr class='data'><td colspan=" . $report->table->nfields() . "><i>Sorry, no rows were returned.</i></td></tr>";
     } else {
@@ -375,88 +356,17 @@ if ($outputType != 'xls') {
 }
 //////////////////////////legend (end)///////////////////
 
-
-
-
-
+/* display any publisher or platform notes */
 echo "<tr><td class='noborder' style='text-align: left;'>";
-if (ReportNotes::hasPlatforms() || ReportNotes::hasPublishers()) {
-    $note_type = array('Platform Interface','Publisher');
-    for ($i=0;$i<2;$i++) {
-        echo "<br/> <br/>
-            <table style='border-width: 1px'>
-            <tr><td colspan='3'><b>{$note_type[$i]} Notes (if available)</b></td></tr>";
-        if (!($i) && ReportNotes::hasPlatforms()) {
-
-
-
-
-
-            /////////////////////platform list (start)//////////////////////
-            foreach ( ReportNotes::platformNotes() as $platform ){
-                echo "<tr valign='top'>
-                    <td align='right'><b>{$platform['reportDisplayName']}</b></td>
-                        ";
-                if ($platform['startYear'] != '' && ($platform['endYear'] == '' || $platform['endYear'] == '0')){
-                    echo "<td>Year: {$platform['startYear']} to present</td>";
-                }else{
-                    echo "<td>Years: {$platform['startYear']} to {$platform['endYear']}</td>";
-                }
-                echo "<td>This Interface ";
-                if ($platform['counterCompliantInd'] == '1'){
-                    echo 'provides COUNTER compliant stats.<br/>';
-                }else{
-                    echo 'does not provide COUNTER compliant stats.<br/>';
-                }
-                if ($platform['noteText']){
-                    echo "<br/><i>Interface Notes</i>: {$platform['noteText']}<br/>";
-                }
-                echo '</td></tr>';
-            }
-            ////////////////////platform list (end)/////////////////////
-
-
-
-
-
-        } else if (ReportNotes::hasPublishers()) {
-
-
-
-
-
-            ////////////////////////publisher list (start)///////////////////
-            foreach ( ReportNotes::publisherNotes() as $publisher ){
-                echo "<tr valign='top'>
-                    <td align='right'><b>{$publisher['reportDisplayName']}</b></td>";
-                if (!(($publisher['startYear'] != '') && ($publisher['endYear'] == '')))
-                    echo "<td>Years: {$publisher['startYear']} to {$publisher['endYear']}</td>";
-                else
-                    echo "<td>Year: {$publisher['startYear']}</td>";
-                if (isset($publisher['notes']))
-                    echo "<td>{$publisher['notes']}</td>";
-                echo "</tr>";
-            }
-            ///////////////////////publisher list (end)/////////////////////
-
-
-
-
-
-        }
-        echo '</table>';
-    }
-}
+ReportNotes::displayNotes();
 echo "</td></tr>
+
     </table><br/>
     </td>
     <td class='noborder'>&nbsp;</td>
     </tr>
     </table>
     </center>";
-
-
-
 
 
 ////////////////////footer//////////////////

@@ -6,10 +6,14 @@
 	bootstrap="directory.php"
 
 	convertErrorsToExceptions="true"
-	convertWarningsToExceptions="true"
+    convertWarningsToExceptions="true"
+
+    stopOnError="true"
 
 	colors="true"
 	verbose="true"
-	printerClass="PHPUnit_Util_Log_TAP"
-	>
+    >
+    <testsuite name="Reporting Module Tests">
+        <directory>admin/test</directory>
+    </testsuite>
 </phpunit>

@@ -38,11 +38,9 @@ class DBServiceTest extends PHPUnit_Framework_TestCase {
 
     /**
      * @depends testConnection
+     * @expectedException RuntimeException
      */
-    public function testGetDatabase($dbservice) {
-        $db = $dbservice->getDatabase();
-        $this->assertNotNull($db);
-        $this->assertInstanceOf('mysqli',$db);
-        return $db;
+    public function testEmptyQuery($dbservice) {
+         $dbservice->query("");
     }
 }

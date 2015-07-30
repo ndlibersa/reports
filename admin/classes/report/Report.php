@@ -23,8 +23,7 @@ abstract class Report implements ReportInterface {
     public $id;
     public $name;
     public $addWhere = array('','');
-    public $sort = array('order'=>'asc','column'=>1);
-    public $table;
+    public $sortData = array('order'=>'asc','column'=>1);
     public $titleID = null;
     public $baseURL = null;
     public $showUnadjusted = false;
@@ -54,17 +53,17 @@ abstract class Report implements ReportInterface {
         }
 
         if (isset($_REQUEST['sortColumn'])) {
-            $this->sort['column'] = $_REQUEST['sortColumn'];
+            $this->sortData['column'] = $_REQUEST['sortColumn'];
         }
 
         if (isset($_REQUEST['sortOrder'])) {
-            $this->sort['order'] = $_REQUEST['sortOrder'];
+            $this->sortData['order'] = $_REQUEST['sortOrder'];
         }
 
         FormInputs::addVisible('reportID',$this->id);
         FormInputs::addHidden('useHidden',1);
-        FormInputs::addHidden('sortColumn',$this->sort['column']);
-        FormInputs::addHidden('sortOrder',$this->sort['order']);
+        FormInputs::addHidden('sortColumn',$this->sortData['column']);
+        FormInputs::addHidden('sortOrder',$this->sortData['order']);
 
         Config::init();
         if (Config::$settings->baseURL) {
@@ -79,12 +78,11 @@ abstract class Report implements ReportInterface {
     public function run($isArchive, $allowSort){
         $sql = $this->sql($isArchive);
         if ($allowSort)
-            $sql .= " ORDER BY {$this->sort['column']} {$this->sort['order']}";
+            $sql .= " ORDER BY {$this->sortData['column']} {$this->sortData['order']}";
 
         $this->db->selectDB(Config::$database->{$this->dbname});
         $reportArray = $this->db->query($sql);
-        $this->table = new ReportTable($this, $reportArray->fetchFields());
-        return $reportArray;
+        return new ReportTable($this, $reportArray);
     }
 
     // returns outlier array for display at the bottom of reports

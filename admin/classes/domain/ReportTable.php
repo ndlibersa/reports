@@ -4,10 +4,16 @@ class ReportTable {
     public static $maxRows;
     public $columnData;
 
-    public function __construct(Report $report, array $fields) {
+    protected $report;
+    protected $reportResult;
+
+    public function __construct(Report $report, DBResult $reportResult) {
+        $this->report = $report;
+        $this->reportResult = $reportResult;
+
         $i = 0;
         $hasSubtotal = false;
-        foreach ($fields as $fld) {
+        foreach ($this->reportResult->fetchFields() as $fld) {
 			$i++;
             if (!$hasSubtotal
                 && ($fld==='outlier_flag'||$fld==='YTD_TOTAL')) {
@@ -21,11 +27,18 @@ class ReportTable {
             }
         }
 
-        $this->columnData = $report->getColumnData();
+        $this->columnData = $this->report->getColumnData();
         $this->columnData['name'] = $_fields;
+
+        if ($this->performSubtotalFlag = count($this->columnData['sum'])>0) {
+            $this->totalSumArray = array();
+            foreach ($this->fields() as $f) {
+                $this->totalSumArray[$f] = 0;
+            }
+        }
     }
 
-    public function displayHeader($outputType,array $sortData) {
+    public function displayHeader($outputType) {
         echo "<thead><tr>";
         foreach ( $this->fields() as $i=>$field ) {
             echo "<th>" . ucwords(strtolower(strtr($field, '_', ' ')));
@@ -33,13 +46,13 @@ class ReportTable {
                 echo "<div><a
                     href=\"javascript:sortRecords('$i', 'asc');\"> <img
                     align='center' src='images/arrowdown";
-                if ($sortData['column'] == $i && $sortData['order'] === 'asc') {
+                if ($this->report->sortData['column'] == $i && $this->report->sortData['order'] === 'asc') {
                     echo '_sel';
                 }
                 echo ".gif' border=0 alt='ascending' /></a>&nbsp; <a
                     href=\"javascript:sortRecords('$i', 'desc');\"> <img
                     align='center' src='images/arrowup";
-                if ($sortData['column'] == $i && $sortData['order'] === 'desc') {
+                if ($this->report->sortData['column'] == $i && $this->report->sortData['order'] === 'desc') {
                     echo '_sel';
                 }
                 echo ".gif' border=0 alt='descending'/></a></div>";
@@ -47,6 +60,81 @@ class ReportTable {
             echo "</th>";
         }
         echo "</tr></thead>";
+    }
+
+    public function prepareBody($outputType) {
+        $this->numRows = 0;
+        $tblBody = "<tbody>";
+        while ($currentRow = $this->reportResult->fetchRowPersist(MYSQLI_ASSOC) ) {
+            if (isset($currentRow['platformID']))
+                ReportNotes::addPlatform($currentRow['platformID']);
+            if (isset($currentRow['publisherPlatformID']))
+                ReportNotes::addPublisher($currentRow['publisherPlatformID']);
+
+            $colnum = 1;
+            $subtotal = 0;
+            $rowOutput = "<tr class='data'>";
+            foreach ( ReportTable::filterRow($currentRow)
+                as $field => $value ) {
+
+
+                if ($this->performSubtotalFlag && isset($this->columnData['sum'][$field])) {
+                    // get the numbers out for summing
+                    if ($field==='QUERY_TOTAL') {
+                        $value = $subtotal;
+                    } else {
+                        $subtotal += $value;
+                    }
+                    $this->totalSumArray[$field] += $value;
+                }
+
+                $rowOutput .= $this->formatColumn($outputType,$currentRow,$field,$value);
+
+                // end if display columns is Y
+                ++$colnum;
+            } // end loop through columns
+            $rowOutput .= "</tr>";
+            ++$this->numRows;
+
+            if (! $this->report->onlySummary || $outputType!=='web')
+                $tblBody .= $rowOutput;
+        }
+        $tblBody .= "</tbody>";
+        return $tblBody;
+    }
+
+    public function displayFooter($startRow, $outputType) {
+        echo "<tfoot>";
+        if (!$this->numRows) {
+            echo "<tr class='data'><td colspan=" . $this->nfields() . "><i>Sorry, no rows were returned.</i></td></tr>";
+        } else {
+            if (/*$outputType != 'xls' &&*/ $this->performSubtotalFlag) {
+
+                $rowParms = array();
+                $total = null;
+                foreach ($this->fields() as $field) {
+                    if (isset($this->columnData['sum'][$field],$this->totalSumArray[$field])) {
+                        $total = $this->sumColumn($field, $this->totalSumArray, $this->numRows);
+                    }
+                    $rowParms[] = ($total===null||$total==='')?'&nbsp;':$total;
+                    $total = null;
+                }
+
+                $rowParms[0] = "Total for Report";
+                echo ReportTable::formatTotalsRow($rowParms);
+            }
+
+            if (!$this->report->onlySummary || $outputType!=='web') {
+                echo "<tr><td colspan=" . $this->nfields() . " align='right'><i>Showing rows ",$startRow," to ";
+                if ((ReportTable::$maxRows > 0) && ($this->numRows > ReportTable::$maxRows)) {
+                    echo ReportTable::$maxRows . " of " . ReportTable::$maxRows;
+                } else {
+                    echo "$this->numRows of $this->numRows";
+                }
+                echo '</i></td></tr>';
+            }
+        }
+        echo '</tfoot>';
     }
 
     public function fields() {
@@ -81,7 +169,7 @@ class ReportTable {
         return $row_tmp;
     }
 
-    public static function formatColumn(Report $report, $outputType, array $currentRow, $field, $value) {
+    public function formatColumn($outputType, array $currentRow, $field, $value) {
         $colOutput = "";
 
         $value = str_replace(" & "," &amp; ",$value);
@@ -89,8 +177,8 @@ class ReportTable {
         if ($outputType === 'web'
             && ($value !== '&nbsp;') && $field === 'TITLE'
         ) {
-            if ($report->id != '1') {
-                $value .= "<br/><font size='-4'><a target='_BLANK' href=\"report.php?reportID=1&prm_4=" . ($report->showUnadjusted ? 'Y' : 'N');
+            if ($this->report->id != '1') {
+                $value .= "<br/><font size='-4'><a target='_BLANK' href=\"report.php?reportID=1&prm_4=" . ($this->report->showUnadjusted ? 'Y' : 'N');
                 if (isset($currentRow['titleID'])) {
                     $value .= "&titleID={$currentRow['titleID']}&outputType=web\">view related titles</a></font>";
                 } else {
@@ -98,15 +186,15 @@ class ReportTable {
                 }
             }
             // echo link resolver link
-            if ((($currentRow['PRINT_ISSN']) || ($currentRow['ONLINE_ISSN'])) && isset($report->baseURL)) {
-                $value .= "<br/><font size=\"-4\"><a target=\"_BLANK\" href=\"" . $report->getLinkResolverLink($currentRow) . "\">view in link resolver</a></font>";
+            if ((($currentRow['PRINT_ISSN']) || ($currentRow['ONLINE_ISSN'])) && isset($this->report->baseURL)) {
+                $value .= "<br/><font size=\"-4\"><a target=\"_BLANK\" href=\"" . $this->report->getLinkResolverLink($currentRow) . "\">view in link resolver</a></font>";
             }
         }
         if (isset($currentRow[$field . '_OVERRIDE']) || (isset($currentRow[$field . '_OUTLIER']) && $currentRow[$field . '_OUTLIER'] > 0)) {
-            if (!$report->showUnadjusted && isset($currentRow[$field . '_OVERRIDE'])) {
+            if (!$this->report->showUnadjusted && isset($currentRow[$field . '_OVERRIDE'])) {
                 $colOutput .= "<td class='overriden'>" . $currentRow[$field . '_OVERRIDE'] . "</td>";
             } else {
-                if ($report->showUnadjusted) {
+                if ($this->report->showUnadjusted) {
                     if ($currentRow[$field . '_OUTLIER'] >= 4) {
                         $tmp_outlier_color = Color::$levels[$currentRow[$field . '_OUTLIER'] - 3];
                     } else {

@@ -44,6 +44,10 @@ class DBService {
 		return self::$db;
 	}
 	public static function query($sql){
+        if (strlen(trim("$sql"))===0) {
+            throw new RuntimeException("Empty DB Query");
+        }
+
 		if (!($result = self::$db->query($sql))) {
 			throw new RuntimeException("There was a problem with the database: " . self::$db->error);
         } else if ($result instanceof mysqli_result){

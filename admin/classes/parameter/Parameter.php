@@ -34,21 +34,24 @@ class Parameter implements ParameterInterface {
     public $parentID;
     public $sqlRestriction;
 
-    public function __construct($reportID, $db, array $dbData, $defaultValue=null) {
+    public function __construct($reportID, $db, $dbData, $value=null) {
         $this->db = $db;
-        $this->id = $dbData['reportParameterID'];
         $this->reportID = $reportID;
-        $this->prompt = $dbData['parameterDisplayPrompt'];
-        $this->addWhereClause = $dbData['parameterAddWhereClause'];
-        $this->typeCode = $dbData['parameterTypeCode'];
-        $this->requiredInd = $dbData['requiredInd']===1;
-        $this->addWhereNum = $dbData['parameterAddWhereNumber'];
-        $this->sql = $dbData['parameterSQLStatement'];
-        $this->parentID = $dbData['parentReportParameterID'];
-        $this->sqlRestriction = $dbData['parameterSQLRestriction'];
 
-        if ($defaultValue) {
-            $this->value = $defaultValue;
+        if ($dbData!==null) {
+            $this->id = $dbData['reportParameterID'];
+            $this->prompt = $dbData['parameterDisplayPrompt'];
+            $this->addWhereClause = $dbData['parameterAddWhereClause'];
+            $this->typeCode = $dbData['parameterTypeCode'];
+            $this->requiredInd = $dbData['requiredInd']===1;
+            $this->addWhereNum = $dbData['parameterAddWhereNumber'];
+            $this->sql = $dbData['parameterSQLStatement'];
+            $this->parentID = $dbData['parentReportParameterID'];
+            $this->sqlRestriction = $dbData['parameterSQLRestriction'];
+        }
+
+        if ($value!==null) {
+            $this->value = $value;
         } else {
             $this->value = $this->value();
         }
@@ -61,7 +64,6 @@ class Parameter implements ParameterInterface {
                 return $val;
             }
         }
-
         return null;
     }
 
@@ -106,6 +108,10 @@ class Parameter implements ParameterInterface {
 
     // used only for allowing access to admin page
     public function getSelectValues($parentValue) {
+        if (trim($this->sql)==='') {
+            throw new RuntimeException("Parameter not fully initialized, missing sql, cannot query DB");
+        }
+
         // get report info so we can determine which database to use
         $parmReport = ReportFactory::makeReport($this->reportID);
         Config::init();
@@ -123,10 +129,12 @@ class Parameter implements ParameterInterface {
         } else {
             $parmSQL = str_replace("ADD_WHERE", "", $this->sql);
         }
+
         $result = $this->db
             ->selectDB(Config::$database->{$parmReport->dbname})
             ->query($parmSQL)
             ->fetchRows();
+
         $num_rows = count($result);
         $valueArray = array();
         for ($i = 0; $i < $num_rows; ++$i) {

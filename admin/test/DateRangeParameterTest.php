@@ -15,8 +15,7 @@ class DateRangeParameterTest extends PHPUnit_Framework_TestCase {
 
 
     public function testEncode() {
-        "021993072015";
-        $param = new DateRangeParameter();
+        $param = new DateRangeParameter(null,null,null);
         $data = array('m0'=>2,'y0'=>1993,'m1'=>7,'y1'=>2015);
 
         try {
@@ -36,7 +35,7 @@ class DateRangeParameterTest extends PHPUnit_Framework_TestCase {
      * @depends testEncode
      */
     public function testDecode($data) {
-        $param = new DateRangeParameter();
+        $param = new DateRangeParameter(null,null,null);
 
         try {
             $result = $param->decode($data);
@@ -59,7 +58,7 @@ class DateRangeParameterTest extends PHPUnit_Framework_TestCase {
      * @dataProvider encodeBadParamProvider
      */
     public function testEncodeFailOnBadParam($data) {
-        $param = new DateRangeParameter();
+        $param = new DateRangeParameter(null,null,null);
         $param->encode($data);
     }
 
@@ -79,7 +78,7 @@ class DateRangeParameterTest extends PHPUnit_Framework_TestCase {
      * @dataProvider decodeBadParamProvider
      */
     public function testDecodeFailOnBadParam($data) {
-        $param = new DateRangeParameter();
+        $param = new DateRangeParameter(null,null,null);
         $param->decode($data);
     }
 

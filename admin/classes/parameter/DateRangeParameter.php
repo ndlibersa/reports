@@ -15,7 +15,7 @@ class DateRangeParameter extends DropdownParameter implements ParameterInterface
 
     public function __construct($reportID,$db,$dbData,$value=null) {
         parent::__construct($reportID, $db, $dbData,$value);
-        
+
         if ($this->value['y0']===$this->value['y1']) {
             $this->addWhereClause = "(mus.year={$this->value['y0']} AND "
             . DateRangeParameter::monthRangeSameYearSQL($this->value['m0'], $this->value['m1']) . ")";
@@ -30,13 +30,16 @@ class DateRangeParameter extends DropdownParameter implements ParameterInterface
     }
 
     public function value() {
-        if(! isset($_REQUEST["prm_$this->id"])) {
+        if ($this->reportID===null) {
+            return array('m0'=>null,'y0'=>null,'m1'=>null,'y1'=>null);
+        } else if (! isset($_REQUEST["prm_$this->id"])) {
             $years = $this->getSelectValues($this->parentID);
             $y0 = min($years);
             $y1 = max($years);
             return array('m0'=>1,'y0'=>$y0['val'],'m1'=>12,'y1'=>$y1['val']);
+        } else {
+            return $this->decode($_REQUEST["prm_$this->id"]);
         }
-        return $this->decode($_REQUEST["prm_$this->id"]);
     }
 
     public function process() {

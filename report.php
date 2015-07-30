@@ -156,115 +156,16 @@ for ($irep=0; $irep<2; $irep++) {
     }
 
     $allowSort = (!$report->onlySummary || $outputType!=='web');
-    $reportArray = $report->run($irep===1,$allowSort);
+    $reportTable = $report->run($irep===1,$allowSort); //ReportTable created by Report::run
 
+    /* print table header */
+    $reportTable->displayHeader($outputType);
 
+    /* process and get table html */
+    $tblBody = $reportTable->prepareBody($outputType);
 
-
-
-
-    ////////////////////table header (start)//////////////
-    $report->table->displayHeader($outputType,$report->sort);
-    //////////////////table header (end)/////////////////
-
-
-
-
-
-    if ($perform_subtotal_flag = count($report->table->columnData['sum'])>0) {
-        $totalSumArray = array();
-        foreach ($report->table->fields() as $f) {
-            $totalSumArray[$f] = 0;
-        }
-    }
-
-    // loop through resultset
-    $rownum = 0;
-
-
-
-
-
-    /////////////////////////table body (start)/////////////////////////
-    $tblBody = "<tbody>";
-    while ($currentRow = $reportArray->fetchRowPersist(MYSQLI_ASSOC) ) {
-        if (isset($currentRow['platformID']))
-            ReportNotes::addPlatform($currentRow['platformID']);
-        if (isset($currentRow['publisherPlatformID']))
-            ReportNotes::addPublisher($currentRow['publisherPlatformID']);
-
-        $colnum = 1;
-        $subtotal = 0;
-        $rowOutput = "<tr class='data'>";
-        foreach ( ReportTable::filterRow($currentRow)
-            as $field => $value ) {
-
-
-            if ($perform_subtotal_flag && isset($report->table->columnData['sum'][$field])) {
-                // get the numbers out for summing
-                if ($field==='QUERY_TOTAL') {
-                    $value = $subtotal;
-                } else {
-                    $subtotal += $value;
-                }
-                $totalSumArray[$field] += $value;
-            }
-
-            $rowOutput .= ReportTable::formatColumn($report,$outputType,$currentRow,$field,$value);
-
-            // end if display columns is Y
-            ++$colnum;
-        } // end loop through columns
-        $rowOutput .= "</tr>";
-        ++$rownum;
-
-        if (! $report->onlySummary || $outputType!=='web')
-            $tblBody .= $rowOutput;
-    }
-    $tblBody .= "</tbody>";
-    ///////////////////////////table body (end)/////////////////////
-
-
-
-
-
-    ///////////////////////////table footer (start)/////////////////
-    echo "<tfoot>";
-    if ($rownum === 0) {
-        echo "<tr class='data'><td colspan=" . $report->table->nfields() . "><i>Sorry, no rows were returned.</i></td></tr>";
-    } else {
-        if (/*$outputType != 'xls' &&*/ $perform_subtotal_flag) {
-
-            $rowparms = array();
-            $total = null;
-            foreach ($report->table->fields() as $field) {
-                if (isset($report->table->columnData['sum'][$field],$totalSumArray[$field])) {
-                    $total = $report->table->sumColumn($field, $totalSumArray, $rownum);
-                }
-                $rowparms[] = ($total===null||$total==='')?'&nbsp;':$total;
-                $total = null;
-            }
-
-            $rowparms[0] = "Total for Report";
-            echo ReportTable::formatTotalsRow($rowparms);
-        }
-
-        if (!$report->onlySummary || $outputType!=='web') {
-            echo "<tr><td colspan=" . $report->table->nfields() . " align='right'><i>Showing rows ",$startRow," to ";
-            if ((ReportTable::$maxRows > 0) && ($rownum > ReportTable::$maxRows)) {
-                echo ReportTable::$maxRows . " of " . ReportTable::$maxRows;
-            } else {
-                echo "$rownum of $rownum";
-            }
-            echo '</i></td></tr>';
-        }
-    }
-    echo '</tfoot>';
-    /////////////////////////table footer (end)////////////////////
-
-
-
-
+    /* print table footer */
+    $reportTable->displayFooter($startRow, $outputType);
 
     echo $tblBody;
 
@@ -281,7 +182,7 @@ $outlier = $report->getOutliers();
 echo "<tr><td class='noborder' style='text-align: left;'><br/> <br/>";
 // for excel
 $outlier_cls = array('flagged','overriden','merged');
-$rp_fldcnt = $report->table->nfields();
+$rp_fldcnt = $reportTable->nfields();
 $modcolcount = $rp_fldcnt - 2;
 $nbsp6 = '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
 $txt_merged = "Multiple titles with the same print ISSN (generally multiple parts) have been merged together";

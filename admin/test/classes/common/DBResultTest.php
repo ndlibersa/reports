@@ -26,17 +26,6 @@ class DBResultTest extends PHPUnit_Framework_TestCase {
     }
 
     /**
-     * @covers DBResult::__destruct
-     * @todo   Implement test__destruct().
-     */
-    public function test__destruct() {
-        // Remove the following lines when you implement this test.
-        $this->markTestIncomplete(
-            'This test has not been implemented yet.'
-        );
-    }
-
-    /**
      * @covers DBResult::hasData
      * @todo   Implement testHasData().
      */

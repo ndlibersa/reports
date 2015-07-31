@@ -26,17 +26,6 @@ class MultiselectParameterTest extends PHPUnit_Framework_TestCase {
     }
 
     /**
-     * @covers MultiselectParameter::value
-     * @todo   Implement testValue().
-     */
-    public function testValue() {
-        // Remove the following lines when you implement this test.
-        $this->markTestIncomplete(
-            'This test has not been implemented yet.'
-        );
-    }
-
-    /**
      * @covers MultiselectParameter::form
      * @todo   Implement testForm().
      */

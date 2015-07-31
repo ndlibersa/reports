@@ -26,32 +26,10 @@ class ParameterTest extends PHPUnit_Framework_TestCase {
     }
 
     /**
-     * @covers Parameter::value
-     * @todo   Implement testValue().
-     */
-    public function testValue() {
-        // Remove the following lines when you implement this test.
-        $this->markTestIncomplete(
-            'This test has not been implemented yet.'
-        );
-    }
-
-    /**
      * @covers Parameter::process
      * @todo   Implement testProcess().
      */
     public function testProcess() {
-        // Remove the following lines when you implement this test.
-        $this->markTestIncomplete(
-            'This test has not been implemented yet.'
-        );
-    }
-
-    /**
-     * @covers Parameter::description
-     * @todo   Implement testDescription().
-     */
-    public function testDescription() {
         // Remove the following lines when you implement this test.
         $this->markTestIncomplete(
             'This test has not been implemented yet.'
@@ -85,17 +63,6 @@ class ParameterTest extends PHPUnit_Framework_TestCase {
      * @todo   Implement testAjaxGetChildParameters().
      */
     public function testAjaxGetChildParameters() {
-        // Remove the following lines when you implement this test.
-        $this->markTestIncomplete(
-            'This test has not been implemented yet.'
-        );
-    }
-
-    /**
-     * @covers Parameter::setReport
-     * @todo   Implement testSetReport().
-     */
-    public function testSetReport() {
         // Remove the following lines when you implement this test.
         $this->markTestIncomplete(
             'This test has not been implemented yet.'

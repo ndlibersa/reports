@@ -37,17 +37,6 @@ class CheckboxParameterTest extends PHPUnit_Framework_TestCase {
     }
 
     /**
-     * @covers CheckboxParameter::value
-     * @todo   Implement testValue().
-     */
-    public function testValue() {
-        // Remove the following lines when you implement this test.
-        $this->markTestIncomplete(
-            'This test has not been implemented yet.'
-        );
-    }
-
-    /**
      * @covers CheckboxParameter::form
      * @todo   Implement testForm().
      */

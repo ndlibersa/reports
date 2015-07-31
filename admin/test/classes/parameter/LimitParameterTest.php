@@ -35,16 +35,4 @@ class LimitParameterTest extends PHPUnit_Framework_TestCase {
             'This test has not been implemented yet.'
         );
     }
-
-    /**
-     * @covers LimitParameter::description
-     * @todo   Implement testDescription().
-     */
-    public function testDescription() {
-        // Remove the following lines when you implement this test.
-        $this->markTestIncomplete(
-            'This test has not been implemented yet.'
-        );
-    }
-
 }

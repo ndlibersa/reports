@@ -35,16 +35,4 @@ class UsageStatisticsPublisherRollupTest extends PHPUnit_Framework_TestCase {
             'This test has not been implemented yet.'
         );
     }
-
-    /**
-     * @covers UsageStatisticsPublisherRollup::sql
-     * @todo   Implement testSql().
-     */
-    public function testSql() {
-        // Remove the following lines when you implement this test.
-        $this->markTestIncomplete(
-            'This test has not been implemented yet.'
-        );
-    }
-
 }

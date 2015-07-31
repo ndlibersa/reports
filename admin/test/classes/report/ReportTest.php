@@ -106,20 +106,6 @@ class ReportTest extends PHPUnit_Framework_TestCase {
 
     /**
      * @dataProvider reportIdProvider
-     * @depends testParams
-     */
-    public function testReportId($reportID) {
-        $report = ReportFactory::makeReport($reportID);
-        Parameter::setReport($report);
-        foreach ($report->getParameters() as $parm ) {
-            $parm->process();
-        }
-        $report->run(false,true);
-        $report->run(true,true);
-    }
-
-    /**
-     * @dataProvider reportIdProvider
      */
     public function testParams($reportID) {
         $this->setUp();
@@ -161,6 +147,20 @@ class ReportTest extends PHPUnit_Framework_TestCase {
         }
     }
 
+    /**
+     * @dataProvider reportIdProvider
+     * @depends testParams
+     */
+    public function testReportId($reportID) {
+        $report = ReportFactory::makeReport($reportID);
+        Parameter::setReport($report);
+        foreach ($report->getParameters() as $parm ) {
+            $parm->process();
+        }
+        $report->run(false,true);
+        $report->run(true,true);
+    }
+
     public function reportIdProvider() {
         $db = new DBService();
         $ids = array();
@@ -175,10 +175,10 @@ class ReportTest extends PHPUnit_Framework_TestCase {
     public function initParamValues($parm) {
         $this->paramValueList = array($parm->id => $parm->value);
 
-        if ($parm instanceof CheckboxParameter || is_subclass_of($parm,'CheckboxParameter') ) {
+        if (is_a($parm,'CheckboxParameter')) {
             $this->paramValueList[$parm->id] = array('Y');
-        } else if ($parm instanceof DropdownParameter || is_subclass_of ($parm, 'DropdownParameter')) {
-            if (trim($parm->sql)!=='') {
+        } else if (is_a($parm,'DropdownParameter')) {
+            if (trim($parm->sql)==='') {
                 throw new RuntimeException("parameter missing sql for test");
             }
             foreach ($parm->getSelectValues($parm->parentID) as $v) {
@@ -188,7 +188,10 @@ class ReportTest extends PHPUnit_Framework_TestCase {
     }
 
     public function testReportHeaders() {
-
+        // Remove the following lines when you implement this test.
+        $this->markTestIncomplete(
+            'This test has not been implemented yet.'
+        );
     }
 
 }

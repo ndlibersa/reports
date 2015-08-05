@@ -1,3 +1,4 @@
+DROP TABLE IF EXISTS `_DATABASE_NAME_`.`Report`;
 CREATE TABLE IF NOT EXISTS  `_DATABASE_NAME_`.`Report` (
   `reportID` int(11) NOT NULL auto_increment,
   `reportName` varchar(45) NOT NULL,
@@ -8,7 +9,7 @@ CREATE TABLE IF NOT EXISTS  `_DATABASE_NAME_`.`Report` (
 ) ENGINE=MyISAM AUTO_INCREMENT=0 DEFAULT CHARSET=latin1;
 
 
-
+DROP TABLE IF EXISTS `_DATABASE_NAME_`.`ReportParameter`;
 CREATE TABLE IF NOT EXISTS `_DATABASE_NAME_`.`ReportParameter` (
   `reportParameterID` int(11) NOT NULL auto_increment,
   `parameterTypeCode` varchar(45) default NULL,
@@ -22,7 +23,7 @@ CREATE TABLE IF NOT EXISTS `_DATABASE_NAME_`.`ReportParameter` (
 ) ENGINE=MyISAM AUTO_INCREMENT=0 DEFAULT CHARSET=latin1;
 
 
-
+DROP TABLE IF EXISTS `_DATABASE_NAME_`.`ReportParameterMap`;
 CREATE TABLE IF NOT EXISTS `_DATABASE_NAME_`.`ReportParameterMap` (
   `reportID` int(11) default NULL,
   `reportParameterID` int(11) NOT NULL auto_increment,
@@ -31,7 +32,7 @@ CREATE TABLE IF NOT EXISTS `_DATABASE_NAME_`.`ReportParameterMap` (
 ) ENGINE=MyISAM AUTO_INCREMENT=0 DEFAULT CHARSET=latin1;
 
 
-
+DROP TABLE IF EXISTS `_DATABASE_NAME_`.`ReportSum`;
 CREATE TABLE IF NOT EXISTS `_DATABASE_NAME_`.`ReportSum` (
   `reportID` int(11) NOT NULL,
   `reportColumnName` varchar(45) default NULL,
@@ -40,7 +41,6 @@ CREATE TABLE IF NOT EXISTS `_DATABASE_NAME_`.`ReportSum` (
 ) ENGINE=MyISAM AUTO_INCREMENT=0 DEFAULT CHARSET=latin1;
 
 
-DELETE FROM `_DATABASE_NAME_`.Report;
 INSERT INTO `_DATABASE_NAME_`.Report (reportID, reportName, defaultRecPageNumber, excelOnlyInd, reportDatabaseName)
 VALUES ('1','Usage Statistics by Titles','100','0', 'usageDatabase');
 
@@ -65,8 +65,6 @@ INSERT INTO `_DATABASE_NAME_`.Report (reportID, reportName, defaultRecPageNumber
 VALUES ('6','Usage Statistics - Yearly Usage Statistics','100','0', 'usageDatabase');
 
 
-
-DELETE FROM `_DATABASE_NAME_`.ReportSum;
 INSERT INTO `_DATABASE_NAME_`.ReportSum (reportID, reportColumnName, reportAction)  VALUES ('1','JAN','sum');
 INSERT INTO `_DATABASE_NAME_`.ReportSum (reportID, reportColumnName, reportAction)  VALUES ('1','FEB','sum');
 INSERT INTO `_DATABASE_NAME_`.ReportSum (reportID, reportColumnName, reportAction)  VALUES ('1','MAR','sum');
@@ -101,8 +99,6 @@ INSERT INTO `_DATABASE_NAME_`.ReportSum (reportID, reportColumnName, reportActio
 INSERT INTO `_DATABASE_NAME_`.ReportSum (reportID, reportColumnName, reportAction)  VALUES ('2','YTD_TOTAL','sum');
 
 
-
-DELETE FROM `_DATABASE_NAME_`.ReportParameter;
 INSERT INTO `_DATABASE_NAME_`.ReportParameter (reportParameterID, parameterTypeCode, parameterDisplayPrompt, parameterAddWhereClause, parameterAddWhereNumber, requiredInd, parameterSQLStatement, parameterSQLRestriction)  VALUES ('1','chk','Do not adjust numbers for use violations','Overriden','0','0','','');
 INSERT INTO `_DATABASE_NAME_`.ReportParameter (reportParameterID, parameterTypeCode, parameterDisplayPrompt, parameterAddWhereClause, parameterAddWhereNumber, requiredInd, parameterSQLStatement, parameterSQLRestriction)  VALUES ('2','txt','ISSN/ISBN/DOI','(ti2.identifier = \'PARM\' OR ti2.identifier = REPLACE(\'PARM\',"-",""))','1','0','','');
 INSERT INTO `_DATABASE_NAME_`.ReportParameter (reportParameterID, parameterTypeCode, parameterDisplayPrompt, parameterAddWhereClause, parameterAddWhereNumber, requiredInd, parameterSQLStatement, parameterSQLRestriction)  VALUES ('3','txt','Title Search','upper(t2.title) like upper(\'%PARM%\')','1','0','','');
@@ -120,7 +116,6 @@ INSERT INTO `_DATABASE_NAME_`.ReportParameter (reportParameterID, parameterTypeC
 INSERT INTO `_DATABASE_NAME_`.ReportParameter (reportParameterID, parameterTypeCode, parameterDisplayPrompt, parameterAddWhereClause, parameterAddWhereNumber, requiredInd, parameterSQLStatement, parameterSQLRestriction)  VALUES ('15','dd','Resource Type','t.resourceType= \'PARM\'','0','0','SELECT distinct resourceType, resourceType FROM Title ORDER BY 1 asc','');
 
 
-DELETE FROM `_DATABASE_NAME_`.ReportParameterMap;
 INSERT INTO `_DATABASE_NAME_`.ReportParameterMap (reportID, reportParameterID, parentReportParameterID)  VALUES ('1','1','0');
 INSERT INTO `_DATABASE_NAME_`.ReportParameterMap (reportID, reportParameterID, parentReportParameterID)  VALUES ('1','2','0');
 INSERT INTO `_DATABASE_NAME_`.ReportParameterMap (reportID, reportParameterID, parentReportParameterID)  VALUES ('1','3','0');

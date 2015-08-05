@@ -33,6 +33,20 @@ class DBService {
 		if ($dbname)
 			$this->selectDB($dbname);
 	}
+
+    public function error() {
+        return self::$db->error;
+    }
+
+    public static function setDatabase(mysqli $db) {
+        self::$db = null;
+        if ($db && $db->ping()) {
+            self::$db = $db;
+            return true;
+        }
+        return false;
+    }
+
 	public function selectDB($databaseName){
 		// $databaseName='coral_reporting_pprd';
 		if (!self::$db->select_db($databaseName)){

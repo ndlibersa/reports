@@ -18,71 +18,54 @@
 $("#reportID").change(function(){
 	//updateParms;
 	if ($("#reportID").val() != "") {
-		$("#div_parm").html("<br><label for=''>&nbsp;</label><img src='images/circle.gif'>  Refreshing Contents...");
+		genericGetById('div_parm').innerHTML = "<br><label for=''>&nbsp;</label><img src='images/circle.gif'>  Refreshing Contents...";
 		$.ajax({
 		 type:       "GET",
 		 url:        "ajax_htmldata.php",
 		 cache:      false,
 		 data:       "action=getReportParameters&reportID=" + $("#reportID").val(),
 		 success:    function(html) {
-				$("#div_parm").html(html);
+                genericGetById('div_parm').innerHTML = html;
 			}
-
-
 		});
 	}else{
-		$("#div_parm").html("");
+        genericGetById('div_parm').innerHTML = "";
 	}
-	
-	
 });
 
 
 
 function clearParms() {
-	
-	$("#reportID").val("");
-	$("#div_parm").html("");
-	
-	
+    genericGetById('reportID').value = "";
+    genericGetById('div_parm').innerHTML = "";
 }
 
 
-function updateChildren(parmID){
-	
+function updateChildren(reportID,parmID){
+
 	//first get a list of this parm's children
 	$.ajax({
 		 type:       "GET",
 		 url:        "ajax_htmldata.php",
 		 cache:      false,
-		 data:       "action=getChildParameters&parentReportParameterID=" + parmID,
+		 data:       "action=getChildParameters&reportID=" + reportID + "&parentReportParameterID=" + parmID,
 		 success:    function(childParms) {
 			var childParmArray = childParms.split("|");
-			
+
 			for (var i=0; i<childParmArray.length-1; i++) {
 				$.ajax({
 				 type:       "GET",
 				 url:        "ajax_htmldata.php",
 				 cache:      false,
 				 async:	     false,
-				 data:       "action=getChildUpdate&reportParameterID=" + childParmArray[i] + "&reportParameterVal=" + $("#prm_" + parmID).val() ,
+				 data:       "action=getChildUpdate&reportID="+reportID+"&reportParameterID=" + childParmArray[i] + "&reportParameterVal=" + $("#prm_" + parmID).val() ,
 				 success:    function(html) {
 					$("#div_parm_" + childParmArray[i]).html(html);
 					}
-					
-					
 				});
-				
-				
-				
-				
 			}
-			
 		}
-		
-		
 	});
-	
 }
 
 function moveOptions(theSelFrom, theSelTo)
@@ -90,7 +73,7 @@ function moveOptions(theSelFrom, theSelTo)
 	var selectedText = new Array();
 	var selectedValues = new Array();
 	var selectedCount = 0;
-	
+
 	var i;
 
 	// Find the selected Options in reverse order
@@ -107,7 +90,7 @@ function moveOptions(theSelFrom, theSelTo)
 			selectedCount++;
 		}
 	}
-	
+
 	// Add the selected text/values in reverse order.
 	// This will add the Options to the 'to' Select
 	// This will add the Options to the 'to' Select
@@ -116,7 +99,7 @@ function moveOptions(theSelFrom, theSelTo)
 	{
 		theSelTo.options[theSelTo.length] = new Option(selectedText[i], selectedValues[i]);
 	}
-	
+
 }
 
 function placeInHidden(delim, selStr, hidStr)
@@ -131,17 +114,33 @@ function placeInHidden(delim, selStr, hidStr)
 }
 
 function toggleLayer(whichLayer, state) {
-	var elem;
-	if(document.getElementById) // this is the way the standards work
-		elem = document.getElementById(whichLayer);
-	else if(document.all) // this is the way old msie versions work
-		elem = document.all[whichLayer];
-	else if(document.layers) // this is the way nn4 works
-		elem = document.layers[whichLayer];
-
-	if (elem){
-		elem.style.display = state;
-	}
+    var elem = genericGetById(whichLayer);
+    if (elem){
+        elem.style.display = state;
+    }
 }
 
-   
+function daterange_onsubmit() {
+	try {
+		var range = genericGetById('daterange');
+	} catch(err) {
+		return true; // daterange not on current form
+	}
+
+	var m0 = parseInt(genericGetById('date0m').value);
+	var y0 = parseInt(genericGetById('date0y').value);
+
+	var m1 = parseInt(genericGetById('date1m').value);
+	var y1 = parseInt(genericGetById('date1y').value);
+
+	if (y0>y1 || (y0===y1&&m0>m1)) {
+		alert("'from' date cannot come after 'through' date!");
+		return false;
+	}
+
+	range.value =
+             ('0' + m0).slice(-2) + y0
+           + ('0' + m1).slice(-2) + y1;
+
+    return true;
+}

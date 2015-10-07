@@ -7,23 +7,29 @@ html {
 body {
  height: 100%;
  text-decoration: none;
- color:  #3D545D;
- font-family: "arial";
- font-size: 8pt;
- font-weight: heavy;
- margin: 5px;
- padding: 0
+ color: #666;
+ font-family: Arial, sans-serif;
+ font-size: 14px;
+ font-weight: 30;
+ background: #E7E8E8;
+ margin: 0;
+ margin-top: 25px;
+ padding: 0;
+ text-align: center;
+ background: #E7E8E8 url(../images/bg-gray-texture.jpg) repeat top left;
+ -webkit-font-smoothing: antialiased;
 }
 
 label{
  float: left;
- width: 150px;
+ width: 200px;
  font-weight: bold;
- margin-left:90px;
+ margin-left: 10px;
+ margin-right: 20px;
+ text-align: right;
 }
 
 input, select, multiple, textarea{
- float: left;
  width: 280px;
  margin-bottom: 5px;
 }
@@ -79,34 +85,28 @@ table.data{
 table.noborder{
 border-width:0px;
 border-spacing:0px;
-padding:0px;
+padding: 0px;
 margin:0px;
 }
 
 td {
-border-right: 1px solid #C1DAD7;
-border-bottom: 1px solid #C1DAD7;
 background: #fff;
 padding: 1px;
 color: #3D545D;
 }
 
 td.fullborder {
-border: 1px solid #adc6de ;
 background: white;
-margin:0px;
-padding-left: 5px;
-padding-right: 5px;
-padding-bottom: 5px;
-padding-top:0px;
+margin: 0px;
+padding: 5px 5px 20px;
 color: #3D545D;
-border-spacing:0px;
+border-spacing: 0px;
 }
 
 td.noborder{
 border-width:0px;
 border-spacing:0px;
-padding:0px;
+padding: 15px;
 margin:0px;
 border-collapse: collapse;
 }
@@ -160,9 +160,9 @@ color: #0d3d6e;
 font-weight: bold;
 }
 
-td.usageFlagged {background:#738291;}
-td.usageOverriden {background:#a9c0d8;}
-td.usageMerged {background:#d8d5da;}
+td.usageFlagged {background:#738291;height:50px;}
+td.usageOverriden {background:#a9c0d8;height:50px;}
+td.usageMerged {background:#d8d5da;height:50px;}
 td.levelOne {background:#e9e33c;}
 td.levelTwo {background:#e9913c;}
 td.levelThree {background:#e93c3c;}
@@ -173,7 +173,13 @@ padding: 0;
 font-size: 100%;
 }
 
-a{color:#3D545D; text-decoration:none; border-bottom:1px dotted #4b6772;} 
+#report-title-form {
+  line-height: 25px;
+}
+
+a{color:#3D545D; text-decoration:none;}
+a:link:hover{border-bottom:1px dotted #4b6772;}
+
 a:hover				{border:none;}
 
 a.headLink{
@@ -183,4 +189,17 @@ color: white;
 select option { color: #3D545D; font-family: "arial"; font-size: 8pt; font-weight: medium; }
 .optionStyle { color: #3D545D; font-family: "arial"; font-size: 8pt; font-weight: medium; }
 
+#report-name {
+  font-size: 16px;
+}
 
+.key-text {
+  padding-left: 10px;
+  padding-right: 10px;
+  font-size: 12px;
+  border: solid 1px #D4D4D4;
+}
+
+#no-adjustment {
+  margin-bottom: 20px;
+}

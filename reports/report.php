@@ -252,7 +252,7 @@ if ($outputType == 'web'){
 
 
 <center>
-<table class='noborder' style='width:780px;'>
+<table class='noborder' style='width:780px;padding:20px;'>
 <tr>
 <td class='noborder' align='center' colspan='2'>
         <table class='noborder' style='text-align:left;'>

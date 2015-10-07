@@ -258,22 +258,22 @@ if ($outputType == 'web'){
         <table class='noborder' style='text-align:left;'>
         <tr>
 <?php if ($outputType == 'web'){ ?>
-        <td class="head" align='left' valign='top' style="min-height:98px;width:480px;background-image:url('images/reportingtitlereport.gif');background-repeat:no-repeat;"> <a href='index.php' style="border:none;outline: none;-moz-outline-style: none;"><img src='images/transparent.gif' style='width:480px;height:98px;border:none' /></a> </td>
-        <td class='noborder' style='height:98px;max-height:124px;min-width:300px; width:100%' align='left' valign='bottom'>
+        <td class="head" align='left' valign='top' style="min-height:98px;width:480px;background-image:url('images/reportingtitlereport.gif');background-repeat:no-repeat;"> <a href='index.php' style="border:none;outline: none;-moz-outline-style: none;"><img src='images/transparent.gif' style='width:420px;height:98px;border:none' /></a> </td>
+        <td class='noborder' style='height:98px;max-height:124px;min-width:370px; width:100%' align='left' valign='bottom'>
                 <table class="noborder" style="min-width:300px;min-height:98px;max-height:124px; width:100%">
                 <tr valign="bottom" style="vertical-align:bottom;">
                 <td class="head" style="padding:5px;vertical-align:bottom;">
-					<form name='viewreport' method='post' target='_self'>
+					<form name='viewreport' method='post' target='_self' id="report-title-form">
 					<?php echo $hidden_inputs; ?>
 					<input type="hidden" name="sortColumn" value='<?php echo $sortColumn; ?>'>
 					<input type="hidden" name="sortOrder" value='<?php echo $sortOrder; ?>'>
 					<input type="hidden" name="outputType" value='web'>
 					<input type="hidden" name="useHidden" value=1>
-					<font size="+1"><?php echo $report->reportName; ?></font>&nbsp;
+					<font size="+1" id="report-name"><?php echo $report->reportName; ?></font>&nbsp;
 					<a href="javascript:showPopup('report','<?php echo $reportID; ?>');" title='Click to show information about this report' style="border:none"><img src='images/help.gif' style="border:none"></a><br />
 					<?php echo $paramDisplay; ?>
 					<a href="index.php?&reportID=<?php echo $reportID . $rprt_prm_add; ?>">Modify Parameters</a>&nbsp;
-					<a href="index.php">Create New Report</a>
+					&bullet; <a href="index.php">Create New Report</a>
 					<br />
 					<a href="javascript:viewReportOutput('xls');" style="border:none"><img border='0' src="images/xls.gif"></a>
 					<a href="javascript:viewReportOutput('print');" style="border:none"><img border='0' src="images/printer.gif"></a><br />
@@ -330,7 +330,7 @@ for($a = 1; $a <= $numberLoops; $a++){
 		?>
 			</table>
         	<tr>
-        	<td colspan="2" class="shadednoborder" style='text-align:left;border-left: 1px solid #c6d7e8;'>
+        	<td colspan="2" class="shadednoborder" style='text-align:left;'>
 			<br />
 			<font size="+1">Number of Successful Full-Text Article Requests from an Archive <?php echo $textAdd; ?></font>
 			</td>
@@ -360,7 +360,7 @@ for($a = 1; $a <= $numberLoops; $a++){
 	if ($outputType == 'web'){
 	?>
         	<tr>
-        	<td colspan="2" class="shadednoborder" style='text-align:left;border-left: 1px solid #c6d7e8;'>
+        	<td colspan="2" class="shadednoborder" style='text-align:left;'>
 			<font size="+1">Number of Successful Full-Text Article Requests <?php echo $textAdd; ?></font>
 			</td>
 			</tr>
@@ -859,32 +859,32 @@ if ($outputType != 'xls'){
 	if ($showUnadjusted == 'N') {
 	?>
 	<td style='width:20px;' bgcolor='<?php echo $usageFlaggedColor; ?>' class='usageFlagged'>&nbsp;</td>
-	<td>Programmatically flagged as outlier based on previous 12 month average.  The number has not been adjusted.</td>
+	<td class="key-text">Programmatically flagged as outlier based on previous 12 month average.  The number has not been adjusted.</td>
 	</tr>
 	<tr>
 	<td style='width:20px;' bgcolor='<?php echo $usageOverridenColor; ?>' class='usageOverriden'>&nbsp;</td>
-	<td>Programmatically flagged as outlier based on previous 12 month average.  The number has been adjusted manually by Electronic Resources.</td>
+	<td class="key-text">Programmatically flagged as outlier based on previous 12 month average.  The number has been adjusted manually by Electronic Resources.</td>
 	</tr>
 	<tr>
 	<td style='width:20px;' bgcolor='<?php echo $usageMergedColor; ?>' class='usageMerged'>&nbsp;</td>
-	<td>Multiple titles with the same print ISSN (generally multiple parts) have been merged together.</td>
+	<td class="key-text">Multiple titles with the same print ISSN (generally multiple parts) have been merged together.</td>
 	<?php
 	}else{
 	?>
 	<td style='width:20px;' bgcolor='<?php echo $levelColors[1][0]; ?>' class='<?php echo $levelColors[1][1]; ?>'>&nbsp;</td>
-	<td>Programmatically flagged as outlier using the following formula: Count is <?php echo $outlier[1]['overageCount']; ?> over <?php echo $outlier[1]['overagePercent']; ?>% of the previous 12 month average. </td>
+	<td class="key-text">Programmatically flagged as outlier using the following formula: Count is <?php echo $outlier[1]['overageCount']; ?> over <?php echo $outlier[1]['overagePercent']; ?>% of the previous 12 month average. </td>
 	</tr>
 	<tr>
 	<td style='width:20px;' bgcolor='<?php echo $levelColors[2][0]; ?>' class='<?php echo $levelColors[2][1]; ?>'>&nbsp;</td>
-	<td>Programmatically flagged as outlier using the following formula: Count is <?php echo $outlier[2]['overageCount']; ?> over <?php echo $outlier[2]['overagePercent']; ?>% of the previous 12 month average. </td>
+	<td class="key-text">Programmatically flagged as outlier using the following formula: Count is <?php echo $outlier[2]['overageCount']; ?> over <?php echo $outlier[2]['overagePercent']; ?>% of the previous 12 month average. </td>
 	</tr>
 	<tr>
 	<td style='width:20px;' bgcolor='<?php echo $levelColors[3][0]; ?>' class='<?php echo $levelColors[3][1]; ?>'>&nbsp;</td>
-	<td>Programmatically flagged as outlier using the following formula: Count is <?php echo $outlier[3]['overageCount']; ?> over <?php echo $outlier[3]['overagePercent']; ?>% of the previous 12 month average. </td>
+	<td class="key-text">Programmatically flagged as outlier using the following formula: Count is <?php echo $outlier[3]['overageCount']; ?> over <?php echo $outlier[3]['overagePercent']; ?>% of the previous 12 month average. </td>
 	</tr>
 	<tr>
 	<td style='width:20px;' bgcolor='<?php echo $usageMergedColor; ?>' class='usageMerged'>&nbsp;</td>
-	<td>Multiple titles with the same print ISSN (generally multiple parts) have been merged together.</td>
+	<td class="key-text">Multiple titles with the same print ISSN (generally multiple parts) have been merged together.</td>
 	<?php
 	}
 	?>

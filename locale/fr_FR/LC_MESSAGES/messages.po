@@ -1,0 +1,273 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: messages\n"
+"POT-Creation-Date: 2015-05-21 12:26+0100\n"
+"PO-Revision-Date: 2015-05-21 13:36+0100\n"
+"Last-Translator: Cesar <hernandez.antonio.cesar19@gmail.com>\n"
+"Language-Team: \n"
+"Language: fr_FR\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Generator: Poedit 1.6.10\n"
+"X-Poedit-Basepath: /var/www/Coral/reports\n"
+"Plural-Forms: nplurals=2; plural=(n > 1);\n"
+"X-Poedit-SourceCharset: UTF-8\n"
+"X-Poedit-SearchPath-0: .\n"
+"X-Poedit-SearchPathExcluded-0: /var/www/Coral/reports/js/plugins/jquery.js\n"
+
+#: LangCodes.php:17
+msgid "French"
+msgstr "Français"
+
+#: LangCodes.php:18
+msgid "English"
+msgstr "Anglais"
+
+#: admin/classes/common/DBService.php:24 admin/classes/common/DBService.php:27
+#: admin/classes/common/DBService.php:30 admin/classes/common/DBService.php:39
+#: admin/classes/common/DBService.php:48
+msgid "There was a problem with the database: "
+msgstr "Il y avait un problème avec la base de données: "
+
+#: admin/classes/domain/Report.php:139
+msgid "to present"
+msgstr "jusqu'à aujourd'hui"
+
+#: admin/classes/domain/Report.php:141 admin/classes/domain/Report.php:162
+msgid "to"
+msgstr "par"
+
+#: admin/classes/domain/Report.php:143
+msgid "This Interface "
+msgstr "Cette interface "
+
+#: admin/classes/domain/Report.php:145
+msgid "provides COUNTER compliant stats."
+msgstr "fournit des statistiques conformes à COUNTER."
+
+#: admin/classes/domain/Report.php:147
+msgid "does not provide COUNTER compliant stats."
+msgstr "ne fournit pas des statistiques conformes à COUNTER."
+
+#: admin/classes/domain/Report.php:150
+msgid "Interface Notes"
+msgstr "Notes de l'interface"
+
+#: admin/classes/domain/Report.php:158
+msgid "Year"
+msgstr "Année"
+
+#: admin/classes/domain/ReportHelper.php:139
+msgid "view related titles"
+msgstr "Regarder les titres connexes"
+
+#: admin/classes/domain/ReportHelper.php:143
+msgid "view in link resolver"
+msgstr "Regarder dans le résoudre des liens"
+
+#: admin/classes/domain/ReportHelper.php:198
+#: admin/classes/domain/ReportHelper.php:221
+msgid "Total for "
+msgstr "Total pour "
+
+#: admin/classes/domain/ReportHelper.php:229
+msgid "Total for Report"
+msgstr "Total par rapport"
+
+#: admin/classes/domain/ReportHelper.php:244
+msgid "Sorry, no rows were returned."
+msgstr "Désolé, aucun résultat a été retourné."
+
+#: admin/classes/domain/ReportHelper.php:246
+msgid "Showing rows "
+msgstr "Rangées affichées "
+
+#: admin/classes/domain/ReportHelper.php:246
+msgid " to "
+msgstr " par "
+
+#: admin/classes/domain/ReportHelper.php:248
+#: admin/classes/domain/ReportHelper.php:250
+msgid " of "
+msgstr " de "
+
+#: admin/classes/domain/ReportHelper.php:300
+msgid "Title:"
+msgstr "Titre:"
+
+#: admin/classes/domain/ReportHelper.php:314
+msgid "Numbers are not adjusted for use violations"
+msgstr "Les nombres ne sont pas ajustés pour violations d'utilisation"
+
+#: admin/classes/domain/ReportHelper.php:320
+msgid "Limit:"
+msgstr "Limit:"
+
+#: admin/classes/domain/ReportHelper.php:320
+msgid "Top "
+msgstr "Haute"
+
+#: ajax_htmldata.php:41
+msgid "all"
+msgstr "Tous"
+
+#: ajax_htmldata.php:58 ajax_htmldata.php:110 index.php:130
+msgid "Click to choose "
+msgstr "Cliquez pour choisir "
+
+#: ajax_htmldata.php:61 ajax_htmldata.php:97 ajax_htmldata.php:113
+#: index.php:99 index.php:139
+msgid "All"
+msgstr "Tous"
+
+#: ajax_htmldata.php:71 ajax_htmldata.php:121 index.php:166
+msgid "Hide "
+msgstr "Cacher "
+
+#: ajax_htmldata.php:124
+msgid "Action "
+msgstr "Action "
+
+#: ajax_htmldata.php:124
+msgid " not set up!"
+msgstr " ne pas etabli!"
+
+#: index.php:24
+msgid "Home"
+msgstr "Accueil"
+
+#: index.php:57
+msgid "Select Report"
+msgstr "Selectionner le rapport"
+
+#: index.php:183
+msgid "Submit"
+msgstr "Confirmer"
+
+#: index.php:184
+msgid "Reset"
+msgstr "Réinitialiser"
+
+#: index.php:193
+msgid "Contact / Help"
+msgstr "Contact / Aide"
+
+#: index.php:200
+msgid "Change language:"
+msgstr "Changer la langue:"
+
+#: index.php:216
+msgid "Invalid translation route!"
+msgstr "Le chemin aux traductions n'est pas valide!"
+
+#: popup.php:75
+msgid "Invalid type!!"
+msgstr "Type incorrect!!"
+
+#: report.php:96
+msgid "Click to show information about this report"
+msgstr "Clic pour montrer l'information à propos de ce rapport"
+
+#: report.php:101
+msgid "Modify Parameters"
+msgstr "Modifier les paramètres"
+
+#: report.php:101
+msgid "Create New Report"
+msgstr "Créer un nouveau rapport"
+
+#: report.php:130
+msgid "By Month and Resource"
+msgstr "par mois et ressource"
+
+#: report.php:135 report.php:147
+msgid "Number of Successful Full-Text Article Requests"
+msgstr "Nombre des résultats des articles rémplis correctement"
+
+#: report.php:165 report.php:184
+msgid "Number of Successful Full-Text Article Requests from an Archive"
+msgstr "Nombre des résultats des articles d'un archive rémplis correctement"
+
+#: report.php:212
+msgid "Key"
+msgstr "Clé"
+
+#: report.php:220 report.php:269
+msgid ""
+"Programmatically flagged as outlier based on previous 12 month average. The "
+"number has not been adjusted."
+msgstr ""
+"Programme marqué comme valeur aberrante basé en la moyenne précédente de 12 "
+"mois. Le nombre n'a pas été ajusté."
+
+#: report.php:224 report.php:280
+msgid ""
+"Programmatically flagged as outlier based on previous 12 month average. The "
+"number has been adjusted manually by Electronic Resources."
+msgstr ""
+"Programme marqué comme valeur aberrante basé en la moyenne précédente de 12 "
+"mois. Le nombre a été ajusté manuellemente par les Ressources Électroniques."
+
+#: report.php:228 report.php:247 report.php:291 report.php:342
+msgid ""
+"Multiple titles with the same print ISSN (generally multiple parts) have "
+"been merged together."
+msgstr ""
+"Multiples titres avec le même ISSN (géneralement multi parts) ont été "
+"fusionnés."
+
+#: report.php:235 report.php:239 report.php:243 report.php:307 report.php:319
+#: report.php:331
+msgid ""
+"Programmatically flagged as outlier using the following formula: Count is"
+msgstr ""
+"Programme marqué comme valeur aberrante basé dans la suivante formule: Comte "
+"est"
+
+#: report.php:235 report.php:239 report.php:243 report.php:307 report.php:319
+#: report.php:331
+msgid " over "
+msgstr " sur "
+
+#: report.php:235 report.php:239 report.php:243 report.php:307 report.php:331
+msgid "of the previous 12 month average."
+msgstr "de la moyenne de l'année précéndent."
+
+#: report.php:267 report.php:304
+msgid "Color Background Key"
+msgstr "Coleur de la clé d'arrière"
+
+#: report.php:319
+msgid " of the previous 12 month average."
+msgstr " de la moyenne de l'année précéndent."
+
+#: report.php:358
+msgid "Platform Interface Notes (if available)"
+msgstr "Notes de l'interface de la Plate-forme (s'il y a existant)"
+
+#: report.php:370
+msgid "Publisher Notes (if available)"
+msgstr "Notes de l'éditeur (s'il y a existants)"
+
+#: templates/header.php:68
+msgid ""
+"JavaScript must be enabled in order for you to use CORAL. However, it seems "
+"JavaScript is either disabled or not supported by your browser. To use "
+"CORAL, enable JavaScript by changing your browser options, then "
+msgstr ""
+"JavaScript doit être activé pour utiliser CORAL. Cependant, on semble qui "
+"JavaScript est desactivé ou n'est pas supporté par votre navigateur. Pour "
+"utiliser CORAL, activez JavaScript en modifiant la configuration de votre "
+"navigateur, après "
+
+#: templates/header.php:68
+msgid "try again"
+msgstr "réessayez"
+
+#: js/index.js:21
+msgid "Refreshing Contents..."
+msgstr "Rechargements des contenus..."
+
+#~ msgid "Could not connect to "
+#~ msgstr "Ne pouvait pas se connecter à "

@@ -57,7 +57,7 @@ if ($reportHelper->outputType === 'web'){
 	header("Content-type: application/vnd.ms-excel;");
 	header("Content-Disposition: attachment; filename='" . strtr($reportHelper->report->getName(), ' ', '_') . "'");
 	
-	echo "<html><head></head><body>";
+	echo "<html><head><meta http-equiv='Content-Type' content='text/html; charset=utf-8' /></head><body>";
 }
 
 ?>
@@ -93,14 +93,12 @@ if ($reportHelper->outputType === 'web'){
 															type="hidden" name="useHidden" value=1> <font size="+1"><?php echo $reportHelper->report->getName(); ?></font>&nbsp;
 																<a
 																href="javascript:showPopup('report','<?php echo $reportHelper->report->getID(); ?>');"
-																title='Click to show information about this report'
+																title="<?php echo _("Click to show information about this report");?>"
 																style="border: none"><img src='images/help.gif'
 																	style="border: none"></a><br>
 <?php echo $reportHelper->paramDisplay; ?>
 <a
-																	href="index.php?&reportID=<?php echo $reportHelper->report->getID() . $reportHelper->rprt_prm_add; ?>">Modify
-																		Parameters</a>&nbsp; <a href="index.php">Create New
-																		Report</a> <br /> <a
+																	href="index.php?&reportID=<?php echo $reportHelper->report->getID() . $reportHelper->rprt_prm_add; ?>"><?php echo _("Modify Parameters");?></a>&nbsp; <a href="index.php"><?php echo _("Create New Report");?></a> <br /> <a
 																	href="javascript:viewReportOutput('xls');"
 																	style="border: none"><img border='0'
 																		src="images/xls.gif"></a> <a
@@ -129,12 +127,12 @@ if ($reportHelper->outputType === 'web'){
 					$notes = new ReportNotes($reportHelper->report->getDBName());
 					
 					$reportArray = $reportHelper->getReportResults(false);
-					$textAdd = (($reportHelper->report->getID() === '1') || ($reportHelper->report->getID() === '2')) ? 'By Month and Resource' : '';
+					$textAdd = (($reportHelper->report->getID() === '1') || ($reportHelper->report->getID() === '2')) ? _('By Month and Resource') : '';
 					if ($reportHelper->outputType === 'web'){
 						?>
 <tr>
 							<td colspan="2" class="rtitle">
-Number of Successful Full-Text Article Requests <?php echo $textAdd; ?>
+<?php echo _("Number of Successful Full-Text Article Requests") .' '. $textAdd; ?>
 </td>
 						</tr>
 						<tr>
@@ -146,7 +144,7 @@ Number of Successful Full-Text Article Requests <?php echo $textAdd; ?>
 						</tr>
 <?php } else { ?>
 <tr>
-							<td colspan='2' align='left' class='noborder'><font size="+1">Number of Successful Full-Text Article Requests <?php echo $textAdd; ?></font>
+							<td colspan='2' align='left' class='noborder'><font size="+1"><?php echo _("Number of Successful Full-Text Article Requests") .' '. $textAdd; ?></font>
 							</td>
 						</tr>
 						<tr>
@@ -164,7 +162,7 @@ Number of Successful Full-Text Article Requests <?php echo $textAdd; ?>
 							?>
 <tr>
 							<td colspan="2" class="rtitle">
-Number of Successful Full-Text Article Requests from an Archive <?php echo $textAdd; ?>
+<?php echo _("Number of Successful Full-Text Article Requests from an Archive") .' '. $textAdd; ?>
 </td>
 						</tr>
 						<tr>
@@ -183,7 +181,7 @@ Number of Successful Full-Text Article Requests from an Archive <?php echo $text
 							<td colspan='2' align='left' class='noborder'>&nbsp;</td>
 						</tr>
 						<tr>
-							<td colspan='2' align='left' class='noborder'><font size="+1">Number of Successful Full-Text Article Requests from an Archive <?php echo $textAdd; ?></font>
+							<td colspan='2' align='left' class='noborder'><font size="+1"><?php echo _("Number of Successful Full-Text Article Requests from an Archive") .' '. $textAdd; ?></font>
 							</td>
 						</tr>
 						<tr>
@@ -211,7 +209,7 @@ if ($reportHelper->outputType != 'xls'){
 	?>
 <table style='width: 350px; border-width: 1px'>
 						<tr>
-							<td colspan='2'><b>Key</b></td>
+							<td colspan='2'><b><?php echo _("Key");?></b></td>
 						</tr>
 <?php
 	
@@ -219,39 +217,34 @@ if ($reportHelper->outputType != 'xls'){
 		?>
 <tr>
 							<td class='flagged'>&nbsp;</td>
-							<td>Programmatically flagged as outlier based on previous 12
-								month average. The number has not been adjusted.</td>
+							<td><?php echo _("Programmatically flagged as outlier based on previous 12 month average. The number has not been adjusted.");?></td>
 						</tr>
 						<tr>
 							<td class='overriden'>&nbsp;</td>
-							<td>Programmatically flagged as outlier based on previous 12
-								month average. The number has been adjusted manually by
-								Electronic Resources.</td>
+							<td><?php echo _("Programmatically flagged as outlier based on previous 12 month average. The number has been adjusted manually by Electronic Resources.");?></td>
 						</tr>
 						<tr>
 							<td class='merged'>&nbsp;</td>
-							<td>Multiple titles with the same print ISSN (generally multiple
-								parts) have been merged together.</td>
+							<td><?php echo _("Multiple titles with the same print ISSN (generally multiple parts) have been merged together.");?></td>
 						</tr>
 <?php
 	}else{
 		?>
 <tr>
 							<td class='l1'>&nbsp;</td>
-							<td>Programmatically flagged as outlier using the following formula: Count is <?php echo $reportHelper->outlier[1]['overageCount']; ?> over <?php echo $reportHelper->outlier[1]['overagePercent']; ?>% of the previous 12 month average. </td>
+							<td><?php echo _("Programmatically flagged as outlier using the following formula: Count is").' '. $reportHelper->outlier[1]['overageCount']._(" over "). $reportHelper->outlier[1]['overagePercent'] .'% '. _("of the previous 12 month average.");?> </td>
 						</tr>
 						<tr>
 							<td class='l2'>&nbsp;</td>
-							<td>Programmatically flagged as outlier using the following formula: Count is <?php echo $reportHelper->outlier[2]['overageCount']; ?> over <?php echo $reportHelper->outlier[2]['overagePercent']; ?>% of the previous 12 month average. </td>
+							<td><?php echo _("Programmatically flagged as outlier using the following formula: Count is").' '. $reportHelper->outlier[2]['overageCount']._(" over "). $reportHelper->outlier[2]['overagePercent'].'% '. _("of the previous 12 month average.");?> </td>
 						</tr>
 						<tr>
 							<td class='l3'>&nbsp;</td>
-							<td>Programmatically flagged as outlier using the following formula: Count is <?php echo $reportHelper->outlier[3]['overageCount']; ?> over <?php echo $reportHelper->outlier[3]['overagePercent']; ?>% of the previous 12 month average. </td>
+							<td><?php echo _("Programmatically flagged as outlier using the following formula: Count is").' '. $reportHelper->outlier[3]['overageCount']._(" over "). $reportHelper->outlier[3]['overagePercent'].'% '. _("of the previous 12 month average.");?> </td>
 						</tr>
 						<tr>
 							<td class='merged'>&nbsp;</td>
-							<td>Multiple titles with the same print ISSN (generally multiple
-								parts) have been merged together.</td>
+							<td><?php echo _("Multiple titles with the same print ISSN (generally multiple parts) have been merged together.");?></td>
 						</tr>
 <?php
 	}
@@ -271,11 +264,9 @@ if ($reportHelper->outputType != 'xls'){
 							<td colspan='<?php echo $reportArray->numFields; ?>'>
 								<table style='border: 0px;'>
 									<tr>
-										<td class='noborder' align='right'><b>Color Background Key</b></td>
+										<td class='noborder' align='right'><b><?php echo _("Color Background Key");?></b></td>
 										<td class='flagged'>&nbsp;</td>
-										<td class='noborder' colspan='<?php echo $modcolcount; ?>'>Programmatically
-											flagged as outlier based on previous 12 month average. The
-											number has not been adjusted.</td>
+										<td class='noborder' colspan='<?php echo $modcolcount; ?>'><?php echo _("Programmatically flagged as outlier based on previous 12 month average. The number has not been adjusted.");?></td>
 									</tr>
 								</table>
 							</td>
@@ -286,9 +277,7 @@ if ($reportHelper->outputType != 'xls'){
 									<tr>
 										<td class='noborder'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td>
 										<td class='overriden'>&nbsp;</td>
-										<td class='noborder' colspan='<?php echo $modcolcount; ?>'>Programmatically
-											flagged as outlier based on previous 12 month average. The
-											number has been adjusted manually by Electronic Resources.</td>
+										<td class='noborder' colspan='<?php echo $modcolcount; ?>'><?php echo _("Programmatically flagged as outlier based on previous 12 month average. The number has been adjusted manually by Electronic Resources.");?></td>
 									</tr>
 								</table>
 							</td>
@@ -299,9 +288,7 @@ if ($reportHelper->outputType != 'xls'){
 									<tr>
 										<td class='noborder'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td>
 										<td class='merged'>&nbsp;</td>
-										<td class='noborder' colspan='<?php echo $modcolcount; ?>'>Multiple
-											titles with the same print ISSN (generally multiple parts)
-											have been merged together.</td>
+										<td class='noborder' colspan='<?php echo $modcolcount; ?>'><?php echo _("Multiple titles with the same print ISSN (generally multiple parts) have been merged together.");?></td>
 									</tr>
 								</table>
 							</td>
@@ -314,10 +301,10 @@ if ($reportHelper->outputType != 'xls'){
 							<td colspan='<?php echo $reportArray->numFields; ?>'>
 								<table style='border: 0px;'>
 									<tr>
-										<td class='noborder' align='right'><b>Color Background Key</b></td>
+										<td class='noborder' align='right'><b><?php echo _("Color Background Key");?></b></td>
 										<td style='width: 20px;'
 											bgcolor='<?php echo Color::$levelColors[1][2]; ?>'>&nbsp;</td>
-										<td class='noborder' colspan='<?php echo $modcolcount; ?>'>Programmatically flagged as outlier using the following formula: Count is <?php echo $reportHelper->outlier[1]['overageCount']; ?> over <?php echo $reportHelper->outlier[1]['overagePercent']; ?>% of the previous 12 month average. </td>
+										<td class='noborder' colspan='<?php echo $modcolcount; ?>'><?php echo _("Programmatically flagged as outlier using the following formula: Count is").' '. $reportHelper->outlier[1]['overageCount']._(" over "). $reportHelper->outlier[1]['overagePercent'].'% '. _("of the previous 12 month average.");?> </td>
 									</tr>
 								</table>
 							</td>
@@ -329,7 +316,7 @@ if ($reportHelper->outputType != 'xls'){
 										<td class='noborder'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td>
 										<td style='width: 20px;'
 											bgcolor='<?php echo Color::$levelColors[2][2]; ?>'>&nbsp;</td>
-										<td class='noborder' colspan='<?php echo $modcolcount; ?>'>Programmatically flagged as outlier using the following formula: Count is <?php echo $reportHelper->outlier[2]['overageCount']; ?> over <?php echo $reportHelper->outlier[2]['overagePercent']; ?>% of the previous 12 month average.</td>
+										<td class='noborder' colspan='<?php echo $modcolcount; ?>'><?php echo _("Programmatically flagged as outlier using the following formula: Count is").' '. $reportHelper->outlier[2]['overageCount']._(" over "). $reportHelper->outlier[2]['overagePercent'].'% '._(" of the previous 12 month average.");?></td>
 									</tr>
 								</table>
 							</td>
@@ -341,7 +328,7 @@ if ($reportHelper->outputType != 'xls'){
 										<td class='noborder'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td>
 										<td style='width: 20px;'
 											bgcolor='<?php echo Color::$levelColors[3][2]; ?>'>&nbsp;</td>
-										<td class='noborder' colspan='<?php echo $modcolcount; ?>'>Programmatically flagged as outlier using the following formula: Count is <?php echo $reportHelper->outlier[3]['overageCount']; ?> over <?php echo $reportHelper->outlier[3]['overagePercent']; ?>% of the previous 12 month average.</td>
+										<td class='noborder' colspan='<?php echo $modcolcount; ?>'><?php echo _("Programmatically flagged as outlier using the following formula: Count is").' '. $reportHelper->outlier[3]['overageCount']._(" over "). $reportHelper->outlier[3]['overagePercent'].'% '. _("of the previous 12 month average.");?></td>
 									</tr>
 								</table>
 							</td>
@@ -352,9 +339,7 @@ if ($reportHelper->outputType != 'xls'){
 									<tr>
 										<td class='noborder'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td>
 										<td class='merged'>&nbsp;</td>
-										<td class='noborder' colspan='<?php echo $modcolcount; ?>'>Multiple
-											titles with the same print ISSN (generally multiple parts)
-											have been merged together.</td>
+										<td class='noborder' colspan='<?php echo $modcolcount; ?>'><?php echo _("Multiple titles with the same print ISSN (generally multiple parts) have been merged together.");?></td>
 									</tr>
 								</table>
 							</td>
@@ -370,7 +355,7 @@ unset($reportHelper->showUnadjusted, $reportHelper->outlier);
 <br> <br>
 										<table style='border-width: 1px'>
 											<tr>
-												<td colspan='3'><b>Platform Interface Notes (if available)</b>
+												<td colspan='3'><b><?php echo _("Platform Interface Notes (if available)");?></b>
 												</td>
 											</tr>
 <?php $reportHelper->report->printPlatformInfo($notes->platformNotes()); ?>
@@ -382,7 +367,7 @@ if ($notes->hasPublishers()){
 <br><br>
 												<table style="border-width: 1px">
 													<tr>
-														<td colspan="3"><b>Publisher Notes (if available)</b></td>
+														<td colspan="3"><b><?php echo _("Publisher Notes (if available)");?></b></td>
 													</tr>
 <?php $reportHelper->report->printPublisherInfo($notes->publisherNotes()); ?>
 </table><?php
@@ -408,7 +393,7 @@ if ($notes->hasPublishers()){
 
 <?php if ($reportHelper->outputType === 'print') { ?>
 <script type="text/javascript">
-<!--
+//<!--
 window.print();
 //-->
 </script>

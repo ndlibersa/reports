@@ -1,7 +1,7 @@
 html { 
  height: 100%; 
  margin: 0;
- padding: 0
+ padding: 0;
 }
 
 body {
@@ -10,9 +10,8 @@ body {
  color:  #3D545D;
  font-family: "arial";
  font-size: 8pt;
- font-weight: heavy;
  margin: 5px;
- padding: 0
+ padding: 0;
 }
 
 label{
@@ -131,10 +130,9 @@ border-right: 1px solid #C1DAD7;
 border-bottom: 1px solid #C1DAD7;
 background: #f5f8fb;
 padding: 1px;
-font-weight: heavy;
 color: #3D545D;
 text-align:center;
-align:center;
+/*align:center;*/
 }
 
 td.head {
@@ -168,7 +166,25 @@ a.headLink{
 color: white;
 }
 
-select option { color: #3D545D; font-family: "arial"; font-size: 8pt; font-weight: medium; }
-.opt { color: #3D545D; font-family: "arial"; font-size: 8pt; font-weight: medium; }
+select option { color: #3D545D; font-family: "arial"; font-size: 8pt; }
+.opt { color: #3D545D; font-family: "arial"; font-size: 8pt; }
 
-
+/* Change language */
+.dropDownLang{
+    color: #3D545D;
+    background: #e4f5fc; /* Old browsers */
+    background: linear-gradient(to bottom, #c8d8e9 3%,#e2f0ff 52%,#c7cefc 100%); /* W3C */
+    border: none;
+    border-radius: 5px;
+    font-weight: bolder;
+    width: auto;
+    height:20px;
+    cursor: pointer;
+}
+.fontText{
+    font-size: 11pt;
+}
+.boxRight{
+    position:absolute; 
+    margin-left:67%;
+}

@@ -136,11 +136,11 @@ class ReportHelper {
 					if ($this->outputType === 'web' 
 							&& ($print_data !== '&nbsp;') && $field === 'TITLE'){
 						if ($this->report->getID() != '1'){
-							$print_data .= '<br><font size="-4"><a target="_BLANK" href="report.php?reportID=1&prm_4=' . ($this->showUnadjusted ? 'Y' : 'N') . "&titleID={$currentRow['titleID']}&outputType=web'>view related titles</a></font>";
+							$print_data .= '<br><font size="-4"><a target="_BLANK" href="report.php?reportID=1&prm_4=' . ($this->showUnadjusted ? 'Y' : 'N') . "&titleID={$currentRow['titleID']}&outputType=web'>"._("view related titles")."</a></font>";
 						}
 						// echo link resolver link
 						if ((($currentRow['PRINT_ISSN']) || ($currentRow['ONLINE_ISSN'])) && isset($this->baseURL)){
-							$print_data .= '<br><font size="-4"><a target="_BLANK" href="' . $this->getLinkResolverLink($currentRow) . '">view in link resolver</a></font>';
+							$print_data .= "<br><font size='-4'><a target='_BLANK' href='" . $this->getLinkResolverLink($currentRow) . "'>"._("view in link resolver")."</a></font>";
 						}
 					}
 					
@@ -195,7 +195,7 @@ class ReportHelper {
 				if ($this->outputType != 'xls' && !($performCheck && in_array(false, $this->groupColsArray, true) !== false) && $print_subtotal_flag && $this->report->hasGroupTotalInd()){
 					$rowoutput .= "</tr>";
 					if ($countForGrouping > 1){
-						$rowoutput .= "<tr class='data'><td class='sum'>Total for $hold_rprt_grpng_data</td>";
+						$rowoutput .= "<tr class='data'><td class='sum'>"._("Total for ").$hold_rprt_grpng_data."</td>";
 						foreach ( $fields as $field ){
 							$rowoutput .= '<td class="sum">' . $this->sumField($this->sumColsArray[$field], $sumArray[$field]) . '</td>';
 						}
@@ -218,7 +218,7 @@ class ReportHelper {
 				if ($this->report->hasGroupTotalInd() && $hold_rprt_grpng_data){
 					// one last grouping summary
 					if ($countForGrouping > 1){
-						$grp .= "<tr class='data'><td class='sum'>Total for $hold_rprt_grpng_data</td>";
+						$grp .= "<tr class='data'><td class='sum'>"._("Total for ").$hold_rprt_grpng_data."</td>";
 						foreach ( $fields as $field ){
 							$grp .= "<td class='sum'>" . $this->sumField($this->sumColsArray[$field], $sumArray[$field]) . "</td>";
 						}
@@ -226,7 +226,7 @@ class ReportHelper {
 					}
 					echo "<tr class='data'><td colspan=$numFields>&nbsp;</td></tr>";
 				}
-				echo '<tr class="data"><td class="sum">Total for Report</td>';
+				echo '<tr class="data"><td class="sum">'._("Total for Report").'</td>';
 				$total = '';
 				for($colNum = 1; $colNum < $numFields; ++$colNum){
 					if (isset($this->sumColsArray[$fields[$colNum]])){
@@ -241,13 +241,13 @@ class ReportHelper {
 			}
 			
 			if ($rowNum === 0){
-				echo "<tr class='data'><td colspan=$numFields><i>Sorry, no rows were returned.";
+				echo "<tr class='data'><td colspan=$numFields><i>"._("Sorry, no rows were returned.");
 			}else{
-				echo "<tr><td colspan=$numFields align='right'><i>Showing rows {$this->startPage} to ";
+				echo "<tr><td colspan=$numFields align='right'><i>"._("Showing rows ").$this->startPage._(" to ");
 				if (($this->maxRows > 0) && ($rowNum > $this->maxRows)){
-					echo "$this->maxRows of $this->maxRows";
+					echo $this->maxRows._(" of ").$this->maxRows;
 				}else{
-					echo "$rowNum of $rowNum";
+					echo $rowNum._(" of ").$rowNum;
 				}
 			}
 			echo '</i></td></tr></tbody>';
@@ -297,7 +297,7 @@ class ReportHelper {
 			$this->paramDisplay = '';
 			$this->rprt_prm_add = '';
 		}else{
-			$this->paramDisplay = '<b>Title:</b> ' . $this->report->getUsageTitle($this->titleID) . '<br>';
+			$this->paramDisplay = '<b>'._("Title:").'</b> ' . $this->report->getUsageTitle($this->titleID) . '<br>';
 			$this->rprt_prm_add = "&titleID={$this->titleID}";
 			$this->hidden_inputs->addReportID($this->report->getID())
 								->addTitleID($this->titleID);
@@ -311,13 +311,13 @@ class ReportHelper {
 					if (($prm_value === 'on') || ($prm_value === 'Y')){
 						$this->showUnadjusted = true;
 						$this->hidden_inputs->addParam($parm->ID, 'Y');
-						$this->paramDisplay .= '<b>Numbers are not adjusted for use violations</b><br>';
+						$this->paramDisplay .= '<b>'._("Numbers are not adjusted for use violations").'</b><br>';
 					}
 				}else if ($parm->addWhereClause === 'limit'){
 					// decide what to do
 					$this->addWhere[0] = ''; // changed from $add_where. Assumed mistake.
 					$this->maxRows = $prm_value;
-					$this->paramDisplay .= "<b>Limit:</b> Top $prm_value<br>";
+					$this->paramDisplay .= "<b>"._("Limit:")."</b> "._("Top ").$prm_value."<br>";
 				}else{
 					// if the parm comes through as an id (for publisher / platform or title), display actual value for user friendliness
 					if (($parm->displayPrompt === 'Provider / Publisher') || ($parm->displayPrompt === 'Provider') || ($parm->displayPrompt === 'Publisher')){

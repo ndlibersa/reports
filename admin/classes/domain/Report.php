@@ -136,18 +136,18 @@ class Report {
 		foreach ( $platforms as $platform ){
 			echo "<tr valign='top'><td align='right'><b>{$platform['reportDisplayName']}</b></td><td>Year";
 			if ($platform['startYear'] != '' && ($platform['endYear'] == '' || $platform['endYear'] == '0')){
-				echo ": {$platform['startYear']} to present";
+				echo ": {$platform['startYear']} "._("to present");
 			}else{
-				echo "s: {$platform['startYear']} to {$platform['endYear']}";
+				echo "s: {$platform['startYear']} "._("to")." {$platform['endYear']}";
 			}
-			echo '</td><td>This Interface ';
+			echo "</td><td>"._("This Interface ");
 			if ($platform['counterCompliantInd'] == '1'){
-				echo 'provides COUNTER compliant stats.<br>';
+				echo _("provides COUNTER compliant stats.").'<br>';
 			}else{
-				echo 'does not provide COUNTER compliant stats.<br>';
+				echo _("does not provide COUNTER compliant stats.").'<br>';
 			}
 			if ($platform['noteText']){
-				echo "<br><i>Interface Notes</i>: {$platform['noteText']}<br>";
+				echo "<br><i>"._("Interface Notes")."</i>: {$platform['noteText']}<br>";
 			}
 			echo '</td></tr>';
 		}
@@ -155,11 +155,11 @@ class Report {
 	
 	public function printPublisherInfo(&$publishers){
 		foreach ( $publishers as $publisher ){
-			echo "<tr valign='top'><td align='right'><b>{$publisher['reportDisplayName']}</b></td><td>Year";
+			echo "<tr valign='top'><td align='right'><b>{$publisher['reportDisplayName']}</b></td><td>"._("Year");
 			if (($publisher['startYear'] != '') && ($publisher['endYear'] == '')){
 				echo ": {$publisher['startYear']}";
 			}else{
-				echo "s: {$publisher['startYear']} to {$publisher['endYear']}";
+				echo "s: {$publisher['startYear']} "._("to")." {$publisher['endYear']}";
 			}
 			echo '</td><td>';
 			if (isset($publisher['notes'])){

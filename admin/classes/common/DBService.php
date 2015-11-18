@@ -21,22 +21,22 @@ class DBService {
 	public function __construct($dbname = null){
 		Config::init();
 		if (!($this->db = new mysqli(Config::$database->host, Config::$database->username, Config::$database->password))){
-			throw new Exception("There was a problem with the database: " . $this->db->error);
+			throw new Exception(_("There was a problem with the database: ") . $this->db->error);
 		}else if ($dbname){
 			if (!$this->db->select_db($dbname)){
-				throw new Exception("There was a problem with the database: " . $this->db->error);
+				throw new Exception(_("There was a problem with the database: ") . $this->db->error);
 			}
 		}else if (!($this->db->select_db(Config::$database->name))){
-			throw new Exception("There was a problem with the database: " . $this->db->error);
+			throw new Exception(_("There was a problem with the database: ") . $this->db->error);
 		}
 		
 		if ($dbname)
 			$this->changeDB($dbname);
 	}
-	public function changeDB($databaseName){
-		// $databaseName='coral_reporting_pprd';
+	public function changeDB($databaseName) {
+		//$databaseName='coral_reporting_pprd';
 		if (!$this->db->select_db($databaseName)){
-			throw new Exception("There was a problem with the database: " . $this->db->error);
+			throw new Exception(_("There was a problem with the database: ") . $this->db->error);
 		}
 		return $this;
 	}
@@ -45,7 +45,7 @@ class DBService {
 	}
 	public function query($sql){
 		if (!($result = $this->db->query($sql)))
-			throw new Exception("There was a problem with the database: " . $this->db->error);
+			throw new Exception(_("There was a problem with the database: ") . $this->db->error);
 		else if ($result instanceof mysqli_result){
 			return new DBResult($result);
 		}else if ($result){

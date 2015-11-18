@@ -21,7 +21,7 @@ ob_start();
 include_once 'directory.php';
 
 // print header
-$pageTitle = 'Home';
+$pageTitle = _('Home');
 include 'templates/header.php';
 
 ?>
@@ -54,7 +54,7 @@ include 'templates/header.php';
 					<div id='div_report'>
 
 
-						<label for="reportID">Select Report</label> <select
+						<label for="reportID"><?php echo _("Select Report");?></label> <select
 							name='reportID' id='reportID' class='opt'>
 							<option value=''></option>
 <?php
@@ -96,7 +96,7 @@ unset($db);
 				echo ">";
 				
 				if ($parm->requiredInd != '1'){
-					echo "<option value=''>All</option>";
+					echo "<option value=''>"._("All")."</option>";
 				}
 				$rownumber = 1;
 				
@@ -127,7 +127,7 @@ unset($db);
 					echo "display:none;";
 				}
 				
-				echo "float:left;margin-bottom: 5px'><a href=\"javascript:toggleLayer('div_", $parm->ID, "','block');toggleLayer('div_show_", $parm->ID, "','none');\">-Click to choose ", $parm->displayPrompt, "-</a></div><div id='div_", $parm->ID, "' style='";
+				echo "float:left;margin-bottom: 5px'><a href=\"javascript:toggleLayer('div_", $parm->ID, "','block');toggleLayer('div_show_", $parm->ID, "','none');\">-"._("Click to choose "), $parm->displayPrompt, "-</a></div><div id='div_", $parm->ID, "' style='";
 				
 				if (!$passedParm){
 					echo "display:none;";
@@ -136,7 +136,7 @@ unset($db);
 				echo "float:left;margin-bottom: 5px;'><table class='noborder'><tr><td class='noborder'><select name='prm_left_", $parm->ID, "' id='prm_left_", $parm->ID, "' class='opt' size='10' multiple='multiple' style='width:175px'>";
 				
 				if ($parm->requiredInd != '1'){
-					echo "<option value='' selected>All</option>";
+					echo "<option value='' selected>"._("All")."</option>";
 				}
 				
 				$rightParms = '';
@@ -163,7 +163,7 @@ unset($db);
 				echo "</select></td>", 
 			
 			// echo javascript left/right buttons
-			"<td align='center' valign='middle' style='border:0px;'><input type='button' value='--&gt;' style='width:35px' onclick='moveOptions(this.form.prm_left_", $parm->ID, ", this.form.prm_right_", $parm->ID, ");placeInHidden(\",\",\"prm_right_", $parm->ID, "\", \"prm_", $parm->ID, "\");' /><br><input type='button' value='&lt;--' style='width:35px' onclick='moveOptions(this.form.prm_right_", $parm->ID, ", this.form.prm_left_", $parm->ID, ");placeInHidden(\",\",\"prm_right_", $parm->ID, "\", \"prm_", $parm->ID, "\");' /></td><td style='border:0px;'><select name='prm_right_", $parm->ID, "' id='prm_right_", $parm->ID, "' class='opt' size='10' multiple='multiple' style='width:175px'>", ($rightParms ? $rightParms : ''), "</select></td></tr><tr><td style='border:0px;' colspan='3' align='left'><input type='hidden' name='prm_", $parm->ID, "' id='prm_", $parm->ID, "' value=\"", $passedParm, "\"><a href=\"javascript:toggleLayer('div_", $parm->ID, "','none');toggleLayer('div_show_", $parm->ID, "','block');\">-Hide ", $parm->displayPrompt, "-</a></td></tr></table></div></span>";
+			"<td align='center' valign='middle' style='border:0px;'><input type='button' value='--&gt;' style='width:35px' onclick='moveOptions(this.form.prm_left_", $parm->ID, ", this.form.prm_right_", $parm->ID, ");placeInHidden(\",\",\"prm_right_", $parm->ID, "\", \"prm_", $parm->ID, "\");' /><br><input type='button' value='&lt;--' style='width:35px' onclick='moveOptions(this.form.prm_right_", $parm->ID, ", this.form.prm_left_", $parm->ID, ");placeInHidden(\",\",\"prm_right_", $parm->ID, "\", \"prm_", $parm->ID, "\");' /></td><td style='border:0px;'><select name='prm_right_", $parm->ID, "' id='prm_right_", $parm->ID, "' class='opt' size='10' multiple='multiple' style='width:175px'>", ($rightParms ? $rightParms : ''), "</select></td></tr><tr><td style='border:0px;' colspan='3' align='left'><input type='hidden' name='prm_", $parm->ID, "' id='prm_", $parm->ID, "' value=\"", $passedParm, "\"><a href=\"javascript:toggleLayer('div_", $parm->ID, "','none');toggleLayer('div_show_", $parm->ID, "','block');\">-"._("Hide "), $parm->displayPrompt, "-</a></td></tr></table></div></span>";
 			}else if ($parm->typeCode === "chk"){
 				
 				echo "<input type='checkbox' name='prm_", $parm->ID, "' class='opt' style='text-align:left;width:13px;' ", (($_GET['prm_' . $parm->ID] === 'on' || $_GET['prm_' . $parm->ID] === 'Y') ? 'checked' : ''), ">";
@@ -180,8 +180,8 @@ unset($db);
 	?>
 	
 </div> <input type='hidden' name='rprt_output' value='web'> <br /> <br />
-					<input type="submit" value="Submit" name="submitbutton"
-					id="submitbutton"> <input type="button" value="Reset"
+					<input type="submit" value="<?php echo _("Submit");?>" name="submitbutton"
+					id="submitbutton"> <input type="button" value="<?php echo _("Reset");?>"
 					name="resetbutton" id="resetbutton"
 					onclick="javascript:clearParms();"></td>
 			</tr>
@@ -190,13 +190,67 @@ unset($db);
 	</form>
 
 
-	<br /> <a href="mailto:Benjamin.J.Heet.2@ND.EDU">Contact / Help</a>
+	<br /> <a href="mailto:Benjamin.J.Heet.2@ND.EDU"><?php echo _("Contact / Help");?></a>
 	</td>
 	</tr>
 	</table>
 	</form>
 	<br /> <br />
+    <div class='boxRight'>
+    <p class="fontText"><?php echo _("Change language:");?></p>
+    <select name="lang" id="lang" class="dropDownLang">
+       <?php
+        // Get all translations on the 'locale' folder
+        $route='locale';
+        $lang[]="en_US"; // add default language
+        if (is_dir($route) && is_readable($route)) { 
+            if ($dh = opendir($route)) { 
+                while (($file = readdir($dh)) !== false) {
+                    if (is_dir("$route/$file") && $file!="." && $file!=".."){
+                        $lang[]=$file;
+                    } 
+                } 
+                closedir($dh); 
+            } 
+        }else {
+            echo "<br>"._("Invalid translation route!"); 
+        }
+        // Get language of navigator
+        $defLang = substr($_SERVER["HTTP_ACCEPT_LANGUAGE"],0,2);
+        // Show an ordered list
+        sort($lang); 
+        for($i=0; $i<count($lang); $i++){
+            if(isset($_COOKIE["lang"])){
+                if($_COOKIE["lang"]==$lang[$i]){
+                    echo "<option value='".$lang[$i]."' selected='selected'>".$lang_name->getNameLang(substr($lang[$i],0,2))."</option>";
+                }else{
+                    echo "<option value='".$lang[$i]."'>".$lang_name->getNameLang(substr($lang[$i],0,2))."</option>";
+                }
+            }else{
+                if($defLang==substr($lang[$i],0,2)){
+                    echo "<option value='".$lang[$i]."' selected='selected'>".$lang_name->getNameLang(substr($lang[$i],0,2))."</option>";
+                }else{
+                    echo "<option value='".$lang[$i]."'>".$lang_name->getNameLang(substr($lang[$i],0,2))."</option>";
+                }
+            }
+        }
+        ?>
 
+    </select>
+</div>
+<script>
+    $("#lang").change(function() {
+        setLanguage($("#lang").val());
+        location.reload();
+    });
+    function setLanguage(lang) {
+        var wl = window.location, now = new Date(), time = now.getTime();
+        var cookievalid=2592000000; // 30 days (1000*60*60*24*30)
+        time += cookievalid;
+        now.setTime(time);
+        document.cookie ='lang='+lang+';path=/'+';domain='+wl.host+';expires='+now;
+    }
+</script>
 
 </center>
 <br />

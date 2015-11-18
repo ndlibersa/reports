@@ -43,6 +43,7 @@ include_once 'directory.php';
 	<script type="text/javascript" src="js/plugins/jquery.datePicker.js"></script>
 	<script type="text/javascript" src="js/plugins/jquery.autocomplete.js"></script>
 	<script type="text/javascript" src="js/plugins/jquery.tooltip.js"></script>
+	<script type="text/javascript" src="js/plugins/Gettext.js"></script>
 	<script type="text/javascript" src="js/common.js"></script>
 
 </head>
@@ -71,7 +72,7 @@ if ($type === 'report'){
 	</center>
 <?php
 }else{
-	echo 'Invalid type!!';
+	echo _('Invalid type!!');
 }
 
 ?>
@@ -79,8 +80,3 @@ if ($type === 'report'){
 
 </body>
 </html>
-
-
-
-
-

@@ -188,9 +188,6 @@ unset($db);
 		</table>
 
 	</form>
-
-
-	<br /> <a href="mailto:Benjamin.J.Heet.2@ND.EDU">Contact / Help</a>
 	</td>
 	</tr>
 	</table>

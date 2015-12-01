@@ -53,23 +53,46 @@ if ($step == "3"){
 					$sqlFile = fread($f,filesize($test_sql_file));
 					$sqlArray = explode(";",$sqlFile);
 
-
-
 					//Process the sql file by statements
 					foreach ($sqlArray as $stmt) {
 					   if (strlen(trim($stmt))>3){
-					   		//replace the DATABASE_NAME parameter with what was actually input
-					   		$stmt = str_replace("_DATABASE_NAME_", $database_name, $stmt);
 
 							$result = mysql_query($stmt);
 							if (!$result){
 								$errorMessage[] = mysql_error() . "<br /><br />For statement: " . $stmt;
 								 break;
 							}
-					    }
+						}
 					}
 
 				}
+
+
+
+				//once this check has passed we can run the entire ddl/dml script
+				if (count($errorMessage) == 0){
+					if (!file_exists($sql_file)) {
+						$errorMessage[] = "Could not open sql file: " . $sql_file . ".  If this file does not exist you must download new install files.";
+					}else{
+						//run the file - checking for errors at each SQL execution
+						$f = fopen($sql_file,"r");
+						$sqlFile = fread($f,filesize($sql_file));
+						$sqlArray = explode(';',$sqlFile);
+
+						//Process the sql file by statements
+						foreach ($sqlArray as $stmt) {
+						   if (strlen(trim($stmt))>3){
+
+								$result = mysql_query($stmt);
+								if (!$result){
+									$errorMessage[] = mysql_error() . "<br /><br />For statement: " . $stmt;
+									 break;
+								}
+							}
+						}
+					}
+				}
+
 
 				//next check the usage database exists
 				$dbcheck = @mysql_select_db("$usage_database_name");
@@ -84,39 +107,8 @@ if ($step == "3"){
 					}
 				}
 
-
-				//once this check has passed we can run the entire ddl/dml script
-				if (count($errorMessage) == 0){
-					if (!file_exists($sql_file)) {
-						$errorMessage[] = "Could not open sql file: " . $sql_file . ".  If this file does not exist you must download new install files.";
-					}else{
-						//run the file - checking for errors at each SQL execution
-						$f = fopen($sql_file,"r");
-						$sqlFile = fread($f,filesize($sql_file));
-						$sqlArray = explode(';',$sqlFile);
-
-
-
-						//Process the sql file by statements
-						foreach ($sqlArray as $stmt) {
-						   if (strlen(trim($stmt))>3){
-								//replace the DATABASE_NAME parameter with what was actually input
-								$stmt = str_replace("_DATABASE_NAME_", $database_name, $stmt);
-
-								$result = mysql_query($stmt);
-								if (!$result){
-									$errorMessage[] = mysql_error() . "<br /><br />For statement: " . $stmt;
-									 break;
-								}
-							}
-						}
-
-					}
-				}
-
 			}
 		}
-
 	}
 
 	if (count($errorMessage) > 0){

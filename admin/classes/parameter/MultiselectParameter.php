@@ -78,6 +78,12 @@ class MultiselectParameter extends Parameter implements ParameterInterface {
                     . strtr($value['cde'], ",'", "\\\\") . "'>" . $value['val']
                     . "</option>";
             }
+        } else {
+            foreach ( $this->getSelectValues(0) as $value ) {
+                $options .= "<option value='"
+                    . strtr($value['cde'], ",'", "\\\\") . "'>" . $value['val']
+                    . "</option>";
+            }
         }
         echo "<div id='div_parm_$this->id'>
                       <br />

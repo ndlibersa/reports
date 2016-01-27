@@ -1,7 +1,7 @@
-html { 
- height: 100%; 
- margin: 0;
- padding: 0
+html {
+	height: 100%;
+	margin: 0;
+	padding: 0
 }
 
 body {
@@ -35,12 +35,12 @@ input, select, multiple, textarea{
 }
 
 textarea{
- width: 250px;
- height: 150px;
+	width: 250px;
+	height: 150px;
 }
 
 .boxes{
- width: 1em;
+	width: 1em;
 }
 
 ul {
@@ -50,19 +50,19 @@ text-align: left;
 }
 
 #resetbutton{
- margin-top: 5px;
- margin-left: 30px;
- width: 90px;
+	margin-top: 5px;
+	margin-left: 30px;
+	width: 90px;
 }
 
 #submitbutton{
- margin-top: 5px;
- margin-left: 240px;
- width: 90px;
+	margin-top: 5px;
+	margin-left: 240px;
+	width: 90px;
 }
 
 br{
- clear: left;
+	clear: left;
 }
 
 img{
@@ -71,15 +71,15 @@ margin:0px;
 }
 
 table{
- border-color: #94a9be ;
- border-width: 1px;
- border-style: solid;
- margin:0px;
- padding:0px;
+	border-color: #94a9be ;
+	border-width: 1px;
+	border-style: solid;
+	margin:0px;
+	padding:0px;
 }
 
 table.data{
- width:100%;
+	width:100%;
 }
 
 table.noborder{

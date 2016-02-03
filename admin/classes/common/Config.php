@@ -19,12 +19,12 @@ class Config {
 	public static $database;
 	public static $settings;
 	protected static $bInit = null;
-	public function init(){
-		if (!isset(Config::$bInit)){
+	public static function init(){
+		if (!isset(self::$bInit)){
 			$data = parse_ini_file(BASE_DIR . '/admin/configuration.ini', true);
-			Config::$database = ( object ) $data['database'];
-			Config::$settings = ( object ) $data['settings'];
-			Config::$bInit = 'y';
+			self::$database = ( object ) $data['database'];
+			self::$settings = ( object ) $data['settings'];
+			self::$bInit = 'y';
 		}
 	}
 }

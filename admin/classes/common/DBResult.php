@@ -25,29 +25,29 @@ class DBResult {
 	public function numRows(){
 		return $this->data->num_rows;
 	}
-	
+
 	// frees sql resource after fetching single row
 	public function fetchRow($type = MYSQLI_NUM){
 		$row = $this->data->fetch_array($type);
 		$this->data->free();
 		return $row;
 	}
-	
+
 	// sql resource not freed, used in a while loop
 	public function fetchRowPersist($type = MYSQLI_NUM){
 		return $this->data->fetch_array($type);
 	}
-	
+
 	// frees sql resource after fetching all rows.
 	public function fetchRows($type = MYSQLI_NUM){
-		$rows = new SplFixedArray($this->data->num_rows);
+		$rows = array();
 		for($i = 0; $i < $this->data->num_rows; ++$i){
 			$rows[$i] = $this->data->fetch_array($type);
 		}
 		$this->data->free();
 		return $rows;
 	}
-	
+
 	// report module specific
 	public function fetchFields(){
 		$fields = array();
@@ -56,7 +56,6 @@ class DBResult {
 				break;
 			$fields[] = $fld->name;
 		}
-		$this->numFields = count($fields); // workaround for report.php
 		return $fields;
 	}
 }

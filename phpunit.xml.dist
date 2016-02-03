@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<phpunit
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:noNamespaceSchemaLocation="http://schema.phpunit.de/3.7/phpunit.xsd"
+
+	bootstrap="directory.php"
+
+	convertErrorsToExceptions="true"
+    convertWarningsToExceptions="true"
+
+    stopOnError="true"
+
+	colors="true"
+	verbose="true"
+    >
+    <testsuite name="Reporting Module Tests">
+        <directory>admin/test</directory>
+    </testsuite>
+</phpunit>

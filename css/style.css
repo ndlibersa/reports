@@ -10,12 +10,12 @@ body {
  color:  #3D545D;
  font-family: "arial";
  font-size: 8pt;
- font-weight: heavy;
+ font-weight: bold;
  margin: 5px;
  padding: 0
 }
 
-label{
+label, legend{
  float: left;
  width: 150px;
  font-weight: bold;
@@ -26,6 +26,14 @@ input, select, multiple, textarea{
  float: left;
  width: 280px;
  margin-bottom: 5px;
+}
+
+fieldset {
+ border: 0;
+}
+
+fieldset select {
+ margin-left:240px;
 }
 
 textarea{
@@ -131,7 +139,7 @@ border-right: 1px solid #C1DAD7;
 border-bottom: 1px solid #C1DAD7;
 background: #f5f8fb;
 padding: 1px;
-font-weight: heavy;
+font-weight: bold;
 color: #3D545D;
 text-align:center;
 align:center;
@@ -168,7 +176,6 @@ a.headLink{
 color: white;
 }
 
-select option { color: #3D545D; font-family: "arial"; font-size: 8pt; font-weight: medium; }
-.opt { color: #3D545D; font-family: "arial"; font-size: 8pt; font-weight: medium; }
-
+select option { color: #3D545D; font-family: "arial"; font-size: 8pt; font-weight: normal; }
+.opt { color: #3D545D; font-family: "arial"; font-size: 8pt; font-weight: normal; }
 

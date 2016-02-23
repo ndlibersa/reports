@@ -263,3 +263,23 @@ div#div_parm_12,
 div#div_parm_16 {
 	margin-top: 18px;
 }
+
+#help-span a {
+    text-decoration: none;
+    font-size: 12px;
+}
+
+#help-span a:hover {
+    color: #ccc;
+}
+
+#help-span a:link:hover {
+	border: none;
+}
+
+#help-span a:before {
+    font-family: FontAwesome;
+    content: "\f059";
+    font-size: 11px;
+    margin-right: 3px;
+}

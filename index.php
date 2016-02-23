@@ -32,12 +32,13 @@ include 'templates/header.php';
 <center>
 	<form name="reportlist" method="post" action="report.php">
 
-
 		<table class='noborder' cellpadding="0" cellspacing="0"
 			style="width: 699px; text-align: left;">
 			<tr>
 				<td class="noborder"
 					style="background-image: url('images/reportstitle.gif'); background-repeat: no-repeat; text-align: right;">
+
+					<span id="help-span"><a href="https://js-erm-helps.bc.sirsidynix.net" target="_blank">Help</a></span>
 
 					<span
 					style="border: none; outline: none; -moz-outline-style: none; float: left;"><img
@@ -189,8 +190,6 @@ unset($db);
 
 	</form>
 
-
-	<br /> <a href="mailto:Benjamin.J.Heet.2@ND.EDU">Contact / Help</a>
 	</td>
 	</tr>
 	</table>

@@ -25,7 +25,7 @@ include_once 'directory.php';
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <META HTTP-EQUIV="CACHE-CONTROL" CONTENT="public">
-	<title>CORAL Usage Statistics Reporting - <?php echo $pageTitle; ?></title>
+	<title><?php echo _("CORAL Usage Statistics Reporting - ") . $pageTitle;?></title>
 	<link rel="stylesheet" href="css/style.css" type="text/css"
 		media="screen" />
 	<link rel="stylesheet" href="css/thickbox.css" type="text/css"

@@ -98,9 +98,7 @@ if ($reportHelper->outputType === 'web'){
 																	style="border: none"></a><br>
 <?php echo $reportHelper->paramDisplay; ?>
 <a
-																	href="index.php?&reportID=<?php echo $reportHelper->report->getID() . $reportHelper->rprt_prm_add; ?>">Modify
-																		Parameters</a>&nbsp; <a href="index.php">Create New
-																		Report</a> <br /> <a
+																	href="index.php?&reportID=<?php echo $reportHelper->report->getID() . $reportHelper->rprt_prm_add; ?>"><?php echo _("Modify Parameters");?></a>&nbsp; <a href="index.php"><?php echo _("Create New Report");?></a> <br /> <a
 																	href="javascript:viewReportOutput('xls');"
 																	style="border: none"><img border='0'
 																		src="images/xls.gif"></a> <a

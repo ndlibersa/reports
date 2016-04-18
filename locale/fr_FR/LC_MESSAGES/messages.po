@@ -1,8 +1,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: messages\n"
-"POT-Creation-Date: 2016-04-18 10:57-0600\n"
-"PO-Revision-Date: 2016-04-18 11:01-0600\n"
+"POT-Creation-Date: 2016-04-18 11:29-0600\n"
+"PO-Revision-Date: 2016-04-18 11:29-0600\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "Language: fr_FR\n"
@@ -40,61 +40,69 @@ msgstr "Réinitialiser"
 msgid "CORAL Usage Statistics Reporting - "
 msgstr ""
 
-#: report.php:132
+#: report.php:101
+msgid "Modify Parameters"
+msgstr ""
+
+#: report.php:101
+msgid "Create New Report"
+msgstr ""
+
+#: report.php:130
 msgid "By Month and Resource"
 msgstr ""
 
-#: report.php:137 report.php:149
+#: report.php:135 report.php:147
 msgid "Number of Successful Full-Text Article Requests "
 msgstr ""
 
-#: report.php:167 report.php:186
+#: report.php:165 report.php:184
 msgid "Number of Successful Full-Text Article Requests from an Archive "
 msgstr ""
 
-#: report.php:222 report.php:271
+#: report.php:220 report.php:269
 msgid ""
 "Programmatically flagged as outlier based on previous 12 month average. The "
 "number has not been adjusted."
 msgstr ""
 
-#: report.php:226 report.php:282
+#: report.php:224 report.php:280
 msgid ""
 "Programmatically flagged as outlier based on previous 12 month average. The "
 "number has been adjusted manually by Electronic Resources."
 msgstr ""
 
-#: report.php:230 report.php:249 report.php:293 report.php:344
+#: report.php:228 report.php:247 report.php:291 report.php:342
 msgid ""
 "Multiple titles with the same print ISSN (generally multiple parts) have "
 "been merged together."
 msgstr ""
 
-#: report.php:237 report.php:241 report.php:245 report.php:309 report.php:321
-#: report.php:333
+#: report.php:235 report.php:239 report.php:243 report.php:307 report.php:319
+#: report.php:331
 msgid ""
 "Programmatically flagged as outlier using the following formula: Count is "
 msgstr ""
 
-#: report.php:237 report.php:241 report.php:245 report.php:309 report.php:321
-#: report.php:333
+#: report.php:235 report.php:239 report.php:243 report.php:307 report.php:319
+#: report.php:331
 msgid " over "
 msgstr ""
 
-#: report.php:237 report.php:241 report.php:245 report.php:309 report.php:321
-#: report.php:333
+#: report.php:235 report.php:239 report.php:243 report.php:307 report.php:319
+#: report.php:331
 #, php-format
 msgid "% of the previous 12 month average."
 msgstr ""
 
-#: report.php:269 report.php:306
+#: report.php:267 report.php:304
 msgid "Color Background Key"
 msgstr ""
 
-#: report.php:360
+#: report.php:358
 msgid "Platform Interface Notes (if available)"
 msgstr ""
 
-#: report.php:372
+#: report.php:370
 msgid "Publisher Notes (if available)"
 msgstr ""

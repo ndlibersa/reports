@@ -48,6 +48,7 @@ $currentPage = $parts[count($parts) - 1];
 <script type="text/javascript" src="js/plugins/date.js"></script>
 <script type="text/javascript" src="js/plugins/jquery.datePicker.js"></script>
 <script type="text/javascript" src="js/plugins/jquery.autocomplete.js"></script>
+<script type="text/javascript" src="js/plugins/Gettext.js"></script>
 <script type="text/javascript" src="js/plugins/jquery.tooltip.js"></script>
 <script type="text/javascript" src="js/plugins/jquery.floatThead.min.js"></script>
 <script type="text/javascript" src="js/common.js"></script>

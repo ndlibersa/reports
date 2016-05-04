@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: messages\n"
 "POT-Creation-Date: 2016-04-18 11:29-0600\n"
-"PO-Revision-Date: 2016-04-18 11:29-0600\n"
+"PO-Revision-Date: 2016-05-03 14:21+0100\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "Language: fr_FR\n"
@@ -18,15 +18,15 @@ msgstr ""
 
 #: js/index.js:21
 msgid " Refreshing Contents..."
-msgstr ""
+msgstr " Actualisation des contenus..."
 
 #: index.php:57
 msgid "Invalid translation route!"
-msgstr ""
+msgstr "Chemin d'accès aux traductions invalide !"
 
 #: index.php:99
 msgid "Select Report"
-msgstr ""
+msgstr "Sélectionnez un rapport"
 
 #: index.php:225
 msgid "Submit"
@@ -38,71 +38,82 @@ msgstr "Réinitialiser"
 
 #: popup.php:28 report.php:36
 msgid "CORAL Usage Statistics Reporting - "
-msgstr ""
+msgstr "Rapports des statistiques d'utilisation CORAL - "
 
 #: report.php:101
 msgid "Modify Parameters"
-msgstr ""
+msgstr "Modifier les paramètres"
 
 #: report.php:101
 msgid "Create New Report"
-msgstr ""
+msgstr "Créer un nouveau rapport"
 
 #: report.php:130
 msgid "By Month and Resource"
-msgstr ""
+msgstr "Par mois et par ressource"
 
 #: report.php:135 report.php:147
 msgid "Number of Successful Full-Text Article Requests "
-msgstr ""
+msgstr "Nombre de demandes réussies d'articles en texte intégral "
 
 #: report.php:165 report.php:184
 msgid "Number of Successful Full-Text Article Requests from an Archive "
 msgstr ""
+"Nombre de demandes réussies pour des articles en texte intégral provenant "
+"d'une Archive "
 
 #: report.php:220 report.php:269
 msgid ""
 "Programmatically flagged as outlier based on previous 12 month average. The "
 "number has not been adjusted."
 msgstr ""
+"Marqué par le programme comme étant une valeur hors norme basée sur la "
+"moyenne des 12 derniers mois. Le nombre n'a pas été ajusté."
 
 #: report.php:224 report.php:280
 msgid ""
 "Programmatically flagged as outlier based on previous 12 month average. The "
 "number has been adjusted manually by Electronic Resources."
 msgstr ""
+"Marqué par le programme comme étant une valeur hors norme basée sur la "
+"moyenne des 12 derniers mois. Le nombre a été ajusté par les Ressources "
+"électroniques."
 
 #: report.php:228 report.php:247 report.php:291 report.php:342
 msgid ""
 "Multiple titles with the same print ISSN (generally multiple parts) have "
 "been merged together."
 msgstr ""
+"Plusieurs titres avec le même ISSN de la version imprimée (généralement "
+"plusieurs parties) ont été fusionnés ensemble."
 
 #: report.php:235 report.php:239 report.php:243 report.php:307 report.php:319
 #: report.php:331
 msgid ""
 "Programmatically flagged as outlier using the following formula: Count is "
 msgstr ""
+"Marqué par le programme comme étant une valeur hors norme selon la formule "
+"suivante : Le décompte est de "
 
 #: report.php:235 report.php:239 report.php:243 report.php:307 report.php:319
 #: report.php:331
 msgid " over "
-msgstr ""
+msgstr " sur "
 
 #: report.php:235 report.php:239 report.php:243 report.php:307 report.php:319
 #: report.php:331
 #, php-format
 msgid "% of the previous 12 month average."
-msgstr ""
+msgstr "% de la moyenne des 12 derniers mois."
 
 #: report.php:267 report.php:304
 msgid "Color Background Key"
-msgstr ""
+msgstr "Légende des couleurs en arrière-plan"
 
 #: report.php:358
 msgid "Platform Interface Notes (if available)"
-msgstr ""
+msgstr "Notes de l'interface de la plateforme (si disponible)"
 
 #: report.php:370
 msgid "Publisher Notes (if available)"
-msgstr ""
+msgstr "Notes de l'éditeur (si disponible)"

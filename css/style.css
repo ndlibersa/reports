@@ -32,7 +32,9 @@ label{
 input, select, multiple, textarea{
 	width: 280px;
 	margin-bottom: 5px;
+	color: #3D545D;
 }
+
 
 textarea{
 	width: 250px;
@@ -288,9 +290,9 @@ div#div_parm_16 {
 
 select#lang {
     border: none;
-    margin-left: 10px;
+    margin-left: 6px;
     background-color: #fff;
-    width: 110px;
+    width: auto;
 }
 
 /*--- Consistentcy for Form Buttons ---*/
@@ -318,7 +320,45 @@ select#lang {
 }
 
 span#setLanguage {
-    position: relative;
-    left: 41px;
-    top: 76px;
+	float: right;
+}
+
+/*--- New Top Bar Titles ---*/
+
+#main-title {
+    font-size: 36px;
+    color: #6098A7;
+    font-family: "Open Sans";
+    font-weight: 100;
+    float: left;
+}
+
+#main-title span {
+	float: left;
+}
+
+#main-title-text {
+    margin-left: 15px;
+}
+
+#powered-by-text img {
+    vertical-align: text-bottom;
+    margin-left: 7px;
+    float: none;
+}
+
+#powered-by-text {
+    color: #687FA1;
+    margin-top: 20px;
+    font-size: 14px;
+    margin-left: 10px;
+}
+
+#main-title > img {
+    margin-left: 15px;
+    float: left !important;
+}
+
+#title-td {
+	background: none;
 }

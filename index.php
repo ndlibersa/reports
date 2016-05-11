@@ -34,9 +34,14 @@ include 'templates/header.php';
 
 		<table class='noborder' cellpadding="0" cellspacing="0"
 			style="width: 699px; text-align: left;">
-			<tr>
-				<td class="noborder"
-					style="background-image: url('images/reportstitle.gif'); background-repeat: no-repeat; text-align: right;">
+			<tr> 
+				<td class="noborder" id="title-td" style="text-align: right;">
+
+					<div id="main-title">
+		                <img src="images/title-icon-reports.png" />
+		                <span id="main-title-text"><?php echo _("Usage Reports"); ?></span>
+		                <span id="powered-by-text"><?php echo _("Powered by");?><img src="images/logo-coral.jpg" /></span>
+		            </div>
 
 					<span id="setLanguage">
 						<select name="lang" id="lang" class="dropDownLang">
@@ -79,16 +84,8 @@ include 'templates/header.php';
 				            ?>
 				        </select>
 					</span>
-					<span id="help-span"><a href="https://js-erm-helps.bc.sirsidynix.net" target="_blank">Help</a></span>
+					<span id="help-span"><a href="https://js-erm-helps.bc.sirsidynix.net" target="_blank">Help</a><span id='divider'> | </span></span>
 
-					<span
-					style="border: none; outline: none; -moz-outline-style: none; float: left;"><img
-						src='images/transparent.gif'
-						style='width: 450px; height: 100px; border: none' /></span>
-					<div
-						style='margin-right: 5px; margin-top: 35px; text-align: right;'>
-						<span style='float: right; font-size: 110%; color: #526972'>&nbsp;</span>
-					</div>
 				</td>
 			</tr>
 			<tr>

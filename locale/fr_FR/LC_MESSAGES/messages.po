@@ -1,8 +1,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: messages\n"
-"POT-Creation-Date: 2016-04-18 11:29-0600\n"
-"PO-Revision-Date: 2016-05-03 14:21+0100\n"
+"POT-Creation-Date: 2016-05-11 13:26-0600\n"
+"PO-Revision-Date: 2016-05-11 13:26-0600\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "Language: fr_FR\n"
@@ -20,19 +20,27 @@ msgstr ""
 msgid " Refreshing Contents..."
 msgstr " Actualisation des contenus..."
 
-#: index.php:57
+#: index.php:42
+msgid "Usage Reports"
+msgstr "Rapports d'utilisation"
+
+#: index.php:43
+msgid "Powered by"
+msgstr "Alimenté par"
+
+#: index.php:62
 msgid "Invalid translation route!"
 msgstr "Chemin d'accès aux traductions invalide !"
 
-#: index.php:99
+#: index.php:96
 msgid "Select Report"
 msgstr "Sélectionnez un rapport"
 
-#: index.php:225
+#: index.php:222
 msgid "Submit"
 msgstr "Envoyer"
 
-#: index.php:226
+#: index.php:223
 msgid "Reset"
 msgstr "Réinitialiser"
 

@@ -84,7 +84,7 @@ include 'templates/header.php';
 				            ?>
 				        </select>
 					</span>
-					<span id="help-span"><a href="https://js-erm-helps.bc.sirsidynix.net" target="_blank">Help</a><span id='divider'> | </span></span>
+					<span id="help-span"><a href="https://js-erm-helps.bc.sirsidynix.net" target="_blank"><?php echo _("Help");?></a><span id='divider'> | </span></span>
 
 				</td>
 			</tr>

@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: messages\n"
 "POT-Creation-Date: 2016-05-12 14:38-0600\n"
-"PO-Revision-Date: 2016-05-12 14:38-0600\n"
+"PO-Revision-Date: 2016-06-06 14:36-0600\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "Language: fr_FR\n"
@@ -105,7 +105,7 @@ msgid ""
 "Programmatically flagged as outlier using the following formula: Count is "
 msgstr ""
 "Marqué par le programme comme étant une valeur hors norme selon la formule "
-"suivante : Le décompte est de "
+"suivante: Le décompte est de "
 
 #: report.php:235 report.php:239 report.php:243 report.php:307 report.php:319
 #: report.php:331

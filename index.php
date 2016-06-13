@@ -62,7 +62,7 @@ include 'templates/header.php';
 				                echo "<br>"._("Invalid translation route!"); 
 				            }
 				            // Get language of navigator
-				            $defLang = substr($_SERVER["HTTP_ACCEPT_LANGUAGE"],0,2);
+				            $defLang = substr($_SERVER["HTTP_ACCEPT_LANGUAGE"],0,5);
 				            
 				            // Show an ordered list
 				            sort($lang); 
@@ -74,7 +74,7 @@ include 'templates/header.php';
 				                        echo "<option value='".$lang[$i]."'>".$lang_name->getNameLang($lang[$i])."</option>";
 				                    }
 				                }else{
-				                    if($defLang==substr($lang[$i],0,2)){
+				                    if($defLang==substr($lang[$i],0,5)){
 				                        echo "<option value='".$lang[$i]."' selected='selected'>".$lang_name->getNameLang($lang[$i])."</option>";
 				                    }else{
 				                        echo "<option value='".$lang[$i]."'>".$lang_name->getNameLang($lang[$i])."</option>";

@@ -362,3 +362,11 @@ span#setLanguage {
 #title-td {
 	background: none;
 }
+
+/*--- Allow Browser to Scroll When Modal Appears ---*/
+
+#TB_window {
+	position: absolute !important;
+	margin-top: 100px !important;
+	top: 0 !important;
+}

@@ -329,7 +329,7 @@ if ($outputType != 'xls') {
                                                                 &nbsp;
                                                             </td>
                                                             <td class='noborder' colspan='$modcolcount'>
-                                                                <?php echo sprintf(_("Programmatically flagged as outlier using the following formula: Count is %d  over %d%% of the previous 12 month average."), $html[$i]['cnt'], $html[$i]['%']);?>
+                                                                <?php echo sprintf(_("Programmatically flagged as outlier using the following formula: Count is %d over %d%% of the previous 12 month average."), $html[$i]['cnt'], $html[$i]['%']);?>
                                                             </td>
                                                         </tr>
                                                     </table>

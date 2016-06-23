@@ -110,11 +110,19 @@ if ($outputType === 'print') {
 <?php
 if ($outputType === 'web') {
 ?>
-                                    <td class='head report-head-img-box' align=left valign='top'>
-                                        <a href='index.php'>
-                                            <img class='report-head-img' src='images/transparent.gif' alt=''/>
-                                        </a>
+                                    <td>
+                                        <div id="main-title">
+                                            <img src="images/title-icon-reports.png" />
+                                            <span id="main-title-text">
+                                                <?php echo _("Usage Reports"); ?>
+                                            </span>
+                                            <span id="powered-by-text">
+                                                <?php echo _("Powered by");?><img src="images/logo-coral.jpg" />
+                                            </span>
+                                        </div>
                                     </td>
+                                </tr>
+                                <tr>
                                     <td class='noborder report-head-info-box' align=left valign='bottom'>
                                         <table class='noborder'>
                                             <tr valign='bottom'>
@@ -189,7 +197,7 @@ for ($irep=0; $irep<2; $irep++) {
                                 </tr>
                                 <tr>
                                     <td colspan='2' class='noborder'>
-                                        <table id='R<?php echo $irep;?>' class='table rep-res'<?php if ($outputType === ' web') {echo " style='width:100%";} else {echo " border='1'";}?>>
+                                        <table id='R<?php echo $irep;?>' class='table rep-res'>
 <?php
     $allowSort = (!$report->onlySummary || $outputType!=='web');
     $reportTable = $report->run($irep===1,$allowSort); //ReportTable created by Report::run
@@ -372,7 +380,6 @@ if ($outputType != 'xls') {
                                         <br/>
                                     </td>
                                     <td class='noborder'>
-                                        &nbsp;
                                     </td>
                                 </tr>
                             </table>

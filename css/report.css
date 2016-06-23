@@ -11,6 +11,13 @@ and open the template in the editor.
 .table {
 	/* here is some css that will make your floated table headers have a 10px gap */
 	margin-top: 10px !important;
+	width: 100%;
+	border-collapse: collapse;
+}
+
+.table td {
+	padding: 5px;
+	border: solid 1px #C1DAD7;
 }
 
 table.floatThead-table {
@@ -56,15 +63,13 @@ td.report-head-img-box a {
 }
 
 tr.rtitle td{
-	border-width:0px;
-	border-spacing:0px;
-	padding:0px;
-	margin:0px;
-	border-collapse: collapse;
+	padding: 0px;
+	margin: 0px;
+	margin-left: 20px;
 	background: white;
 	text-align:left;
-	border-left: 1px solid #c6d7e8;
 	font-size: 2em;
+	float: left;
 }
 
 table.rep-res thead tr th div {
@@ -125,10 +130,40 @@ td.l3 {
 }
 
 th {
-	text-align: center;
+	text-align: left;
+	border: solid 1px #ccc;
+	background: #efefef;
+	padding: 5px;
+    vertical-align: bottom;
+    font-weight: normal;
 }
 
 div.param {
     float:left;
     margin-bottom: 5px;
+}
+
+.table.rep-res thead tr th div a img {
+	float: left;
+    margin-right: 1px;
+    margin-top: 5px;
+}
+
+#main-title {
+    background: #EEE;
+    padding: 20px;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+table.noborder {
+	padding: 15px;
+}
+
+td.noborder {
+	padding: 0;
+}
+
+body {
+	margin-top: 10px;
 }

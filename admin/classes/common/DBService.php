@@ -16,45 +16,63 @@
  * *************************************************************************************************************************
  */
 class DBService {
-	protected $db;
+	protected static $db = null;
 	protected $error;
 	public function __construct($dbname = null){
 		Config::init();
-		if (!($this->db = new mysqli(Config::$database->host, Config::$database->username, Config::$database->password))){
-			throw new Exception("There was a problem with the database: " . $this->db->error);
+		if (!self::$db && !(self::$db = new mysqli(Config::$database->host, Config::$database->username, Config::$database->password))){
+			throw new RuntimeException("There was a problem with the database: " . self::$db->error);
 		}else if ($dbname){
-			if (!$this->db->select_db($dbname)){
-				throw new Exception("There was a problem with the database: " . $this->db->error);
+			if (!self::$db->select_db($dbname)){
+				throw new RuntimeException("There was a problem with the database: " . self::$db->error);
 			}
-		}else if (!($this->db->select_db(Config::$database->name))){
-			throw new Exception("There was a problem with the database: " . $this->db->error);
+		}else if (!(self::$db->select_db(Config::$database->name))){
+			throw new RuntimeException("There was a problem with the database: " . self::$db->error);
 		}
-		
+
 		if ($dbname)
-			$this->changeDB($dbname);
+			$this->selectDB($dbname);
 	}
-	public function changeDB($databaseName){
+
+    public function error() {
+        return self::$db->error;
+    }
+
+    public static function setDatabase(mysqli $db) {
+        self::$db = null;
+        if ($db && $db->ping()) {
+            self::$db = $db;
+            return true;
+        }
+        return false;
+    }
+
+	public function selectDB($databaseName){
 		// $databaseName='coral_reporting_pprd';
-		if (!$this->db->select_db($databaseName)){
-			throw new Exception("There was a problem with the database: " . $this->db->error);
+		if (!self::$db->select_db($databaseName)){
+			throw new RuntimeException("There was a problem with the database: " . self::$db->error);
 		}
 		return $this;
 	}
-	public function getSQLdb(){
-		return $this->db;
+	public static function getDatabase(){
+		return self::$db;
 	}
-	public function query($sql){
-		if (!($result = $this->db->query($sql)))
-			throw new Exception("There was a problem with the database: " . $this->db->error);
-		else if ($result instanceof mysqli_result){
+	public static function query($sql){
+        if (strlen(trim("$sql"))===0) {
+            throw new RuntimeException("Empty DB Query");
+        }
+
+		if (!($result = self::$db->query($sql))) {
+			throw new RuntimeException("There was a problem with the database: " . self::$db->error);
+        } else if ($result instanceof mysqli_result){
 			return new DBResult($result);
 		}else if ($result){
-			return $this->db->insert_id;
+			return self::$db->insert_id;
 		}
 		return array();
 	}
-	public function sanitize($str){
-		return $this->db->real_escape_string($str);
+	public static function escapeString($str){
+		return self::$db->real_escape_string($str);
 	}
 }
 

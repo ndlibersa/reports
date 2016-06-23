@@ -56,3 +56,34 @@ if (!Array.prototype.indexOf)
 		return -1;
 	};
 }
+
+function genericGetById() {
+    if (arguments.length===0) {
+        throw "genericGetById() : Did not receive any id parameters"
+    }
+
+    if (! document.getElementById) {
+        if (document.all) {
+            document.getElementById = function(id) {
+                return document.all[id];
+            }
+        } else if (document.layers) {
+            document.getElementById = function(id) {
+                return document.layers[id];
+            }
+        } else {
+            throw "genericGetById() : Document missing all supported ways for retrieving an element";
+        }
+    }
+    var elems = [];
+    for (var i=0; i<arguments.length; ++i) {
+        elems[i] = document.getElementById(arguments[i]);
+        if(! elems[i]) {
+            throw "genericGetById() : id '" + arguments[i] + "' is undefined";
+        }
+    }
+    if (elems.length===1) {
+        return elems[0];
+    }
+    return elems;
+}

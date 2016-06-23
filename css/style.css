@@ -123,7 +123,7 @@ background: white;
 }
 
 td.old {
-left: expression(offsetParent.scrollTop == 0 ? 0+"px" : -1+"px");
+left: expression((offsetParent.scrollTop == 0) ? 0+"px" : -1+"px");
 color: #6D929B;
 color: #B4AA9D;
 }
@@ -363,10 +363,10 @@ span#setLanguage {
 	background: none;
 }
 
-/*--- Allow Browser to Scroll When Modal Appears ---*/
-
 #TB_window {
-	position: absolute !important;
-	margin-top: 100px !important;
-	top: 0 !important;
+	max-height: 75vh !important;
+	max-width: 100vw !important;
+	overflow-y: auto !important;
+	top: 5vh !important;
+	margin-top: 0px !important;
 }

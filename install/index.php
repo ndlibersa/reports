@@ -53,13 +53,9 @@ if ($step == "3"){
 					$sqlFile = fread($f,filesize($test_sql_file));
 					$sqlArray = explode(";",$sqlFile);
 
-
-
 					//Process the sql file by statements
 					foreach ($sqlArray as $stmt) {
 					   if (strlen(trim($stmt))>3){
-					   		//replace the DATABASE_NAME parameter with what was actually input
-					   		$stmt = str_replace("_DATABASE_NAME_", $database_name, $stmt);
 
 							$result = mysql_query($stmt);
 							if (!$result){
@@ -68,22 +64,7 @@ if ($step == "3"){
 							}
 					    }
 					}
-
 				}
-
-				//next check the usage database exists
-				$dbcheck = @mysql_select_db("$usage_database_name");
-				if (!$dbcheck) {
-					$errorMessage[] = "Unable to access the usage database '" . $usage_database_name . "'.  Please verify it has been created.<br />MySQL Error: " . mysql_error();
-				}else{
-
-					//passed db host, name check, test that user can select from License database
-					$result = mysql_query("SELECT outlierID FROM " . $usage_database_name . ".Outlier WHERE outlierLevel = '1';");
-					if (!$result){
-						$errorMessage[] = "Unable to select from the Outlier table in database '" . $usage_database_name . "' with user '" . $database_username . "'.  Please complete the Usage install and verify the database has been set up.  Error: " . mysql_error();
-					}
-				}
-
 
 				//once this check has passed we can run the entire ddl/dml script
 				if (count($errorMessage) == 0){
@@ -95,14 +76,10 @@ if ($step == "3"){
 						$sqlFile = fread($f,filesize($sql_file));
 						$sqlArray = explode(';',$sqlFile);
 
-
-
 						//Process the sql file by statements
 						foreach ($sqlArray as $stmt) {
 						   if (strlen(trim($stmt))>3){
-								//replace the DATABASE_NAME parameter with what was actually input
-								$stmt = str_replace("_DATABASE_NAME_", $database_name, $stmt);
-
+                               
 								$result = mysql_query($stmt);
 								if (!$result){
 									$errorMessage[] = mysql_error() . "<br /><br />For statement: " . $stmt;
@@ -113,7 +90,20 @@ if ($step == "3"){
 
 					}
 				}
+                
+                //next check the usage database exists
+				$dbcheck = @mysql_select_db("$usage_database_name");
+				if (!$dbcheck) {
+					$errorMessage[] = "Unable to access the usage database '" . $usage_database_name . "'.  Please verify it has been created.<br />MySQL Error: " . mysql_error();
+				}else{
 
+					//passed db host, name check, test that user can select from License database
+					$result = mysql_query("SELECT outlierID FROM " . $usage_database_name . ".Outlier WHERE outlierLevel = '1';");
+					if (!$result){
+						$errorMessage[] = "Unable to select from the Outlier table in database '" . $usage_database_name . "' with user '" . $database_username . "'.  Please complete the Usage install and verify the database has been set up.  Error: " . mysql_error();
+					}
+				}
+                
 			}
 		}
 

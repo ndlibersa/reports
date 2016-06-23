@@ -17,8 +17,8 @@
 
 
 $(document).ready(function(){
+	if($('#R0')) $('#R0').floatThead();
 	if($('#R1')) $('#R1').floatThead();
-	if($('#R2')) $('#R2').floatThead();
 });
 
 
@@ -31,8 +31,6 @@ function viewReportOutput(reportOutput) {
 function sortRecords(columnIndex, sortOrder){
 	document.viewreport.sortColumn.value=columnIndex;
 	document.viewreport.sortOrder.value=sortOrder;
-	document.viewreport.outputType.value='web';
-	document.viewreport.target='';
 	document.viewreport.submit();
 
 }

@@ -49,13 +49,13 @@ class ReportTable {
                 if ($this->report->sortData['column'] == $i && $this->report->sortData['order'] === 'asc') {
                     echo '_sel';
                 }
-                echo ".gif' border=0 alt='ascending' /></a>&nbsp; <a
+                echo ".png' border=0 alt='ascending' /></a>&nbsp; <a
                     href=\"javascript:sortRecords('$i', 'desc');\"> <img
                     align='center' src='images/arrowup";
                 if ($this->report->sortData['column'] == $i && $this->report->sortData['order'] === 'desc') {
                     echo '_sel';
                 }
-                echo ".gif' border=0 alt='descending'/></a></div>";
+                echo ".png' border=0 alt='descending'/></a></div>";
             }
             echo "</th>";
         }
